@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, ImageBackground, TextInput, Button, Alert, Dimensions } from 'react-native';
+import { StyleSheet, View, ImageBackground, Text, TextInput, Button, Alert, Dimensions, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import UnsplashImageSearch from './unsplashImageSearch';
@@ -16,6 +16,7 @@ const AddNewScreen = () => {
   const updateImageBackground = (uri) => {
     setImageBackgroundUri({uri: uri});
     setShowImagePicker(false);
+    setShowSaveButton(true);
   }
 
   return (
@@ -32,7 +33,8 @@ const AddNewScreen = () => {
           />
           <Button title="show/hide" onPress={() => setShowImagePicker(!showImagePicker)} />
           {showImagePicker ? <UnsplashImageSearch width={width*.75} height={height*.75} searchQuery={titleText} updateBackground={updateImageBackground}></UnsplashImageSearch> : null}
-          {showSaveButton ? <Button title="Save" onPress={() => Alert.alert('save it here')} /> : null}
+          <View style={{flex: 1}} />
+          {showSaveButton ? <TouchableOpacity style={{backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4}} onPress={() => Alert.alert('save it here')} ><Text>Save</Text></TouchableOpacity> : null}
           <StatusBar style="auto" />
         </SafeAreaView>
       </ImageBackground>
@@ -43,6 +45,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       width: "100%",
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'flex-start',
     },
