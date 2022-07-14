@@ -10,7 +10,7 @@ setupURLPolyfill();
 const {width, height} = Dimensions.get('window');
 
 export default function UnsplashImageSearch(props) {
-  const [searchText, setSearchText] = useState('mountains');
+  const [searchQuery, setSearchQuery] = useState(props.searchQuery);
   const [data, setPhotosResponse] = useState(null);
   const flatListRef = useRef(null);
 
@@ -25,40 +25,27 @@ export default function UnsplashImageSearch(props) {
   }, [data])
 
   useEffect(() => {
-    console.log(`searchQuery is ${props.searchQuery.toLowerCase()}`);
+    console.log(`searchQuery is ${searchQuery.toLowerCase()}`);
     api.search
-      .getPhotos({ query: props.searchQuery.toLowerCase(), orientation: "portrait", page: 1, perPage: 30})
+      .getPhotos({ query: searchQuery.toLowerCase(), orientation: "portrait", page: 1, perPage: 30})
       .then(result => {
         setPhotosResponse(result);
       })
       .catch((e) => {
         console.log(`DisplayWindow encountered an error -> ${e}`);
       });
-  }, [props.searchQuery]);
+  }, [searchQuery]);
 
   const PhotoItemForFlatList = ({ photo }) => {
-    const { user, urls } = photo;
+    const {urls, user} = photo;
     return (
       <ImageBackground 
-        style={{width: width* .75, flexDirection: 'column', justifyContent:'flex-end', alignItems: 'flex-end', resizeMode:"contain"}} 
+        style={{width: props.width, flexDirection: 'column', justifyContent:'flex-end', alignItems: 'flex-end', resizeMode:"contain"}} 
         source={{uri: urls.regular}}
       >
         <TouchableOpacity 
-            style={{width: 100, height: 25, backgroundColor:'#ccc', opacity: 0.8, alignItems: 'center', justifyContent: 'center', alignSelf:'center', borderRadius: 5, marginBottom: 10}}
-            onPress={() => {
-            api.photos.trackDownload({ downloadLocation: photo.links.download_location });
-            FileSystem.downloadAsync(
-                urls.regular,
-                FileSystem.documentDirectory + photo.id
-            )
-                .then(({ uri }) => {
-                console.log('Finished downloading to ', uri);
-                })
-                .catch(error => {
-                console.error(`DownloadAsync encountered an error -> ${error}`);
-                Alert.alert("There was an error downloading this image");
-                });
-            }}
+          style={{width: 100, height: 25, backgroundColor:'#ccc', opacity: 0.8, alignItems: 'center', justifyContent: 'center', alignSelf:'center', borderRadius: 5, marginBottom: 10}}
+          onPress={() => onImageBackgroundSelect(photo)}
         >
             <Text style={{color: 'white'}}>Choose image</Text>
         </TouchableOpacity>
@@ -67,10 +54,36 @@ export default function UnsplashImageSearch(props) {
     );
   };
 
+  const onImageBackgroundSelect = (photo) => {
+    downloadImageFromUnsplash(photo)
+    .then((uri) => {
+      props.updateBackground(uri);
+    });    
+  }
+
+  const downloadImageFromUnsplash = (photo) => {
+    api.photos.trackDownload({ downloadLocation: photo.links.download_location });
+    const {user, urls} = photo
+    return new Promise((resolve, reject) => {
+      FileSystem.downloadAsync(
+          urls.regular,
+          FileSystem.documentDirectory + photo.id
+      )
+      .then(({ uri }) => {
+        console.log('Finished downloading to ', uri);
+        resolve(uri);
+      })
+      .catch(error => {
+        console.error(`DownloadAsync encountered an error -> ${error}`);
+        reject("Failed");        
+      });
+    })
+  }
+
 
   if (data === null) {
     return (
-      <View style={{height: height *.75, width: width *.75}} >
+      <View style={{height: props.height, width: props.width}} >
         <ActivityIndicator />
         <StatusBar style="auto" />
       </View>
@@ -85,10 +98,10 @@ export default function UnsplashImageSearch(props) {
     );
   } else {
     return (
-      <View style={{height: height *.75, width: width *.75}} >
+      <View style={{height: props.height, width: props.width}} >
         <TextInput 
-          style={{width: width*.75, backgroundColor: 'lightgray'}} 
-          onSubmitEditing={(event) => setSearchText(event.nativeEvent.text)} 
+          style={{width: props.width, backgroundColor: 'lightgray'}} 
+          onSubmitEditing={(event) => setSearchQuery(event.nativeEvent.text)} 
           returnKeyType='search' 
           placeholder={"Search Unsplash for images"}
         />
