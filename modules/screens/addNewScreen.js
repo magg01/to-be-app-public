@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, View, ImageBackground, Text, TextInput, Button, Alert, Dimensions, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import UnsplashImageSearch from './unsplashImageSearch';
+import { addToBeItem } from '../database/database';
 
 const backgroundImage = require("../../assets/addNew.jpg");
 const {height, width} = Dimensions.get('window');
@@ -11,7 +12,7 @@ const AddNewScreen = () => {
   const [titleText, updateTitleText] = useState('');
   const [showSaveButton, setShowSaveButton] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
-  const [ImageBackgroundUri, setImageBackgroundUri] = useState(backgroundImage);
+  const [imageBackgroundUri, setImageBackgroundUri] = useState(backgroundImage);
 
   const updateImageBackground = (uri) => {
     setShowImagePicker(false);
@@ -19,8 +20,12 @@ const AddNewScreen = () => {
     setShowSaveButton(true);
   }
 
+  const onNewSave = () => {
+    addToBeItem(titleText, imageBackgroundUri.uri)
+  }
+
   return (
-      <ImageBackground source={ImageBackgroundUri} resizeMode="cover" style={styles.container}>
+      <ImageBackground source={imageBackgroundUri} resizeMode="cover" style={styles.container}>
         <SafeAreaView style={styles.container}>
           <TextInput
             style={styles.input} 
@@ -34,7 +39,7 @@ const AddNewScreen = () => {
           <Button title="show/hide" onPress={() => setShowImagePicker(!showImagePicker)} />
           {showImagePicker ? <UnsplashImageSearch width={width*.75} height={height*.75} searchQuery={titleText} updateBackground={updateImageBackground}></UnsplashImageSearch> : null}
           <View style={{flex: 1}} />
-          {showSaveButton ? <TouchableOpacity style={{backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4}} onPress={() => Alert.alert('save it here')} ><Text>Save</Text></TouchableOpacity> : null}
+          {showSaveButton ? <TouchableOpacity style={{backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4}} onPress={onNewSave} ><Text>Save</Text></TouchableOpacity> : null}
           <StatusBar style="auto" />
         </SafeAreaView>
       </ImageBackground>
