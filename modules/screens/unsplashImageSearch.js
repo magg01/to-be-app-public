@@ -55,7 +55,11 @@ export default function UnsplashImageSearch(props) {
       >
         <TouchableOpacity 
           style={{width: 100, height: 25, backgroundColor:'#ccc', opacity: 0.8, alignItems: 'center', justifyContent: 'center', alignSelf:'center', borderRadius: 5, marginBottom: 10}}
-          onPress={() => onImageBackgroundSelect(photo)}
+          onPress={() =>
+            downloadStarted ?
+            null
+            :
+            onImageBackgroundSelect(photo)}
         >
             { downloadStarted ? 
               <ActivityIndicator /> 
