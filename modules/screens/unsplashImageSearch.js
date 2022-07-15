@@ -9,9 +9,12 @@ import UnsplashKeys from '../../local/unsplashkeys';
 setupURLPolyfill();
 const {width, height} = Dimensions.get('window');
 
+const loadingImage = require('../../assets/icon.png');
+
 export default function UnsplashImageSearch(props) {
   const [searchQuery, setSearchQuery] = useState(props.searchQuery);
   const [data, setPhotosResponse] = useState(null);
+  const [downloadStarted, setDownloadStarted] = useState(false);
   const flatListRef = useRef(null);
 
   const api = createApi({
@@ -40,14 +43,25 @@ export default function UnsplashImageSearch(props) {
     const {urls, user} = photo;
     return (
       <ImageBackground 
-        style={{width: props.width, flexDirection: 'column', justifyContent:'flex-end', alignItems: 'flex-end', resizeMode:"contain"}} 
+        style={{
+          width: props.width, 
+          flexDirection: 'column', 
+          justifyContent:'flex-end', 
+          alignItems: 'flex-end', 
+          resizeMode:"contain",
+        }} 
         source={{uri: urls.regular}}
+        defaultSource={loadingImage}
       >
         <TouchableOpacity 
           style={{width: 100, height: 25, backgroundColor:'#ccc', opacity: 0.8, alignItems: 'center', justifyContent: 'center', alignSelf:'center', borderRadius: 5, marginBottom: 10}}
           onPress={() => onImageBackgroundSelect(photo)}
         >
-            <Text style={{color: 'white'}}>Choose image</Text>
+            { downloadStarted ? 
+              <ActivityIndicator /> 
+              :
+              <Text style={{color: 'white'}}>Choose image</Text>
+            }
         </TouchableOpacity>
         <Text style={{color: "white", fontSize: 10}}>{`${user.name} / Unsplash`}</Text>
       </ImageBackground>
@@ -55,6 +69,7 @@ export default function UnsplashImageSearch(props) {
   };
 
   const onImageBackgroundSelect = (photo) => {
+    setDownloadStarted(true);
     downloadImageFromUnsplash(photo)
     .then((uri) => {
       props.updateBackground(uri);

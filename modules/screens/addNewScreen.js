@@ -14,8 +14,8 @@ const AddNewScreen = () => {
   const [ImageBackgroundUri, setImageBackgroundUri] = useState(backgroundImage);
 
   const updateImageBackground = (uri) => {
-    setImageBackgroundUri({uri: uri});
     setShowImagePicker(false);
+    setImageBackgroundUri({uri: uri});
     setShowSaveButton(true);
   }
 
