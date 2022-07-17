@@ -26,7 +26,7 @@ const addToBeItem = (title, imageBackgroundUri) => {
   );
 };
 
-const getToBeItem = (id) => {
+const getToBeItemById = (id) => {
   db.readTransaction(
     (tx) => {
       tx.executeSql("select from tobeitems where id=?", [id]);
@@ -34,6 +34,39 @@ const getToBeItem = (id) => {
     (e) => console.log(`getToBeItem encountered an error -> ${e}`),
     () => console.log(`getToBeItem: item with id:${id} successfully read from tobeitems table`)
   )
+}
+
+const getFirstToBeItem = () => {
+  db.readTransaction(
+    (tx) => {
+      tx.executeSql("select * from tobeitems limit=1");
+    },
+    (e) => console.log(`getFirstToBeItem encountered an error -> ${e}`),
+    () => console.log('getFirstToBeItem: successfully read from tobeitems table')
+  )
+}
+
+const getAllToBeItems = () => {
+  return new Promise((resolve, reject) => {
+    let result;
+    db.readTransaction(
+      (tx) => {
+        tx.executeSql(
+          "select * from tobeitems", 
+          [], 
+          (_, { rows: {_array} }) =>{
+            console.log(`getAllToBeItems: _array is ${JSON.stringify(_array,null, 1)}`)
+            result = _array;
+          },
+        )
+      },
+      (e) => {
+        console.log(`getAllToBeItems encountered an error -> ${e}`)
+        reject(e);
+      },
+      () => resolve(result)
+    )
+  })
 }
 
 const deleteToBeItem = (id) => {
@@ -49,4 +82,4 @@ const deleteToBeItem = (id) => {
   )
 }
 
-export { deleteToBeItem, addToBeItem, getToBeItem}
+export { deleteToBeItem, addToBeItem, getToBeItemById, getAllToBeItems}
