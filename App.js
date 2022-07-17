@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AddNewScreen } from './modules/screens/addNewScreen';
 import { HomeScreen } from './modules/screens/homeScreen';
+import ViewToBeScreen from './modules/screens/viewToBeScreen';
 
 const Stack = createStackNavigator();
 
@@ -14,6 +15,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{headerShown: false}}>
         <Stack.Screen name="HomeScreen" component={HomeScreen}/>
         <Stack.Screen name="AddNewScreen" component={AddNewScreen}/>
+        <Stack.Screen name="ViewToBeScreen" component={ViewToBeScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
