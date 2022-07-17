@@ -1,13 +1,18 @@
 import React from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ImageBackground } from 'react-native';
 import { StatusBar } from 'expo-status-bar'; 
 
-export default ViewToBeScreen = (props) => {
+export default ViewToBeScreen = ({route}) => {
+  const title = route.params.title
+  const imageBackgroundUri = route.params.imageBackgroundUri
+
   return(
-    <View style={styles.container}>
-      <Text>This is the view to be screen</Text> 
+    <ImageBackground source={{uri: imageBackgroundUri}} resizeMode="cover" style={styles.container}>
+      <SafeAreaView style={styles.container}>
+        <Text style={{color: 'white', fontSize: 36}}>{title}</Text>
+      </SafeAreaView>
       <StatusBar style={'auto'} />
-    </View>
+    </ImageBackground>
   )
 }
 
