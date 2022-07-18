@@ -1,21 +1,38 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, SafeAreaView, ImageBackground, Button } from 'react-native';
 import { StatusBar } from 'expo-status-bar'; 
+import { getToBeItemById } from '../database/database';
 
 export default ViewToBeScreen = ({route}) => {
-  const title = route.params.title
-  const imageBackgroundUri = route.params.imageBackgroundUri
+  const [toBeId, setToBeId] = useState(route.params.toBeId);
+  const [toBeItem, setToBeItem] = useState(undefined);
 
-  return(
-    <ImageBackground source={{uri: imageBackgroundUri}} resizeMode="cover" style={styles.container}>
+  useEffect(() => {
+    getToBeItemById(toBeId)
+    .then((result) => {
+      console.log(`ViewToBeScreen: useEffect getToBeItemById = ${JSON.stringify(result,null, 1)}`)
+      setToBeItem(result);
+    })
+  }, [toBeId])
+
+  if(toBeItem === undefined){
+    return (
       <SafeAreaView style={styles.container}>
-        <Text style={{color: 'white', fontSize: 36}}>{title}</Text>
-        <Button title={"next"}/>
-        <Button title={"previous"}/>
+        <Text>Fetching from database</Text>
       </SafeAreaView>
-      <StatusBar style={'auto'} />
-    </ImageBackground>
-  )
+    )
+  } else {
+    return(
+      <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
+        <SafeAreaView style={styles.container}>
+          <Text style={{color: 'white', fontSize: 36}}>{toBeItem.title}</Text>
+          <Button title={"next"} />
+          <Button title={"previous"}/>
+        </SafeAreaView>
+        <StatusBar style={'auto'} />
+      </ImageBackground>
+   )
+  }
 }
 
 const styles = StyleSheet.create({

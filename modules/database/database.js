@@ -27,13 +27,26 @@ const addToBeItem = (title, imageBackgroundUri) => {
 };
 
 const getToBeItemById = (id) => {
-  db.readTransaction(
-    (tx) => {
-      tx.executeSql("select from tobeitems where id=?", [id]);
-    },
-    (e) => console.log(`getToBeItem encountered an error -> ${e}`),
-    () => console.log(`getToBeItem: item with id:${id} successfully read from tobeitems table`)
-  )
+  return new Promise((resolve, reject) => {
+    let result;
+    db.readTransaction(
+      (tx) => {
+        tx.executeSql(
+          "select * from tobeitems where id=?", 
+          [id], 
+          (_, { rows: {_array} }) =>{
+            console.log(`getToBeItemById: _array is ${JSON.stringify(_array,null, 1)}`)
+            result = _array[0];
+          },
+        )
+      },
+      (e) => {
+        console.log(`getToBeItemById encountered an error -> ${e}`)
+        reject(e);
+      },
+      () => resolve(result)
+    )
+  })
 }
 
 const getFirstToBeItem = () => {

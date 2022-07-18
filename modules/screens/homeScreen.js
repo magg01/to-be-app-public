@@ -24,7 +24,7 @@ const HomeScreen = ({navigation}) => {
       <Text>This is the home screen</Text>
       <Button title={"go to add new screen"} onPress={() => navigation.navigate("AddNewScreen")} />
       {allToBes.map((tobe, index) => (
-        <Button key={index} title={`see item ${tobe.title}`} onPress={() => navigation.navigate("ViewToBeScreen", {title: tobe.title, imageBackgroundUri: tobe.imageBackgroundUri})} />
+        <Button key={index} title={`see item ${tobe.title}`} onPress={() => navigation.navigate("ViewToBeScreen", {toBeId: tobe.id, next: allToBes[index+1].id, previous: allToBes[index-1].id})} />
       ))}
       <StatusBar style={"auto"}/>
     </View>
