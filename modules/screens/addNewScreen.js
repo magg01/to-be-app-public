@@ -8,7 +8,7 @@ import { addToBeItem } from '../database/database';
 const backgroundImage = require("../../assets/addNew.jpg");
 const {height, width} = Dimensions.get('window');
 
-const AddNewScreen = () => {
+const AddNewScreen = ({navigation}) => {
   const [titleText, updateTitleText] = useState('');
   const [showSaveButton, setShowSaveButton] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
@@ -21,7 +21,8 @@ const AddNewScreen = () => {
   }
 
   const onNewSave = () => {
-    addToBeItem(titleText, imageBackgroundUri.uri)
+    addToBeItem(titleText, imageBackgroundUri.uri);
+    navigation.goBack();
   }
 
   return (

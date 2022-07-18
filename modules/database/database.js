@@ -4,7 +4,7 @@ const db = SQLite.openDatabase("tobedb")
 db.transaction(
   (tx) => {
     //reset the table on each reload
-    tx.executeSql("drop table if exists tobeitems;");
+    //tx.executeSql("drop table if exists tobeitems;");
     tx.executeSql(        
     "create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text);"
     );
