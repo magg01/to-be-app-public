@@ -49,14 +49,121 @@ const getToBeItemById = (id) => {
   })
 }
 
+const getPreviousToBeItemIdById = (id) => {
+  return new Promise((resolve, reject) => {
+    let result;
+    db.readTransaction(
+      (tx) => {
+        tx.executeSql(
+          "select * from tobeitems where id < ? order by id desc limit 1", 
+          [id],
+          (_, { rows: {_array} }) =>{
+            console.log(`getPreviousToBeItemIdById: _array is ${JSON.stringify(_array,null, 1)}`)
+            if(_array.length === 0){
+              getLastToBeItem().then((lastToBeItem) => {
+                result = lastToBeItem.id
+                console.log(`getPreviousToBeItemIdById: result = ${result}`)
+                resolve(result);
+              })
+            } else {
+              result = _array[0].id;
+              console.log(`getPreviousToBeItemIdById: result = ${result}`)
+              resolve(result);
+            }
+          },
+          // (_, { rows: {_array} }) =>{
+          //   console.log(`getPreviousToBeItemIdById: _array is ${JSON.stringify(_array,null, 1)}`)
+          //   result = _array[0].id;
+          //   console.log(`getPreviousToBeItemIdById: result = ${result}`)
+          // },
+        )
+      },
+      (e) => {
+        console.log(`getPreviousToBeItemIdById encountered an error -> ${e}`)
+        reject(e);
+      },
+      console.log("getPreviousToBeItemIdById transaction success")
+    )
+  })
+}
+
+const getNextToBeItemIdById = (id) => {
+  return new Promise((resolve, reject) => {
+    let result;
+    db.readTransaction(
+      (tx) => {
+        tx.executeSql(
+          "select * from tobeitems where id > ? order by id limit 1", 
+          [id], 
+          (_, { rows: {_array} }) =>{
+            console.log(`getNextToBeItemIdById: _array is ${JSON.stringify(_array,null, 1)}`)
+            if(_array.length === 0){
+              getFirstToBeItem().then((firstToBeItem) => {
+                result = firstToBeItem.id
+                console.log(`getNextToBeItemIdById: result = ${result}`)
+                resolve(result);
+              })
+            } else {
+              result = _array[0].id;
+              console.log(`getNextToBeItemIdById: result = ${result}`)
+              resolve(result);
+            }
+          },
+        )
+      },
+      (e) => {
+        console.log(`getNextToBeItemIdById encountered an error -> ${e}`)
+        reject(e);
+      },
+      console.log("getNextToBeItemIdById transaction success")
+    )
+  })
+}
+
 const getFirstToBeItem = () => {
-  db.readTransaction(
-    (tx) => {
-      tx.executeSql("select * from tobeitems limit=1");
-    },
-    (e) => console.log(`getFirstToBeItem encountered an error -> ${e}`),
-    () => console.log('getFirstToBeItem: successfully read from tobeitems table')
-  )
+  return new Promise((resolve, reject) => {
+    let result;
+    db.readTransaction(
+      (tx) => {
+        tx.executeSql(
+          "select * from tobeitems order by id limit 1",
+          [],
+          (_, { rows: {_array} }) => {
+            result = _array[0]
+            console.log(`getFirstToBeItem: result = ${JSON.stringify(result, null, 1)}`)
+          }
+        )
+      },
+      (e) => {
+        console.log(`getFirstToBeItem encountered an error -> ${e}`)
+        reject(e);
+      },
+      () => resolve(result)  
+    )
+  })
+}
+
+const getLastToBeItem = () => {
+  return new Promise((resolve, reject) => {
+    let result;
+    db.readTransaction(
+      (tx) => {
+        tx.executeSql(
+          "select * from tobeitems order by id desc limit 1",
+          [],
+          (_, { rows: {_array} }) => {
+            result = _array[0]
+            console.log(`getLastToBeItem: result = ${JSON.stringify(result, null, 1)}`)
+          }
+        )
+      },
+      (e) => {
+        console.log(`getLastToBeItem encountered an error -> ${e}`)
+        reject(e);
+      },
+      () => resolve(result)  
+    )
+  })
 }
 
 const getAllToBeItems = () => {
@@ -95,4 +202,4 @@ const deleteToBeItem = (id) => {
   )
 }
 
-export { deleteToBeItem, addToBeItem, getToBeItemById, getAllToBeItems}
+export { deleteToBeItem, addToBeItem, getToBeItemById, getAllToBeItems, getPreviousToBeItemIdById, getNextToBeItemIdById}

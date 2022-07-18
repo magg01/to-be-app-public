@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, SafeAreaView, ImageBackground, Button } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ImageBackground, Button, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar'; 
-import { getToBeItemById } from '../database/database';
+import { getPreviousToBeItemIdById, getToBeItemById, getNextToBeItemIdById } from '../database/database';
 
 export default ViewToBeScreen = ({route}) => {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
@@ -26,8 +26,12 @@ export default ViewToBeScreen = ({route}) => {
       <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
         <SafeAreaView style={styles.container}>
           <Text style={{color: 'white', fontSize: 36}}>{toBeItem.title}</Text>
-          <Button title={"next"} />
-          <Button title={"previous"}/>
+          <Button title={"next"} onPress={() => {
+            getNextToBeItemIdById(toBeId).then((result) => setToBeId(result))
+          }}/>
+          <Button title={"previous"} onPress={() => {
+            getPreviousToBeItemIdById(toBeId).then((result) => setToBeId(result))
+          }}/>
         </SafeAreaView>
         <StatusBar style={'auto'} />
       </ImageBackground>
