@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, SafeAreaView, ImageBackground } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ImageBackground, Button } from 'react-native';
 import { StatusBar } from 'expo-status-bar'; 
 
 export default ViewToBeScreen = ({route}) => {
@@ -10,6 +10,8 @@ export default ViewToBeScreen = ({route}) => {
     <ImageBackground source={{uri: imageBackgroundUri}} resizeMode="cover" style={styles.container}>
       <SafeAreaView style={styles.container}>
         <Text style={{color: 'white', fontSize: 36}}>{title}</Text>
+        <Button title={"next"}/>
+        <Button title={"previous"}/>
       </SafeAreaView>
       <StatusBar style={'auto'} />
     </ImageBackground>
