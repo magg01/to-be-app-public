@@ -189,17 +189,22 @@ const getAllToBeItems = () => {
   })
 }
 
-const deleteToBeItem = (id) => {
-  db.transaction(
-    (tx) => {
-      tx.executeSql("delete from tobeitems where id=?", [id]);
-      tx.executeSql("select * from tobeitems", [], (_, { rows: {_array} }) =>{
-      console.log(JSON.stringify(_array));
-      })
-    },
-    (e) => console.log(`deleteToBeItem encountered an error -> ${e}`),
-    () => console.log(`deleteToBeItem: item with id:${id} successfully deleted from tobeitems table`)
-  )
+const deleteToBeItemById = (id) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql("delete from tobeitems where id=?", [id]);
+      },
+      (e) => {
+        console.log(`deleteToBeItem encountered an error -> ${e}`)
+        reject(false);
+      },
+      () => {
+        console.log(`deleteToBeItem: item with id:${id} successfully deleted from tobeitems table`);
+        resolve(true);
+      }
+    )
+  })
 }
 
-export { deleteToBeItem, addToBeItem, getToBeItemById, getAllToBeItems, getPreviousToBeItemIdById, getNextToBeItemIdById}
+export { deleteToBeItemById, addToBeItem, getToBeItemById, getAllToBeItems, getPreviousToBeItemIdById, getNextToBeItemIdById}

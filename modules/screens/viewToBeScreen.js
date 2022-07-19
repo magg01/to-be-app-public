@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, SafeAreaView, ImageBackground, Button, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar'; 
-import { getPreviousToBeItemIdById, getToBeItemById, getNextToBeItemIdById } from '../database/database';
+import { getPreviousToBeItemIdById, getToBeItemById, getNextToBeItemIdById, deleteToBeItemById } from '../database/database';
 
-export default ViewToBeScreen = ({route}) => {
+export default ViewToBeScreen = ({route, navigation}) => {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
   const [toBeItem, setToBeItem] = useState(undefined);
 
@@ -32,6 +32,35 @@ export default ViewToBeScreen = ({route}) => {
           <Button title={"previous"} onPress={() => {
             getPreviousToBeItemIdById(toBeId).then((result) => setToBeId(result))
           }}/>
+          <Button title={"delete"} onPress={() => {
+            Alert.alert(
+              'Are you sure?',
+              'All associated data will be lost',
+              [
+                {
+                  text: 'Cancel',
+                  onPress: () => null,
+                  style: 'cancel',
+                },
+                {
+                  text: 'Delete',
+                  onPress: () =>  {
+                    deleteToBeItemById(toBeId)
+                    .then((deleted) => {
+                    deleted ? navigation.goBack() : Alert.alert("There was a problem deleting our to be. Please try again.");
+                    })
+                  },
+                  style: 'destructive',
+                },
+              ],
+              {
+                cancelable: true,
+                onDismiss: () =>
+                  Alert.alert('This alert was dismissed by tapping outside of the alert dialog.'),
+              }
+            );
+           
+          }} />
         </SafeAreaView>
         <StatusBar style={'auto'} />
       </ImageBackground>
