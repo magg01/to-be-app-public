@@ -62,7 +62,7 @@ export default ViewToBeScreen = ({route, navigation}) => {
            
           }} />
         </SafeAreaView>
-        <StatusBar style={'auto'} />
+        <StatusBar style={'light'} />
       </ImageBackground>
    )
   }
