@@ -30,13 +30,21 @@ const addToBeItem = (title, imageBackgroundUri) => {
 };
 
 const addPlan = (title, tobeitem) => {
-  db.transaction(
-    (tx) => {
-      tx.executeSql("insert into plans (done, title, tobeitem) values (0, ?, ?)", [title, tobeitem]);
-    },
-    (e) => console.log(`addPlan encountered an error -> ${e}`),
-    () => console.log(`addPlan: item with title:${title} successfully added to plans table`)
-  );
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql("insert into plans (done, title, tobeitem) values (0, ?, ?)", [title, tobeitem]);
+      },
+      (e) => {
+        console.log(`addPlan encountered an error -> ${e}`);
+        reject(false);
+      },
+      () => {
+        console.log(`addPlan: item with title:${title} successfully added to plans table`);
+        resolve(true);
+      }
+    );
+  })
 };
 
 
