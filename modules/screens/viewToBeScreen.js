@@ -1,19 +1,38 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, SafeAreaView, ImageBackground, Button, Alert } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { StyleSheet, Text, SafeAreaView, ImageBackground, Button, Alert, BackHandler } from 'react-native';
 import { StatusBar } from 'expo-status-bar'; 
-import { getPreviousToBeItemIdById, getToBeItemById, getNextToBeItemIdById, deleteToBeItemById } from '../database/database';
+import * as db from '../database/database';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default ViewToBeScreen = ({route, navigation}) => {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
   const [toBeItem, setToBeItem] = useState(undefined);
+  const [detailMode, setDetailMode] = useState(false);
 
   useEffect(() => {
-    getToBeItemById(toBeId)
+    db.getToBeItemById(toBeId)
     .then((result) => {
       console.log(`ViewToBeScreen: useEffect getToBeItemById = ${JSON.stringify(result,null, 1)}`)
       setToBeItem(result);
     })
   }, [toBeId])
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if(detailMode){
+          setDetailMode(false);
+          return true
+        } else {
+          return false
+        }
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [detailMode])
+  )
 
   if(toBeItem === undefined){
     return (
@@ -21,17 +40,28 @@ export default ViewToBeScreen = ({route, navigation}) => {
         <Text>Fetching from database</Text>
       </SafeAreaView>
     )
+  } else if (detailMode) {
+    return (
+      <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
+        <SafeAreaView style={styles.container}>
+          <Text style={{color: 'white', fontSize: 36}}>{toBeItem.title}</Text>
+          <Text style={{color: 'white'}}>This is detail mode</Text>
+        </SafeAreaView>
+        <StatusBar style={'light'} />
+      </ImageBackground>
+    )
   } else {
     return(
       <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
         <SafeAreaView style={styles.container}>
           <Text style={{color: 'white', fontSize: 36}}>{toBeItem.title}</Text>
           <Button title={"next"} onPress={() => {
-            getNextToBeItemIdById(toBeId).then((result) => setToBeId(result))
+            db.getNextToBeItemIdById(toBeId).then((result) => setToBeId(result))
           }}/>
           <Button title={"previous"} onPress={() => {
-            getPreviousToBeItemIdById(toBeId).then((result) => setToBeId(result))
+            db.getPreviousToBeItemIdById(toBeId).then((result) => setToBeId(result))
           }}/>
+          <Button title={"details"} onPress={() => {setDetailMode(true)}} />
           <Button title={"delete"} onPress={() => {
             Alert.alert(
               'Are you sure?',
@@ -45,9 +75,9 @@ export default ViewToBeScreen = ({route, navigation}) => {
                 {
                   text: 'Delete',
                   onPress: () =>  {
-                    deleteToBeItemById(toBeId)
+                    db.deleteToBeItemById(toBeId)
                     .then((deleted) => {
-                    deleted ? navigation.goBack() : Alert.alert("There was a problem deleting our to be. Please try again.");
+                    deleted ? navigation.goBack() : Alert.alert("There was a problem deleting your to be. Please try again.");
                     })
                   },
                   style: 'destructive',
@@ -55,11 +85,8 @@ export default ViewToBeScreen = ({route, navigation}) => {
               ],
               {
                 cancelable: true,
-                onDismiss: () =>
-                  Alert.alert('This alert was dismissed by tapping outside of the alert dialog.'),
               }
             );
-           
           }} />
         </SafeAreaView>
         <StatusBar style={'light'} />
