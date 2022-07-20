@@ -9,10 +9,10 @@ db.transaction(
     "create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text);"
     );
     tx.executeSql(
-      "create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) not null"
+      "create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id));"
     )
   },
-  (e) => console.log(`deleteToBeItem encountered an error -> ${e}`),
+  (e) => console.log(`setUpTables encountered an error -> ${e}`),
   () => console.log("setUpTables: success")
 );
 
