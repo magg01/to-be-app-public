@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, SafeAreaView, ImageBackground, Button, Alert, BackHandler } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ImageBackground, Button, Alert, BackHandler, TextInput } from 'react-native';
 import { StatusBar } from 'expo-status-bar'; 
 import * as db from '../database/database';
 import { useFocusEffect } from '@react-navigation/native';
@@ -9,6 +9,7 @@ export default ViewToBeScreen = ({route, navigation}) => {
   const [toBeItem, setToBeItem] = useState(undefined);
   const [plans, setPlans] = useState(null);
   const [detailMode, setDetailMode] = useState(false);
+  const [newPlanTitle, setNewPlanTitle] = useState("");
 
   useEffect(() => {
     db.getToBeItemById(toBeId)
@@ -56,6 +57,24 @@ export default ViewToBeScreen = ({route, navigation}) => {
         <SafeAreaView style={styles.container}>
           <Text style={{color: 'white', fontSize: 36}}>{toBeItem.title}</Text>
           <Text style={{color: 'white'}}>This is detail mode</Text>
+          {plans ?
+          plans.map((plan) => (
+            <Text style={{color:'white'}} key={plan.id}>{plan.title}</Text>
+          ))
+          : 
+          null}
+          <TextInput style={styles.input} onChangeText={(text) => setNewPlanTitle(text)} />
+          <Button title={'add plan'} onPress={() => {
+            db.addPlan(newPlanTitle, toBeId)
+            .then((success) => {
+              if(success){
+                db.getAllPlansByToBeId(toBeId)
+                .then((plans) => setPlans(plans))
+              } else {
+                Alert.alert("Unable to add a new plan at this time.");
+              }
+            });
+          }} />
         </SafeAreaView>
         <StatusBar style={'light'} />
       </ImageBackground>
@@ -110,5 +129,14 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  input: {
+    width: "50%",
+    margin: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: 'white',
+    padding: 6,
+    fontSize: 20,
+    color: 'white'
   },
 });
