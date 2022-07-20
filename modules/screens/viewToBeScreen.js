@@ -7,6 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 export default ViewToBeScreen = ({route, navigation}) => {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
   const [toBeItem, setToBeItem] = useState(undefined);
+  const [plans, setPlans] = useState(null);
   const [detailMode, setDetailMode] = useState(false);
 
   useEffect(() => {
@@ -16,6 +17,15 @@ export default ViewToBeScreen = ({route, navigation}) => {
       setToBeItem(result);
     })
   }, [toBeId])
+
+  useEffect(() => {
+    if(detailMode){
+      db.getAllPlansByToBeId(toBeId)
+      .then((result) => {
+        setPlans(result);
+      })
+    }
+  }, [detailMode])
 
   useFocusEffect(
     useCallback(() => {
