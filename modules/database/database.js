@@ -223,11 +223,27 @@ const deleteToBeItemById = (id) => {
 
 const getAllPlansByToBeId = (id) => {
   return new Promise((resolve, reject) => {
-    if(false){
-      resolve(Alert.alert("hey"))
-    } else {
-      resolve(Alert.alert("onh now"))
-    }
+    let result;
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          "select * from plans where tobeitem = ?", 
+          [id], 
+          (_, { rows: {_array} }) =>{
+            console.log(`getAllPlansByToBeId: _array is ${JSON.stringify(_array, null, 1)}`)
+            result = _array;
+          }
+        );
+      },
+      (e) => {
+        console.log(`getAllPlansByToBeId encountered an error -> ${e}`)
+        reject(false);
+      },
+      () => {
+        console.log(`getAllPlansByToBeId: plans for tobeitem id:${id} successfully retreived from plans table`);
+        resolve(result);
+      }
+    )
   })
 }
 
