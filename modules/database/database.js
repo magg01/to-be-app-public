@@ -1,13 +1,16 @@
 import * as SQLite from 'expo-sqlite';
+import { Alert } from 'react-native';
 
 const db = SQLite.openDatabase("tobedb")
 db.transaction(
   (tx) => {
     //reset the table on each reload
-    //tx.executeSql("drop table if exists tobeitems;");
     tx.executeSql(        
     "create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text);"
     );
+    tx.executeSql(
+      "create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) not null"
+    )
   },
   (e) => console.log(`deleteToBeItem encountered an error -> ${e}`),
   () => console.log("setUpTables: success")
@@ -25,6 +28,17 @@ const addToBeItem = (title, imageBackgroundUri) => {
     () => console.log(`addToBeItem: item with title:${title} successfully added to tobeitems table`)
   );
 };
+
+const addPlan = (title, tobeitem) => {
+  db.transaction(
+    (tx) => {
+      tx.executeSql("insert into plans (done, title, tobeitem) values (0, ?, ?)", [title, tobeitem]);
+    },
+    (e) => console.log(`addPlan encountered an error -> ${e}`),
+    () => console.log(`addPlan: item with title:${title} successfully added to plans table`)
+  );
+};
+
 
 const getToBeItemById = (id) => {
   return new Promise((resolve, reject) => {
@@ -207,4 +221,23 @@ const deleteToBeItemById = (id) => {
   })
 }
 
-export { deleteToBeItemById, addToBeItem, getToBeItemById, getAllToBeItems, getPreviousToBeItemIdById, getNextToBeItemIdById}
+const getAllPlansByToBeId = (id) => {
+  return new Promise((resolve, reject) => {
+    if(false){
+      resolve(Alert.alert("hey"))
+    } else {
+      resolve(Alert.alert("onh now"))
+    }
+  })
+}
+
+export { 
+  deleteToBeItemById, 
+  addToBeItem, 
+  getToBeItemById, 
+  getAllToBeItems, 
+  getPreviousToBeItemIdById, 
+  getNextToBeItemIdById,
+  getAllPlansByToBeId,
+  addPlan
+}
