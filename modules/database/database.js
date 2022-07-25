@@ -248,6 +248,24 @@ const deleteToBeItemById = (id) => {
   })
 }
 
+const deletePlanItemById = (id) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql("delete from plans where id=?", [id]);
+      },
+      (e) => {
+        console.log(`deletePlanItemById encountered an error -> ${e}`)
+        reject(false);
+      },
+      () => {
+        console.log(`deletePlanItemById: item with id:${id} successfully deleted from plans table`);
+        resolve(true);
+      }
+    )
+  })
+}
+
 const getAllPlansByToBeId = (id) => {
   return new Promise((resolve, reject) => {
     let result;
@@ -282,5 +300,6 @@ export {
   getPreviousToBeItemIdById, 
   getNextToBeItemIdById,
   getAllPlansByToBeId,
-  addPlan
+  addPlan,
+  deletePlanItemById
 }
