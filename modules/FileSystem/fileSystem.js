@@ -17,4 +17,9 @@ const downloadRemoteImageToLocalStorage = (imageUrl, filepathSuffix) => {
   })
 }
 
-export { downloadRemoteImageToLocalStorage }
+const deleteLocallyStoredImage = (imageUri) => {
+  //delete the file at the given location. Don't throw an error if no file found.
+  FileSystem.deleteAsync(imageUri, {idempotent: true})
+}
+
+export { downloadRemoteImageToLocalStorage, deleteLocallyStoredImage }

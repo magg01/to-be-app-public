@@ -3,6 +3,7 @@ import { StyleSheet, Text, SafeAreaView, ImageBackground, Button, Alert, BackHan
 import { StatusBar } from 'expo-status-bar'; 
 import * as db from '../database/database';
 import { useFocusEffect } from '@react-navigation/native';
+import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
 
 export default ViewToBeScreen = ({route, navigation}) => {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
@@ -106,7 +107,12 @@ export default ViewToBeScreen = ({route, navigation}) => {
                   onPress: () =>  {
                     db.deleteToBeItemById(toBeId)
                     .then((deleted) => {
-                    deleted ? navigation.goBack() : Alert.alert("There was a problem deleting your to be. Please try again.");
+                      if(deleted){
+                        deleteLocallyStoredImage(toBeItem.imageBackgroundUri);
+                        navigation.goBack(); 
+                      } else {
+                        Alert.alert("There was a problem deleting your to be. Please try again.");
+                      }
                     })
                   },
                   style: 'destructive',
