@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, ImageBackground, Text, TextInput, Button, Alert, Dimensions, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import UnsplashImageSearch from './unsplashImageSearch';
+import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
 
 const backgroundImage = require("../../assets/addNew.jpg");
