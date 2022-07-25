@@ -1,5 +1,5 @@
 import * as SQLite from 'expo-sqlite';
-import { Alert } from 'react-native';
+const DEBUG = false;
 
 const db = SQLite.openDatabase("tobedb")
 
@@ -8,15 +8,22 @@ db.exec([{ sql: 'PRAGMA foreign_keys = ON;', args: [] }], false, () =>
   console.log('Foreign keys turned on')
 );
 
+if (DEBUG) {
+  // reset the tables on each reload
+  db.transaction(
+    (tx) => {
+      tx.executeSql(
+        "drop table if exists plans"
+      );
+      tx.executeSql(
+        "drop table if exists tobeitems"
+      );
+    }
+  )
+}
+
 db.transaction(
-  (tx) => {
-    // reset the tables on each reload
-    tx.executeSql(
-      "drop table if exists plans"
-    );
-    tx.executeSql(
-      "drop table if exists tobeitems"
-    );
+  (tx) => {    
     tx.executeSql(        
       "create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text);"
     );
