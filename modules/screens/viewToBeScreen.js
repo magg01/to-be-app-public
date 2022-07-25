@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as db from '../database/database';
 import { useFocusEffect } from '@react-navigation/native';
 import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
+import PlanView from '../components/plans';
 
 export default ViewToBeScreen = ({route, navigation}) => {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
@@ -57,13 +58,7 @@ export default ViewToBeScreen = ({route, navigation}) => {
       <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
         <SafeAreaView style={styles.container}>
           <Text style={{color: 'white', fontSize: 36}}>{toBeItem.title}</Text>
-          <Text style={{color: 'white'}}>This is detail mode</Text>
-          {plans ?
-          plans.map((plan) => (
-            <Text style={{color:'white'}} key={plan.id}>{plan.title}</Text>
-          ))
-          : 
-          null}
+          <PlanView toBeId={toBeId}></PlanView>
           <TextInput style={styles.input} onChangeText={(text) => setNewPlanTitle(text)} />
           <Button title={'add plan'} onPress={() => {
             db.addPlan(newPlanTitle, toBeId)
