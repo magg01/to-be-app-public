@@ -2,14 +2,26 @@ import * as SQLite from 'expo-sqlite';
 import { Alert } from 'react-native';
 
 const db = SQLite.openDatabase("tobedb")
+
+// default setting for sqlite is that foreign key constraints are not enforced. So we need to turn the constraint enforcement on manually.
+db.exec([{ sql: 'PRAGMA foreign_keys = ON;', args: [] }], false, () =>
+  console.log('Foreign keys turned on')
+);
+
 db.transaction(
   (tx) => {
-    //reset the table on each reload
-    tx.executeSql(        
-    "create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text);"
+    // reset the tables on each reload
+    tx.executeSql(
+      "drop table if exists plans"
     );
     tx.executeSql(
-      "create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id));"
+      "drop table if exists tobeitems"
+    );
+    tx.executeSql(        
+      "create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text);"
+    );
+    tx.executeSql(
+      "create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);"
     )
   },
   (e) => console.log(`setUpTables encountered an error -> ${e}`),
