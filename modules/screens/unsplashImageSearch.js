@@ -3,8 +3,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ActivityIndicator, FlatList, ImageBackground, Dimensions, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { createApi } from "unsplash-js";
-import * as FileSystem from 'expo-file-system';
 import UnsplashKeys from '../../local/unsplashkeys';
+import { downloadRemoteImageToLocalStorage } from '../FileSystem/fileSystem';
 
 setupURLPolyfill();
 const {width, height} = Dimensions.get('window');
@@ -59,7 +59,7 @@ export default function UnsplashImageSearch(props) {
             downloadStarted ?
             null
             :
-            onImageBackgroundSelect(photo)}
+            onImageSelectionMade(photo)}
         >
             { downloadStarted ? 
               <ActivityIndicator /> 
@@ -72,33 +72,31 @@ export default function UnsplashImageSearch(props) {
     );
   };
 
-  const onImageBackgroundSelect = (photo) => {
+  
+  const onImageSelectionMade = (photo) => {
     setDownloadStarted(true);
     downloadImageFromUnsplash(photo)
-    .then((uri) => {
-      props.updateBackground(uri);
+    .then((localFileUri) => {
+      props.onImageDownload(localFileUri);
+    })
+    .catch((error) => {
+      console.error(`onImageSelectionMade encountered an error -> ${error}`);
     });    
   }
 
   const downloadImageFromUnsplash = (photo) => {
-    api.photos.trackDownload({ downloadLocation: photo.links.download_location });
-    const {user, urls} = photo
-    return new Promise((resolve, reject) => {
-      FileSystem.downloadAsync(
-          urls.regular,
-          FileSystem.documentDirectory + photo.id
-      )
-      .then(({ uri }) => {
-        console.log('Finished downloading to ', uri);
-        resolve(uri);
-      })
-      .catch(error => {
-        console.error(`DownloadAsync encountered an error -> ${error}`);
-        reject("Failed");        
-      });
-    })
+    notifyUnsplashOfImageDownload(photo);
+    return downloadRemoteImageToLocalStorage(photo.urls.regular, photo.id);
   }
 
+  const notifyUnsplashOfImageDownload = (photo) => {
+    try{
+      api.photos.trackDownload({ downloadLocation: photo.links.download_location });
+    }
+    catch (error) {
+      console.error(`notifyUnsplashOfImageDownload: encountered an error -> ${error}`)
+    }
+  }
 
   if (data === null) {
     return (
