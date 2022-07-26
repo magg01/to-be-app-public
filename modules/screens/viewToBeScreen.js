@@ -5,6 +5,7 @@ import * as db from '../database/database';
 import { useFocusEffect } from '@react-navigation/native';
 import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
 import PlanView from '../components/plans';
+import AddPlan from '../components/addPlan';
 
 export default ViewToBeScreen = ({route, navigation}) => {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
@@ -25,6 +26,9 @@ export default ViewToBeScreen = ({route, navigation}) => {
         if(viewMode === 'detail'){
           setViewMode('overview');
           return true
+        } else if(viewMode === 'addPlan') {
+          setViewMode('detail')
+          return true
         } else {
           return false
         }
@@ -36,8 +40,8 @@ export default ViewToBeScreen = ({route, navigation}) => {
     }, [viewMode])
   )
 
-  const onAddNew = () => {
-    setViewMode('addPlan');
+  const onNewPlanAdded = () => {
+    setViewMode('detail');
   }
 
   if(toBeItem === undefined){
@@ -52,9 +56,18 @@ export default ViewToBeScreen = ({route, navigation}) => {
         <SafeAreaView style={styles.container}>
           <Text style={{color: 'white', fontSize: 36}}>{toBeItem.title}</Text>
           <PlanView toBeId={toBeId} />
-          <TouchableOpacity style={styles.addButton} onPress={onAddNew}>
+          <TouchableOpacity style={styles.addButton} onPress={() => setViewMode('addPlan')}>
             <Text>new</Text>
           </TouchableOpacity>
+        </SafeAreaView>
+        <StatusBar style={'light'} />
+      </ImageBackground>
+    )
+  } else if (viewMode === 'addPlan') {
+    return (
+      <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
+        <SafeAreaView style={styles.container}>
+          <AddPlan toBeId={toBeId} onAddNewPlan={onNewPlanAdded} />
         </SafeAreaView>
         <StatusBar style={'light'} />
       </ImageBackground>
@@ -105,7 +118,7 @@ export default ViewToBeScreen = ({route, navigation}) => {
         </SafeAreaView>
         <StatusBar style={'light'} />
       </ImageBackground>
-   )
+    )
   }
 }
 

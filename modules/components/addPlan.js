@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, TextInput, Button } from 'react-native'
+import * as db from '../database/database';
 
 export default AddPlan = (props) => {
-
   const toBeId = useRef(props.toBeId);
   const [newPlanTitle, setNewPlanTitle] = useState('');
 
@@ -11,11 +11,10 @@ export default AddPlan = (props) => {
       <Text>Add Plan Component</Text>
       <TextInput style={styles.input} onChangeText={(text) => setNewPlanTitle(text)} />
       <Button title={'add plan'} onPress={() => {
-            db.addPlan(newPlanTitle, toBeId)
+            db.addPlan(newPlanTitle, toBeId.current)
             .then((success) => {
               if(success){
-                db.getAllPlansByToBeId(toBeId)
-                .then((plans) => setPlans(plans))
+                props.onAddNewPlan();
               } else {
                 Alert.alert("Unable to add a new plan at this time.");
               }
