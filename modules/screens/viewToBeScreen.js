@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, SafeAreaView, ImageBackground, Button, Alert, BackHandler, TextInput } from 'react-native';
+import { StyleSheet, Text, SafeAreaView, ImageBackground, Button, Alert, BackHandler, TextInput, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar'; 
 import * as db from '../database/database';
 import { useFocusEffect } from '@react-navigation/native';
@@ -10,7 +10,7 @@ export default ViewToBeScreen = ({route, navigation}) => {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
   const [toBeItem, setToBeItem] = useState(undefined);
   const [plans, setPlans] = useState(null);
-  const [detailMode, setDetailMode] = useState(false);
+  const [viewMode, setViewMode] = useState('overview');
   const [newPlanTitle, setNewPlanTitle] = useState("");
 
   useEffect(() => {
@@ -22,19 +22,19 @@ export default ViewToBeScreen = ({route, navigation}) => {
   }, [toBeId])
 
   useEffect(() => {
-    if(detailMode){
+    if(viewMode === 'detail'){
       db.getAllPlansByToBeId(toBeId)
       .then((result) => {
         setPlans(result);
       })
     }
-  }, [detailMode])
+  }, [viewMode])
 
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        if(detailMode){
-          setDetailMode(false);
+        if(viewMode === 'detail'){
+          setViewMode('overview');
           return true
         } else {
           return false
@@ -44,8 +44,12 @@ export default ViewToBeScreen = ({route, navigation}) => {
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
       return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [detailMode])
+    }, [viewMode])
   )
+
+  const onAddNew = () => {
+    setAddPlanMode(true);
+  }
 
   if(toBeItem === undefined){
     return (
@@ -53,12 +57,15 @@ export default ViewToBeScreen = ({route, navigation}) => {
         <Text>Fetching from database</Text>
       </SafeAreaView>
     )
-  } else if (detailMode) {
+  } else if (viewMode === 'detail') {
     return (
       <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
         <SafeAreaView style={styles.container}>
           <Text style={{color: 'white', fontSize: 36}}>{toBeItem.title}</Text>
-          <PlanView toBeId={toBeId}></PlanView>
+          <PlanView toBeId={toBeId} />
+          <TouchableOpacity style={styles.addButton} onPress={onAddNew}>
+            <Text>new</Text>
+          </TouchableOpacity>
           <TextInput style={styles.input} onChangeText={(text) => setNewPlanTitle(text)} />
           <Button title={'add plan'} onPress={() => {
             db.addPlan(newPlanTitle, toBeId)
@@ -86,7 +93,7 @@ export default ViewToBeScreen = ({route, navigation}) => {
           <Button title={"previous"} onPress={() => {
             db.getPreviousToBeItemIdById(toBeId).then((result) => setToBeId(result))
           }}/>
-          <Button title={"details"} onPress={() => {setDetailMode(true)}} />
+          <Button title={"details"} onPress={() => {setViewMode('detail')}} />
           <Button title={"delete"} onPress={() => {
             Alert.alert(
               'Are you sure?',
@@ -140,4 +147,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: 'white'
   },
+  addButton: {
+    marginTop: 8,
+    alignSelf: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'white'
+  }
 });

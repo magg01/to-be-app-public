@@ -32,9 +32,7 @@ export default PlanView = (props) => {
         data={plans} 
         keyExtractor={item => item.id} 
       />
-      <TouchableOpacity style={styles.addButton} onPress={() => Alert.alert("hey")}>
-        <Text>new</Text>
-      </TouchableOpacity>
+
     </View>
   )
 }
@@ -57,14 +55,4 @@ const styles = StyleSheet.create({
     opacity: 1,
     justifyContent: 'center',
   },
-  addButton: {
-    marginTop: 8,
-    alignSelf: 'flex-end',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'white'
-  }
 })
