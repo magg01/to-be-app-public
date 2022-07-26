@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, View, Button, Alert } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { getAllToBeItems } from '../database/database';
 import { useFocusEffect } from '@react-navigation/native';
+import { ToBeTile } from '../components/toBeTile';
 
 const HomeScreen = ({navigation}) => {
   const [allToBes, setAllToBes] = useState([]);
@@ -24,7 +25,7 @@ const HomeScreen = ({navigation}) => {
       <Text>This is the home screen</Text>
       <Button title={"go to add new screen"} onPress={() => navigation.navigate("AddNewScreen")} />
       {allToBes.map((tobe, index) => (
-        <Button key={index} title={`see item ${tobe.title}`} onPress={() => navigation.navigate("ViewToBeScreen", {toBeId: tobe.id})} />
+        <ToBeTile key={index} toBeId={tobe.id} onPress={() => navigation.navigate("ViewToBeScreen", {toBeId: tobe.id})} />
       ))}
       <StatusBar style={"auto"}/>
     </View>
