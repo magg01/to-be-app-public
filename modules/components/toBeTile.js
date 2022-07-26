@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, View, Image, TouchableHighlight, Text } from 'react-native';
+import {StyleSheet, View, ImageBackground, TouchableHighlight, Text } from 'react-native';
 import { getToBeItemById } from '../database/database';
 
 export function ToBeTile(props){
@@ -21,23 +21,24 @@ export function ToBeTile(props){
     )
   } else {
     return(
-      <View style={styles.toBeTile}>
-        <TouchableHighlight
-          onPress={props.onPress}
-          underlayColor={ 'transparent' }
+      <TouchableHighlight
+        style={styles.toBeTile}
+        onPress={props.onPress}
+        underlayColor={ 'transparent' }
+        >
+        <View style={[styles.tileImageAndTitle, {backgroundColor: 'white'}]}>
+          <ImageBackground
+            style={styles.tileImageBackground}
+            imageStyle={{borderRadius: 4}}
+            source={{uri: toBeItemDetails.imageBackgroundUri}}
+            // defaultSource={require("./assets/cocktail-shaker.png")}
           >
-          <View style={[styles.tileImageAndTitle, {backgroundColor: 'blue'}]}>
-            <Image
-              style={styles.tileImage}
-              source={{uri: toBeItemDetails.imageBackgroundUri}}
-              // defaultSource={require("./assets/cocktail-shaker.png")}
-              />
-            <Text style={{color: 'white'}}>
+            <Text style={{color: 'white', fontSize: 22}}>
               {toBeItemDetails.title}
             </Text>
-          </View>
-        </TouchableHighlight>
-      </View>
+          </ImageBackground>
+        </View>
+      </TouchableHighlight>
     );
   }
 }
@@ -45,7 +46,7 @@ export function ToBeTile(props){
 const styles = StyleSheet.create({
   toBeTile: {
     flex: 1,
-    margin: 10,
+    margin: 6,
     borderRadius: 4,
     elevation: 4,
   },
@@ -54,10 +55,11 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     alignItems: 'center',
   },
-  tileImage: {
+  tileImageBackground: {
     flex: 1,
     height: "100%",
     width: "100%",
-    borderRadius: 4
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 })
