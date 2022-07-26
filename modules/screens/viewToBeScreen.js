@@ -9,9 +9,7 @@ import PlanView from '../components/plans';
 export default ViewToBeScreen = ({route, navigation}) => {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
   const [toBeItem, setToBeItem] = useState(undefined);
-  const [plans, setPlans] = useState(null);
   const [viewMode, setViewMode] = useState('overview');
-  const [newPlanTitle, setNewPlanTitle] = useState("");
 
   useEffect(() => {
     db.getToBeItemById(toBeId)
@@ -57,18 +55,6 @@ export default ViewToBeScreen = ({route, navigation}) => {
           <TouchableOpacity style={styles.addButton} onPress={onAddNew}>
             <Text>new</Text>
           </TouchableOpacity>
-          <TextInput style={styles.input} onChangeText={(text) => setNewPlanTitle(text)} />
-          <Button title={'add plan'} onPress={() => {
-            db.addPlan(newPlanTitle, toBeId)
-            .then((success) => {
-              if(success){
-                db.getAllPlansByToBeId(toBeId)
-                .then((plans) => setPlans(plans))
-              } else {
-                Alert.alert("Unable to add a new plan at this time.");
-              }
-            });
-          }} />
         </SafeAreaView>
         <StatusBar style={'light'} />
       </ImageBackground>
@@ -128,15 +114,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  input: {
-    width: "50%",
-    margin: 12,
-    borderBottomWidth: 2,
-    borderBottomColor: 'white',
-    padding: 6,
-    fontSize: 20,
-    color: 'white'
   },
   addButton: {
     marginTop: 8,
