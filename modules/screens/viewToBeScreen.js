@@ -21,15 +21,6 @@ export default ViewToBeScreen = ({route, navigation}) => {
     })
   }, [toBeId])
 
-  useEffect(() => {
-    if(viewMode === 'detail'){
-      db.getAllPlansByToBeId(toBeId)
-      .then((result) => {
-        setPlans(result);
-      })
-    }
-  }, [viewMode])
-
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
@@ -48,7 +39,7 @@ export default ViewToBeScreen = ({route, navigation}) => {
   )
 
   const onAddNew = () => {
-    setAddPlanMode(true);
+    setViewMode('addPlan');
   }
 
   if(toBeItem === undefined){
