@@ -24,20 +24,18 @@ export function ToBeTile(props){
       <TouchableHighlight
         style={styles.toBeTile}
         onPress={props.onPress}
-        underlayColor={ 'transparent' }
+        underlayColor={'white'}
+      >
+        <ImageBackground
+          style={styles.tileImageBackground}
+          imageStyle={{borderRadius: 4}}
+          source={{uri: toBeItemDetails.imageBackgroundUri}}
+          // defaultSource={require("./assets/cocktail-shaker.png")}
         >
-        <View style={[styles.tileImageAndTitle, {backgroundColor: 'white'}]}>
-          <ImageBackground
-            style={styles.tileImageBackground}
-            imageStyle={{borderRadius: 4}}
-            source={{uri: toBeItemDetails.imageBackgroundUri}}
-            // defaultSource={require("./assets/cocktail-shaker.png")}
-          >
-            <Text style={{color: 'white', fontSize: 22}}>
-              {toBeItemDetails.title}
-            </Text>
-          </ImageBackground>
-        </View>
+          <Text style={{color: 'white', fontSize: 22}}>
+            {toBeItemDetails.title}
+          </Text>
+        </ImageBackground>
       </TouchableHighlight>
     );
   }
@@ -50,13 +48,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     elevation: 4,
   },
-  tileImageAndTitle: {
-    aspectRatio: 1,
-    borderRadius: 4,
-    alignItems: 'center',
-  },
   tileImageBackground: {
     flex: 1,
+    aspectRatio: 1,
     height: "100%",
     width: "100%",
     justifyContent: 'center',
