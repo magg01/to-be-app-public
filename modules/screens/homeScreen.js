@@ -46,7 +46,7 @@ const HomeScreen = ({navigation}) => {
         keyExtractor={item => item.id}
         numColumns={2}
       />
-      <Button title={"go to add new screen"} onPress={() => navigation.navigate("AddNewScreen")} />
+      <Button title={"Add new to be"} onPress={() => navigation.navigate("AddNewScreen")} />
       <StatusBar style={"auto"}/>
     </SafeAreaView>
   )
