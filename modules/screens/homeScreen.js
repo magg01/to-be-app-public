@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, Button } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { getAllToBeItems } from '../database/database';
 import { useFocusEffect } from '@react-navigation/native';
@@ -21,14 +22,14 @@ const HomeScreen = ({navigation}) => {
   )
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text>This is the home screen</Text>
       <Button title={"go to add new screen"} onPress={() => navigation.navigate("AddNewScreen")} />
       {allToBes.map((tobe, index) => (
         <ToBeTile key={index} toBeId={tobe.id} onPress={() => navigation.navigate("ViewToBeScreen", {toBeId: tobe.id})} />
       ))}
       <StatusBar style={"auto"}/>
-    </View>
+    </SafeAreaView>
   )
 }
 

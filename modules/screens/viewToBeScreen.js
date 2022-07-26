@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, SafeAreaView, ImageBackground, Button, Alert, BackHandler, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, ImageBackground, Button, Alert, BackHandler, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar'; 
 import * as db from '../database/database';
 import { useFocusEffect } from '@react-navigation/native';
