@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, Text, Button } from 'react-native';
+import { StyleSheet, FlatList, Button } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { getAllToBeItems } from '../database/database';
@@ -21,13 +21,32 @@ const HomeScreen = ({navigation}) => {
     }, [])    
   )
 
+  const renderToBeTile = ({item}) => {
+    return (
+      <ToBeTile
+        key={item.id}
+        toBeId={item.id}
+        onPress={() => {
+          navigation.navigate("ViewToBeScreen", {toBeId: item.id})
+        }}
+      />
+    )
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text>This is the home screen</Text>
+      <FlatList
+        // need to ensure flatlist expands to bottom of screen even if there's
+        // not enough data to fill it, otherwise animated cocktail tiles
+        // are not visible when moved beyond the extent of the flatlist container
+        // contentContainerStyle={{flexGrow: 1}}
+        style={{width: "100%"}}
+        data={allToBes}
+        renderItem={renderToBeTile}
+        keyExtractor={item => item.id}
+        numColumns={2}
+      />
       <Button title={"go to add new screen"} onPress={() => navigation.navigate("AddNewScreen")} />
-      {allToBes.map((tobe, index) => (
-        <ToBeTile key={index} toBeId={tobe.id} onPress={() => navigation.navigate("ViewToBeScreen", {toBeId: tobe.id})} />
-      ))}
       <StatusBar style={"auto"}/>
     </SafeAreaView>
   )
