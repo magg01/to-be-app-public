@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, View, Text, TextInput, Alert, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, Text, TextInput, Alert, TouchableOpacity, Platform } from 'react-native'
 import * as db from '../database/database';
+import {SelectDateTimeIOS, SelectDateTimeAndroid} from './calendarEventCreator';
 
 export default AddPlan = (props) => {
   const toBeId = useRef(props.toBeId);
   const [newPlanTitle, setNewPlanTitle] = useState('');
   const [toBeItem, setToBeItem] = useState(undefined);
+  const [showDateTimePicker, setShowDateTimePicker] = useState(false);
 
   useEffect(() => {
     db.getToBeItemById(toBeId.current).then((toBeItem) => {
@@ -29,7 +31,12 @@ export default AddPlan = (props) => {
   }
 
   const addCalendar = () => {
-    Alert.alert("Add to calendar here");
+    setShowDateTimePicker(true);
+  }
+
+  const onChangeDate = (event, date) => {
+    console.log(date);
+    setShowDateTimePicker(false);
   }
 
   if(toBeItem === undefined){
@@ -52,6 +59,7 @@ export default AddPlan = (props) => {
         <TouchableOpacity style={styles.addButton} onPress={addCalendar}>
           <Text>Cal</Text>
         </TouchableOpacity>
+        {showDateTimePicker ? (Platform.OS === 'ios' ? <SelectDateTimeIOS /> : <SelectDateTimeAndroid />) : null} 
       </View>
     )
   }
