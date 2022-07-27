@@ -35,7 +35,7 @@ const SelectDateTimeIOS = (props) => {
       </View>
       <Text style={{color: 'white'}}>selected: {date.toLocaleString()}</Text>
       {show && (
-        <View style={{height: 200, width: 200}}>
+        <View>
           <RNDateTimePicker
             testID="dateTimePicker"
             value={date}
