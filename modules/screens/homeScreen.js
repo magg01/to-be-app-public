@@ -47,6 +47,8 @@ const HomeScreen = ({navigation}) => {
         numColumns={2}
       />
       <Button title={"Add new to be"} onPress={() => navigation.navigate("AddNewScreen")} />
+      <Button title={"Calendar"} onPress={() => navigation.navigate("CalendarScreen")} />
+      <Button title={"Agenda"} onPress={() => navigation.navigate("AgendaScreen")} />
       <StatusBar style={"auto"}/>
     </SafeAreaView>
   )
