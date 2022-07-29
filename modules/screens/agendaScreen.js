@@ -33,6 +33,7 @@ const AgendaScreen = () => {
 
   const testLoadItemsForMonth = (data) => {
     //need to use data object passed to method here to judiciously get relevant calevents from the database based on their date. (not as currently getting all of them)
+    //also need to get joined table with Plans
     let appointments = {}
     db.getAllCalEvents().then((result) => {
       for(const event in result){
@@ -43,10 +44,28 @@ const AgendaScreen = () => {
         if(!appointments[dayOfAppointment]){
            appointments[dayOfAppointment] = []
         }
+        //would rather use .toLocaleString on Date objects here but doesn't work for Android see (https://stackoverflow.com/questions/41408025/react-native-tolocalestring-not-working-on-android)
+        //could get around it (see: https://expo.canny.io/feature-requests/p/add-intl-support) but wouldn't work in Expo Go. 
+        let startHours = eventStartTime.getHours();
+        if (startHours < 10) {
+          startHours = `0${startHours}`;
+        }
+        let startMinutes = eventStartTime.getMinutes();
+        if (startMinutes < 10) {
+          startMinutes = `0${startMinutes}`;
+        }
+        let endHours = eventEndTime.getHours();
+        if (endHours < 10) {
+          endHours = `0${endHours}`;
+        }
+        let endMinutes = eventEndTime.getMinutes();
+        if (endMinutes < 10) {
+          endMinutes = `0${endMinutes}`;
+        }
         appointments[dayOfAppointment].push({
           name: "this should be filled in from the plan",
-          start: `${eventStartTime.getHours()}:${eventStartTime.getMinutes()}`,
-          end: `${eventEndTime.getHours()}:${eventEndTime.getMinutes()}`,
+          start: `${startHours}:${startMinutes}`,
+          end: `${endHours}:${endMinutes}`,
           type: "this could maybe be the to-be title"
         })
       }
