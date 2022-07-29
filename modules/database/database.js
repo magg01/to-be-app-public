@@ -1,7 +1,7 @@
 import * as SQLite from 'expo-sqlite';
 const DEBUG = false;
 
-const db = SQLite.openDatabase("tobedb")
+const db = SQLite.openDatabase("tobedb","0.0.3");
 
 // default setting for sqlite is that foreign key constraints are not enforced. So we need to turn the constraint enforcement on manually.
 db.exec([{ sql: 'PRAGMA foreign_keys = ON;', args: [] }], false, () =>
@@ -12,6 +12,9 @@ if (DEBUG) {
   // reset the tables on each reload
   db.transaction(
     (tx) => {
+      tx.executeSql(
+        "drop table if exists calevents"
+      );
       tx.executeSql(
         "drop table if exists plans"
       );
@@ -29,7 +32,10 @@ db.transaction(
     );
     tx.executeSql(
       "create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);"
-    )
+    );
+    tx.executeSql(
+      "create table if not exists calevents (id integer primary key not null, eventdate string, eventstarttime string, eventendtime string, planitem integer not null, FOREIGN KEY(planitem) REFERENCES plans(id) on delete cascade);"
+    );
   },
   (e) => console.log(`setUpTables encountered an error -> ${e}`),
   () => console.log("setUpTables: success")
@@ -60,6 +66,24 @@ const addPlan = (title, tobeitem) => {
       },
       () => {
         console.log(`addPlan: item with title:${title} successfully added to plans table`);
+        resolve(true);
+      }
+    );
+  })
+};
+
+const addCalEvent = (date, startTime, endTime, planItem) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql("insert into calevents (eventdate, eventstarttime, eventendtime, planitem) values (?, ?, ?, ?)", [date, startTime, endTime, planItem]);
+      },
+      (e) => {
+        console.log(`addCalEvent encountered an error -> ${e}`);
+        reject(false);
+      },
+      () => {
+        console.log(`addCalEvent: item with date:${date} successfully added to calevents table`);
         resolve(true);
       }
     );
@@ -124,6 +148,23 @@ const getPreviousToBeItemIdById = (id) => {
         reject(e);
       },
       console.log("getPreviousToBeItemIdById transaction success")
+    )
+  })
+}
+
+const getAllCalEventsWithPlanDetails = () => {
+  return new Promise((resolve, reject) => {
+    let result;
+    db.readTransaction(
+      (tx) => {
+        tx.executeSql(
+          "select * from calevents C left join plans P ON C.planitem = P.id;",
+          [],
+          (_, { rows: {_array} }) => {
+            result = _array;
+          },
+        )
+      }
     )
   })
 }
@@ -230,6 +271,29 @@ const getAllToBeItems = () => {
   })
 }
 
+const getAllCalEvents = () => {
+  return new Promise((resolve, reject) => {
+    let result;
+    db.readTransaction(
+      (tx) => {
+        tx.executeSql(
+          "select * from calevents", 
+          [], 
+          (_, { rows: {_array} }) =>{
+            console.log(`getAllCalEvents: _array is ${JSON.stringify(_array,null, 1)}`)
+            result = _array;
+          },
+        )
+      },
+      (e) => {
+        console.log(`getAllCalEvents encountered an error -> ${e}`)
+        reject(e);
+      },
+      () => resolve(result)
+    )
+  })
+}
+
 const deleteToBeItemById = (id) => {
   return new Promise((resolve, reject) => {
     db.transaction(
@@ -301,5 +365,7 @@ export {
   getNextToBeItemIdById,
   getAllPlansByToBeId,
   addPlan,
-  deletePlanItemById
+  deletePlanItemById,
+  addCalEvent,
+  getAllCalEvents
 }

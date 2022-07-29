@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
-import { Button, View, Text } from "react-native";
+import { Button, View, Text, Alert } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
+import * as db from '../database/database';
 
 const Example = () => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -42,6 +43,13 @@ const Example = () => {
     hideDatePicker();
   };
 
+  const submit = () => {
+    console.log(`date submitted: ${datePicked.toISOString()}`)
+    console.log(`start time submitted: ${startTimePicked.toISOString()}`)
+    console.log(`end time submitted: ${endTimePicked.toISOString()}`)
+    db.addCalEvent(datePicked.toISOString(), startTimePicked.toISOString(), endTimePicked.toISOString(), 1).then((result) => console.log(result));
+  }
+
   return (
     <View>
       <Button title="Show Date Picker" onPress={() => showDatePicker('date')} />
@@ -50,6 +58,7 @@ const Example = () => {
       <Text style={{color:'white'}}>Start time: {startTimePicked.getHours()}:{startTimePicked.getMinutes()} </Text>
       <Button title="Show End Time Picker" onPress={() => showDatePicker('endTime')} />
       <Text style={{color:'white'}}>End time: {endTimePicked.getHours()}:{endTimePicked.getMinutes()}</Text>
+      <Button title="submit" onPress={() => submit()} />
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode={pickerMode.current}

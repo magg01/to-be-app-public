@@ -1,56 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyleSheet, TouchableOpacity, Text, Alert, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Agenda, calendarTheme } from 'react-native-calendars';
+import * as db from '../database/database';
 
 const AgendaScreen = () => {
-  const appointments = {
-    "2021-03-11": [{
-        name: "Jeevan More",
-        start: "10:00 AM",
-        end: "10:30 AM",
-        type: "Follow Up",
-      },
-      {
-        name: "Seema More",
-        start: "10:30 AM",
-        end: "11:30 AM",
-        type: "New Consult",
-      },
-    ],
-    "2021-03-12": [{
-        name: "Madhura Utekar",
-        start: "10:00 AM",
-        end: "11:00 AM",
-        type: "Accute",
-      },
-      {
-        name: "Aditya Utekar",
-        start: "12:00 PM",
-        end: "12:30 PM",
-        type: "Follow Up",
-      },
-      {
-        name: "Aditya Utekar",
-        start: "13:00 PM",
-        end: "13:30 PM",
-        type: "Follow Up",
-      },
-      {
-        name: "Aditya Utekar",
-        start: "14:00 PM",
-        end: "14:30 PM",
-        type: "Follow Up",
-      },
-      {
-        name: "Aditya Utekar",
-        start: "15:00 PM",
-        end: "15:30 PM",
-        type: "Follow Up",
-      },
-    ]
-  }
+  const [loadedAppointments, setLoadedAppointments] = useState(null)  
 
   const renderItem = (item) => {
     return (
@@ -75,19 +31,44 @@ const AgendaScreen = () => {
     );
   };
 
+  const testLoadItemsForMonth = (data) => {
+    //need to use data object passed to method here to judiciously get relevant calevents from the database based on their date. (not as currently getting all of them)
+    let appointments = {}
+    db.getAllCalEvents().then((result) => {
+      for(const event in result){
+        let eventDate = new Date(result[event].eventdate);
+        let eventStartTime = new Date(result[event].eventstarttime);
+        let eventEndTime = new Date(result[event].eventendtime);
+        let dayOfAppointment = new Date(eventDate.getTime() - (eventDate.getTimezoneOffset() * 60000)).toISOString().split("T")[0];
+        if(!appointments[dayOfAppointment]){
+           appointments[dayOfAppointment] = []
+        }
+        appointments[dayOfAppointment].push({
+          name: "this should be filled in from the plan",
+          start: `${eventStartTime.getHours()}:${eventStartTime.getMinutes()}`,
+          end: `${eventEndTime.getHours()}:${eventEndTime.getMinutes()}`,
+          type: "this could maybe be the to-be title"
+        })
+      }
+    }).then(() => {
+      setLoadedAppointments(appointments);
+    })
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <Agenda
-        items={appointments}
-        renderItem={(item) => {
-          return renderItem(item);
+        items={loadedAppointments}
+          renderItem={(item) => {
+            return renderItem(item);
         }}
-        selected={"2021-03-11"}
+        selected={Date('now')}
         //pastScrollRange={0}
         //futureScrollRange={0}
         renderEmptyData={renderEmptyItem}
         // renderEmptyDate={renderEmptyDate}
         //theme={calendarTheme}
+        loadItemsForMonth={testLoadItemsForMonth}
       />
       <StatusBar style={"auto"}/>
     </SafeAreaView>
