@@ -43,23 +43,38 @@ const Example = (props) => {
     hideDatePicker();
   };
 
+  const zeroPadTime = (time) => {
+    //would rather use .toLocaleString on Date objects here but doesn't work for Android see (https://stackoverflow.com/questions/41408025/react-native-tolocalestring-not-working-on-android)
+    //could get around it (see: https://expo.canny.io/feature-requests/p/add-intl-support) but wouldn't work in Expo Go. 
+    if(time < 10){
+      return `0${time}`;
+    } else {
+      return time;
+    }
+  }
+
   const onClose = (shouldUpdateDateTime) => {
     if(shouldUpdateDateTime){
       props.onDateTimeChange(datePicked, startTimePicked, endTimePicked);
     } else {
       props.onCancel();
     }
-    // db.addCalEvent(datePicked.toISOString(), startTimePicked.toISOString(), endTimePicked.toISOString(), 1).then((result) => console.log(result));
   }
 
   return (
     <View>
       <Button title="Show Date Picker" onPress={() => showDatePicker('date')} />
-      <Text style={{color:'white'}}>Date: {datePicked.toDateString()}</Text>
+      <Text style={{color:'white'}}>
+        Date: {datePicked.toDateString()}
+      </Text>
       <Button title="Show Start Time Picker" onPress={() => showDatePicker('startTime')} />
-      <Text style={{color:'white'}}>Start time: {startTimePicked.getHours()}:{startTimePicked.getMinutes()} </Text>
+      <Text style={{color:'white'}}>
+        Start time: {zeroPadTime(startTimePicked.getHours())}:{zeroPadTime(startTimePicked.getMinutes())}
+      </Text>
       <Button title="Show End Time Picker" onPress={() => showDatePicker('endTime')} />
-      <Text style={{color:'white'}}>End time: {endTimePicked.getHours()}:{endTimePicked.getMinutes()}</Text>
+      <Text style={{color:'white'}}>
+        End time: {zeroPadTime(endTimePicked.getHours())}:{zeroPadTime(endTimePicked.getMinutes())}
+      </Text>
       <Button title="submit" onPress={() => onClose(true)} />
       <Button title="cancel" onPress={() => onClose(false)} />
       <DateTimePickerModal
