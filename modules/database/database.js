@@ -3,6 +3,9 @@ const DEBUG = false;
 
 const db = SQLite.openDatabase("tobedb","0.0.3");
 
+
+//go through all methods and move error reporting and final promise resolve to the TRANSACTION success callback
+
 // default setting for sqlite is that foreign key constraints are not enforced. So we need to turn the constraint enforcement on manually.
 db.exec([{ sql: 'PRAGMA foreign_keys = ON;', args: [] }], false, () =>
   console.log('Foreign keys turned on')
@@ -158,13 +161,19 @@ const getAllCalEventsWithPlanDetails = () => {
     db.readTransaction(
       (tx) => {
         tx.executeSql(
-          "select * from calevents C left join plans P ON C.planitem = P.id;",
+          "SELECT C.id, C.eventdate, C.eventstarttime, C.eventendtime, P.title as plan_title, T.title as tobeitem_title, T.imageBackgroundUri from calevents C left join plans P ON C.planitem = P.id left join tobeitems T ON P.tobeitem = T.id;",
           [],
           (_, { rows: {_array} }) => {
+            console.log(`getAllCalEventsWithPlanDetails: _array is ${JSON.stringify(_array,null, 1)}`)
             result = _array;
           },
         )
-      }
+      },
+      (e) => {
+        console.log(`getAllCalEventsWithPlanDetails encountered an error -> ${e}`)
+        reject(e)
+      },
+      () => resolve(result)
     )
   })
 }
@@ -367,5 +376,6 @@ export {
   addPlan,
   deletePlanItemById,
   addCalEvent,
-  getAllCalEvents
+  getAllCalEvents,
+  getAllCalEventsWithPlanDetails
 }

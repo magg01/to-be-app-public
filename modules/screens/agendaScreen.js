@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity, Text, Alert, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, Alert, View, Button, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Agenda, calendarTheme } from 'react-native-calendars';
@@ -10,16 +10,16 @@ const AgendaScreen = () => {
 
   const renderItem = (item) => {
     return (
-      <TouchableOpacity
-        style={[styles.item, { height: item.height }]}
-        onPress={() => Alert.alert(item.name)}
-      >
-        <Text style={styles.timing}>
-          {item.start} - {item.end}
-        </Text>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.type}>{item.type}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.item, { height: item.height }]}
+          onPress={() => Alert.alert(item.name)}
+        >
+          <Text style={styles.timing}>
+            {item.start} - {item.end}
+          </Text>
+          <Text style={styles.name}>{item.name}</Text>
+          <Text style={styles.type}>{item.type}</Text>
+        </TouchableOpacity>
     );
   };
 
@@ -35,7 +35,7 @@ const AgendaScreen = () => {
     //need to use data object passed to method here to judiciously get relevant calevents from the database based on their date. (not as currently getting all of them)
     //also need to get joined table with Plans
     let appointments = {}
-    db.getAllCalEvents().then((result) => {
+    db.getAllCalEventsWithPlanDetails().then((result) => {
       for(const event in result){
         let eventDate = new Date(result[event].eventdate);
         let eventStartTime = new Date(result[event].eventstarttime);
@@ -63,10 +63,11 @@ const AgendaScreen = () => {
           endMinutes = `0${endMinutes}`;
         }
         appointments[dayOfAppointment].push({
-          name: "this should be filled in from the plan",
+          name: result[event].plan_title,
           start: `${startHours}:${startMinutes}`,
           end: `${endHours}:${endMinutes}`,
-          type: "this could maybe be the to-be title"
+          type: `Be: ${result[event].tobeitem_title}`,
+          image: result[event].imageBackgroundUri
         })
       }
     }).then(() => {
@@ -76,10 +77,12 @@ const AgendaScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Button title={'all events'} onPress={() => db.getAllCalEvents()} />
+      <Button title={'test join db'} onPress={() => db.getAllCalEventsWithPlanDetails()} />
       <Agenda
         items={loadedAppointments}
-          renderItem={(item) => {
-            return renderItem(item);
+        renderItem={(item) => {
+          return renderItem(item);
         }}
         selected={Date('now')}
         //pastScrollRange={0}
