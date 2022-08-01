@@ -9,6 +9,7 @@ export default AddPlan = (props) => {
   const [newPlanTitle, setNewPlanTitle] = useState('');
   const [toBeItem, setToBeItem] = useState(undefined);
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
+  const calEvent = useRef(null);
 
   useEffect(() => {
     db.getToBeItemById(toBeId.current).then((toBeItem) => {
@@ -17,7 +18,7 @@ export default AddPlan = (props) => {
   }, [toBeId.current])
 
   const addPlan = () => {
-    db.addPlan(newPlanTitle, toBeId.current)
+    db.addPlan(newPlanTitle, toBeId.current, calEvent.current)
     .then((success) => {
       if(success){
         props.onAddNewPlan();
@@ -35,8 +36,12 @@ export default AddPlan = (props) => {
     setShowDateTimePicker(true);
   }
 
-  const onChangeDate = (event, date) => {
-    console.log(date);
+  const onDateTimeChange = (eventDate, eventStartTime, eventEndTime) => {
+    calEvent.current = {
+      date: eventDate.toISOString(),
+      start: eventStartTime.toISOString(),
+      end: eventEndTime.toISOString()
+    }
     setShowDateTimePicker(false);
   }
 
@@ -60,7 +65,11 @@ export default AddPlan = (props) => {
         <TouchableOpacity style={styles.addButton} onPress={addCalendar}>
           <Text>Cal</Text>
         </TouchableOpacity>
-        {showDateTimePicker && <Example />} 
+        {showDateTimePicker && <Example 
+          calEvent={calEvent.current}
+          onDateTimeChange={(eventDate, eventStartTime, eventEndTime) => onDateTimeChange(eventDate, eventStartTime, eventEndTime)} 
+          onCancel={() => setShowDateTimePicker(false)}
+        />} 
       </View>
     )
   }

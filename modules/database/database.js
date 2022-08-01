@@ -57,11 +57,21 @@ const addToBeItem = (title, imageBackgroundUri) => {
   );
 };
 
-const addPlan = (title, tobeitem) => {
+const addPlan = (title, tobeitem, calEvent) => {
   return new Promise((resolve, reject) => {
     db.transaction(
       (tx) => {
-        tx.executeSql("insert into plans (done, title, tobeitem) values (0, ?, ?)", [title, tobeitem]);
+        tx.executeSql(
+          "insert into plans (done, title, tobeitem) values (0, ?, ?)", 
+          [title, tobeitem],
+          (tx, newPlan) => {
+            if(calEvent){
+              tx.executeSql(
+                "insert into calevents (eventdate, eventstarttime, eventendtime, planitem) values (?, ?, ?, ?)", [calEvent.date, calEvent.start, calEvent.end, newPlan.insertId]
+              );
+            }
+          }
+        );
       },
       (e) => {
         console.log(`addPlan encountered an error -> ${e}`);
