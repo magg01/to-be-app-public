@@ -5,7 +5,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { AddNewScreen } from './modules/screens/addNewScreen';
 import { HomeScreen } from './modules/screens/homeScreen';
 import ViewToBeScreen from './modules/screens/viewToBeScreen';
-import { CalendarScreen } from './modules/screens/calendarScreen';
 import { AgendaScreen } from './modules/screens/agendaScreen';
 
 const Stack = createStackNavigator();
@@ -18,7 +17,6 @@ export default function App() {
         <Stack.Screen name="HomeScreen" component={HomeScreen}/>
         <Stack.Screen name="AddNewScreen" component={AddNewScreen}/>
         <Stack.Screen name="ViewToBeScreen" component={ViewToBeScreen} />
-        <Stack.Screen name="CalendarScreen" component={CalendarScreen} />
         <Stack.Screen name="AgendaScreen" component={AgendaScreen} />
       </Stack.Navigator>
     </NavigationContainer>
