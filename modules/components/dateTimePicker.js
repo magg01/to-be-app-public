@@ -1,9 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Button, View, Text } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import * as db from '../database/database';
 
-const Example = (props) => {
+const DateTimePicker = (props) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [datePicked, setDatePicked] = useState(props.calEvent ? new Date(props.calEvent.date) : new Date());
   const [startTimePicked, setStartTimePicked] = useState(props.calEvent ? new Date(props.calEvent.start) : new Date());
@@ -87,4 +86,4 @@ const Example = (props) => {
   );
 };
 
-export default Example;
+export default DateTimePicker;

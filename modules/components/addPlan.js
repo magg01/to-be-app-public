@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { StyleSheet, View, Text, TextInput, Alert, TouchableOpacity, Platform } from 'react-native'
+import { StyleSheet, View, Text, TextInput, Alert, TouchableOpacity } from 'react-native'
 import * as db from '../database/database';
-import {SelectDateTimeIOS, SelectDateTimeAndroid} from './calendarEventCreator';
-import Example from './exampleDTpicker';
+import DateTimePicker from './dateTimePicker';
 
 export default AddPlan = (props) => {
   const toBeId = useRef(props.toBeId);
@@ -65,7 +64,7 @@ export default AddPlan = (props) => {
         <TouchableOpacity style={styles.addButton} onPress={addCalendar}>
           <Text>Cal</Text>
         </TouchableOpacity>
-        {showDateTimePicker && <Example 
+        {showDateTimePicker && <DateTimePicker 
           calEvent={calEvent.current}
           onDateTimeChange={(eventDate, eventStartTime, eventEndTime) => onDateTimeChange(eventDate, eventStartTime, eventEndTime)} 
           onCancel={() => setShowDateTimePicker(false)}
