@@ -1,15 +1,41 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AddNewScreen } from './modules/screens/addNewScreen';
 import { HomeScreen } from './modules/screens/homeScreen';
 import ViewToBeScreen from './modules/screens/viewToBeScreen';
 import { AgendaScreen } from './modules/screens/agendaScreen';
+import * as Permissions from 'expo-permissions';
+import * as Notifications from 'expo-notifications';
+
 
 const Stack = createStackNavigator();
 
+//notifications module is deprecated so adjust this
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true
+    }
+  }
+})
+
 export default function App() {
+
+  useEffect(() => {
+    Permissions.getAsync(Permissions.NOTIFICATIONS)
+    .then((statusObj) => {
+      if (statusObj.status !== 'granted') {
+        return Permissions.askAsync(Permissions.NOTIFICATIONS)
+      }
+      return statusObj;
+    })
+    .then((statusObj) => {
+      if (statusObj.status !== 'granted') {
+        return;
+      }
+    })
+  }, [])
 
   return (
     <NavigationContainer>
@@ -22,12 +48,3 @@ export default function App() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
