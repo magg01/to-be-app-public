@@ -11,7 +11,6 @@ import * as Notifications from 'expo-notifications';
 
 const Stack = createStackNavigator();
 
-//notifications module is deprecated so adjust this
 Notifications.setNotificationHandler({
   handleNotification: async () => {
     return {
@@ -22,6 +21,7 @@ Notifications.setNotificationHandler({
 
 export default function App() {
 
+  //permissions module is deprecated so adjust this
   useEffect(() => {
     Permissions.getAsync(Permissions.NOTIFICATIONS)
     .then((statusObj) => {
