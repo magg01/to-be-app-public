@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { StyleSheet, View, Text, TextInput, Alert, TouchableOpacity } from 'react-native'
 import * as db from '../database/database';
 import DateTimePicker from './dateTimePicker';
+import { checkNotificationPermission } from './testNotifications';
 
 export default AddPlan = (props) => {
   const toBeId = useRef(props.toBeId);
@@ -28,7 +29,7 @@ export default AddPlan = (props) => {
   }
 
   const addNotification = () => {
-    Alert.alert("Add notification here");
+    checkNotificationPermission();
   }
 
   const addCalendar = () => {

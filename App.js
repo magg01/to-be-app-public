@@ -21,22 +21,6 @@ Notifications.setNotificationHandler({
 
 export default function App() {
 
-  //permissions module is deprecated so adjust this
-  useEffect(() => {
-    Permissions.getAsync(Permissions.NOTIFICATIONS)
-    .then((statusObj) => {
-      if (statusObj.status !== 'granted') {
-        return Permissions.askAsync(Permissions.NOTIFICATIONS)
-      }
-      return statusObj;
-    })
-    .then((statusObj) => {
-      if (statusObj.status !== 'granted') {
-        return;
-      }
-    })
-  }, [])
-
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{headerShown: false}}>
