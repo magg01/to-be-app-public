@@ -93,6 +93,7 @@ const checkShouldRemoveNotification = () => {
   })
 }
 
+//add or remove an notification on a calEvent. After operations should return true if a notification is present and false if not
 const addRemoveNotificationOnCalEvent = async (calEventId) => {
   //check if the calItem already has a notification identifier
   const calEvent = await getCalEventById(calEventId);

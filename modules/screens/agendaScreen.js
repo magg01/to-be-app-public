@@ -3,43 +3,8 @@ import { StyleSheet, TouchableOpacity, Text, Alert, View, Button, Image } from '
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Agenda, calendarTheme } from 'react-native-calendars';
-import { addRemoveNotificationOnCalEvent } from '../components/testNotifications';
-import Ionicons from '@expo/vector-icons/Ionicons';
+import CalEventItem from '../components/calEventItem';
 import * as db from '../database/database';
-
-//move this to components section (with style)
-const CalEventItem = ({item}) => {
-  const [notificationPresent, setNotificationPresent] = useState(item.notification != null);
-
-  const addRemoveNotification = async (calEventId) => {
-    console.log(calEventId);
-    const notificationAdded = await addRemoveNotificationOnCalEvent(calEventId);
-    if(notificationAdded){
-      setNotificationPresent(true);
-    } else {
-      setNotificationPresent(false);
-    }
-  }
-
-  return (
-    <View style={[styles.item, { height: item.height, flexDirection: 'row' }]}>
-      <TouchableOpacity
-        style={{ flexGrow: 1}}
-        onPress={() => Alert.alert(item.name)}
-      >
-        <Text style={styles.timing}>
-          {item.start} - {item.end}
-        </Text>
-        <Text style={styles.name}>{item.name}</Text>
-        <Text style={styles.type}>{item.type}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={{alignSelf: 'center', }} onPress={() => addRemoveNotification(item.calEventId)}>
-        <Ionicons name="notifications-outline" size={24} color={notificationPresent ? "black" : "lightgrey" } />
-      </TouchableOpacity>
-    </View>
-  );
-};
-
 
 
 const AgendaScreen = () => {
@@ -126,14 +91,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'stretch',
     justifyContent: 'center',
-  },
-  item: {
-    backgroundColor: "white",
-    flex: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginRight: 10,
-    marginTop: 17,
   },
 });
 

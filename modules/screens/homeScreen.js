@@ -5,7 +5,6 @@ import { StatusBar } from 'expo-status-bar';
 import { getAllToBeItems } from '../database/database';
 import { useFocusEffect } from '@react-navigation/native';
 import { ToBeTile } from '../components/toBeTile';
-import { triggerNotifications } from '../components/testNotifications';
 
 const HomeScreen = ({navigation}) => {
   const [allToBes, setAllToBes] = useState([]);
@@ -49,7 +48,6 @@ const HomeScreen = ({navigation}) => {
       />
       <Button title={"Add new to be"} onPress={() => navigation.navigate("AddNewScreen")} />
       <Button title={"Agenda"} onPress={() => navigation.navigate("AgendaScreen")} />
-      <Button onPress={triggerNotifications} title="Trigger Local Notifications" color="#841584" accessibilityLabel="Trigger Local Notifications"/>
       <StatusBar style={"auto"}/>
     </SafeAreaView>
   )
