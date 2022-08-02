@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import { StyleSheet, View, Text, TextInput, Alert, TouchableOpacity } from 'react-native'
 import * as db from '../database/database';
 import DateTimePicker from './dateTimePicker';
-import { checkNotificationPermission } from './testNotifications';
 
 export default AddPlan = (props) => {
   const toBeId = useRef(props.toBeId);
@@ -26,10 +25,6 @@ export default AddPlan = (props) => {
         Alert.alert("Unable to add a new plan at this time.");
       }
     });
-  }
-
-  const addNotification = () => {
-    checkNotificationPermission();
   }
 
   const addCalendar = () => {
@@ -58,9 +53,6 @@ export default AddPlan = (props) => {
         <TextInput style={styles.input} onChangeText={(text) => setNewPlanTitle(text)} />
         <TouchableOpacity style={styles.addButton} onPress={addPlan}>
           <Text>Add</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.addButton} onPress={addNotification}>
-          <Text>Not</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.addButton} onPress={addCalendar}>
           <Text>Cal</Text>

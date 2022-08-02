@@ -37,7 +37,7 @@ db.transaction(
       "create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);"
     );
     tx.executeSql(
-      "create table if not exists calevents (id integer primary key not null, eventdate string, eventstarttime string, eventendtime string, planitem integer not null, FOREIGN KEY(planitem) REFERENCES plans(id) on delete cascade);"
+      "create table if not exists calevents (id integer primary key not null, eventdate string, eventstarttime string, eventendtime string, eventnotification string, planitem integer not null, FOREIGN KEY(planitem) REFERENCES plans(id) on delete cascade);"
     );
   },
   (e) => console.log(`setUpTables encountered an error -> ${e}`),
@@ -171,7 +171,7 @@ const getAllCalEventsWithPlanDetails = () => {
     db.readTransaction(
       (tx) => {
         tx.executeSql(
-          "SELECT C.id, C.eventdate, C.eventstarttime, C.eventendtime, P.title as plan_title, T.title as tobeitem_title, T.imageBackgroundUri from calevents C left join plans P ON C.planitem = P.id left join tobeitems T ON P.tobeitem = T.id;",
+          "SELECT C.id, C.eventdate, C.eventstarttime, C.eventendtime, C.eventnotification, P.title as plan_title, T.title as tobeitem_title, T.imageBackgroundUri from calevents C left join plans P ON C.planitem = P.id left join tobeitems T ON P.tobeitem = T.id;",
           [],
           (_, { rows: {_array} }) => {
             console.log(`getAllCalEventsWithPlanDetails: _array is ${JSON.stringify(_array,null, 1)}`)
@@ -313,6 +313,29 @@ const getAllCalEvents = () => {
   })
 }
 
+const getCalEventById = (id) => {
+  return new Promise((resolve, reject) => {
+    let result;
+    db.readTransaction(
+      (tx) => {
+        tx.executeSql(
+          "select * from calevents where id=?", 
+          [id], 
+          (_, { rows: {_array} }) =>{
+            console.log(`getCalEventById: _array is ${JSON.stringify(_array,null, 1)}`);
+            result = _array[0];
+          },
+        )
+      },
+      (e) => {
+        console.log(`getCalEventById encountered an error -> ${e}`);
+        reject(e);
+      },
+      () => resolve(result)
+    )
+  })
+}
+
 const deleteToBeItemById = (id) => {
   return new Promise((resolve, reject) => {
     db.transaction(
@@ -343,6 +366,42 @@ const deletePlanItemById = (id) => {
       },
       () => {
         console.log(`deletePlanItemById: item with id:${id} successfully deleted from plans table`);
+        resolve(true);
+      }
+    )
+  })
+}
+
+const addNotificationToCalEvent = (calEventId, notificationIdentifier) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql("UPDATE calevents set eventnotification = ? WHERE id = ?", [notificationIdentifier, calEventId]);
+      },
+      (e) => {
+        console.log(`addNotificationToCalEvent encountered an error -> ${e}`);
+        reject(e);
+      },
+      () => {
+        console.log(`addNotificationToCalEvent: notification with identifier ${notificationIdentifier} successfully added to calevent with id=${calEventId}`)
+        resolve(true);
+      }
+    )
+  })
+}
+
+const removeNotificationFromCalEvent = (calEventId) => {
+  return new Promise((resolve, reject) => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql("UPDATE calevents set eventnotification = null WHERE id = ?", [calEventId]);
+      },
+      (e) => {
+        console.log(`removeNotificationFromCalEvent encountered an error -> ${e}`);
+        reject(e);
+      },
+      () => {
+        console.log(`removeNotificationFromCalEvent: calevent with id=${calEventId} eventnotification successfully set to null`);
         resolve(true);
       }
     )
@@ -387,5 +446,8 @@ export {
   deletePlanItemById,
   addCalEvent,
   getAllCalEvents,
+  getCalEventById,
+  addNotificationToCalEvent,
+  removeNotificationFromCalEvent,
   getAllCalEventsWithPlanDetails
 }

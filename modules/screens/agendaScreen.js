@@ -1,28 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, Text, Alert, View, Button, Image } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Agenda, calendarTheme } from 'react-native-calendars';
+import { addRemoveNotificationOnCalEvent } from '../components/testNotifications';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import * as db from '../database/database';
+
+//move this to components section (with style)
+const CalEventItem = ({item}) => {
+  const [notificationPresent, setNotificationPresent] = useState(item.notification != null);
+
+  const addRemoveNotification = async (calEventId) => {
+    console.log(calEventId);
+    const notificationAdded = await addRemoveNotificationOnCalEvent(calEventId);
+    if(notificationAdded){
+      setNotificationPresent(true);
+    } else {
+      setNotificationPresent(false);
+    }
+  }
+
+  return (
+    <View style={[styles.item, { height: item.height, flexDirection: 'row' }]}>
+      <TouchableOpacity
+        style={{ flexGrow: 1}}
+        onPress={() => Alert.alert(item.name)}
+      >
+        <Text style={styles.timing}>
+          {item.start} - {item.end}
+        </Text>
+        <Text style={styles.name}>{item.name}</Text>
+        <Text style={styles.type}>{item.type}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={{alignSelf: 'center', }} onPress={() => addRemoveNotification(item.calEventId)}>
+        <Ionicons name="notifications-outline" size={24} color={notificationPresent ? "black" : "lightgrey" } />
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+
 
 const AgendaScreen = () => {
   const [loadedAppointments, setLoadedAppointments] = useState(null)  
-
-  const renderItem = (item) => {
-    return (
-        <TouchableOpacity
-          style={[styles.item, { height: item.height }]}
-          onPress={() => Alert.alert(item.name)}
-        >
-          <Text style={styles.timing}>
-            {item.start} - {item.end}
-          </Text>
-          <Text style={styles.name}>{item.name}</Text>
-          <Text style={styles.type}>{item.type}</Text>
-        </TouchableOpacity>
-    );
-  };
-
+          
   const renderEmptyItem = () => {
     return (
       <View>
@@ -63,10 +85,12 @@ const AgendaScreen = () => {
           endMinutes = `0${endMinutes}`;
         }
         appointments[dayOfAppointment].push({
+          calEventId: result[event].id,
           name: result[event].plan_title,
           start: `${startHours}:${startMinutes}`,
           end: `${endHours}:${endMinutes}`,
           type: `Be: ${result[event].tobeitem_title}`,
+          notification: result[event].eventnotification,
           image: result[event].imageBackgroundUri
         })
       }
@@ -82,7 +106,7 @@ const AgendaScreen = () => {
       <Agenda
         items={loadedAppointments}
         renderItem={(item) => {
-          return renderItem(item);
+          return <CalEventItem item={item} />
         }}
         selected={Date('now')}
         //pastScrollRange={0}
