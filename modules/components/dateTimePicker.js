@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Button, View, Text } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 
+//look into proptypes library in order to codify the necessary functions to supply as props
 const DateTimePicker = (props) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [datePicked, setDatePicked] = useState(props.calEvent ? new Date(props.calEvent.date) : new Date());

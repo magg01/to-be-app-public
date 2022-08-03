@@ -165,22 +165,22 @@ const getPreviousToBeItemIdById = (id) => {
   })
 }
 
-const getAllCalEventsWithPlanDetails = () => {
+const getCalEventWithPlanDetailsByCalEventId = (calEventId) => {
   return new Promise((resolve, reject) => {
     let result;
     db.readTransaction(
       (tx) => {
         tx.executeSql(
-          "SELECT C.id, C.eventdate, C.eventstarttime, C.eventendtime, C.eventnotification, P.title as plan_title, T.title as tobeitem_title, T.imageBackgroundUri from calevents C left join plans P ON C.planitem = P.id left join tobeitems T ON P.tobeitem = T.id;",
-          [],
+          "SELECT C.id, C.eventdate, C.eventstarttime, C.eventendtime, C.eventnotification, P.title as plan_title, T.title as tobeitem_title, T.imageBackgroundUri from calevents C left join plans P ON C.planitem = P.id left join tobeitems T ON P.tobeitem = T.id where c.id = ?;",
+          [calEventId],
           (_, { rows: {_array} }) => {
-            console.log(`getAllCalEventsWithPlanDetails: _array is ${JSON.stringify(_array,null, 1)}`)
-            result = _array;
+            console.log(`getCalEventWithPlanDetailsByCalEventId: _array is ${JSON.stringify(_array,null, 1)}`)
+            result = _array[0];
           },
         )
       },
       (e) => {
-        console.log(`getAllCalEventsWithPlanDetails encountered an error -> ${e}`)
+        console.log(`getCalEventWithPlanDetailsByCalEventId encountered an error -> ${e}`)
         reject(e)
       },
       () => resolve(result)
@@ -372,11 +372,40 @@ const deletePlanItemById = (id) => {
   })
 }
 
-const addNotificationToCalEvent = (calEventId, notificationIdentifier) => {
+const getCalEventNotificationByCalEventId = (calEventId) => {
   return new Promise((resolve, reject) => {
     db.transaction(
       (tx) => {
-        tx.executeSql("UPDATE calevents set eventnotification = ? WHERE id = ?", [notificationIdentifier, calEventId]);
+        tx.executeSql(
+          "SELECT eventnotification from calevents where id = ?", [calEventId],
+          [id], 
+          (_, { rows: {_array} }) => {
+            console.log(`getCalEventNotificationById: _array is ${JSON.stringify(_array,null, 1)}`);
+            result = _array[0];
+          },
+        )
+      },
+      (e) => {
+        console.log(`getCalEventNotificationById encountered an error -> ${e}`);
+        reject(e);
+      },
+      () => {
+        console.log(`getCalEventNotificationById: successfully retreieved from calevent with id=${calEventId}`)
+        resolve(result);
+      }
+    )
+  })
+}
+
+const addNotificationToCalEvent = (calEventId, notificationIdentifier) => {
+  return new Promise((resolve, reject) => {
+    let result;
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          "UPDATE calevents set eventnotification = ? WHERE id = ?", 
+          [notificationIdentifier, calEventId]
+        );
       },
       (e) => {
         console.log(`addNotificationToCalEvent encountered an error -> ${e}`);
@@ -384,7 +413,7 @@ const addNotificationToCalEvent = (calEventId, notificationIdentifier) => {
       },
       () => {
         console.log(`addNotificationToCalEvent: notification with identifier ${notificationIdentifier} successfully added to calevent with id=${calEventId}`)
-        resolve(true);
+        resolve(result);
       }
     )
   })
@@ -447,7 +476,8 @@ export {
   addCalEvent,
   getAllCalEvents,
   getCalEventById,
+  getCalEventNotificationByCalEventId,
   addNotificationToCalEvent,
   removeNotificationFromCalEvent,
-  getAllCalEventsWithPlanDetails
+  getCalEventWithPlanDetailsByCalEventId,
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, Text, Alert, View, Button, Image } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, Alert, View, Button, Image, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Agenda, calendarTheme } from 'react-native-calendars';
@@ -8,7 +8,9 @@ import * as db from '../database/database';
 
 
 const AgendaScreen = () => {
-  const [loadedAppointments, setLoadedAppointments] = useState(null)  
+  const [loadedAppointments, setLoadedAppointments] = useState(null)
+  const [modalVisible, setModalVisible] = useState(false);
+
           
   const renderEmptyItem = () => {
     return (
@@ -20,43 +22,17 @@ const AgendaScreen = () => {
 
   const testLoadItemsForMonth = (data) => {
     //need to use data object passed to method here to judiciously get relevant calevents from the database based on their date. (not as currently getting all of them)
-    //also need to get joined table with Plans
     let appointments = {}
-    db.getAllCalEventsWithPlanDetails().then((result) => {
+    db.getAllCalEvents().then((result) => {
       for(const event in result){
         let eventDate = new Date(result[event].eventdate);
-        let eventStartTime = new Date(result[event].eventstarttime);
-        let eventEndTime = new Date(result[event].eventendtime);
+        //account for timezone differences for the date of the appointment
         let dayOfAppointment = new Date(eventDate.getTime() - (eventDate.getTimezoneOffset() * 60000)).toISOString().split("T")[0];
         if(!appointments[dayOfAppointment]){
            appointments[dayOfAppointment] = []
         }
-        //would rather use .toLocaleString on Date objects here but doesn't work for Android see (https://stackoverflow.com/questions/41408025/react-native-tolocalestring-not-working-on-android)
-        //could get around it (see: https://expo.canny.io/feature-requests/p/add-intl-support) but wouldn't work in Expo Go. 
-        let startHours = eventStartTime.getHours();
-        if (startHours < 10) {
-          startHours = `0${startHours}`;
-        }
-        let startMinutes = eventStartTime.getMinutes();
-        if (startMinutes < 10) {
-          startMinutes = `0${startMinutes}`;
-        }
-        let endHours = eventEndTime.getHours();
-        if (endHours < 10) {
-          endHours = `0${endHours}`;
-        }
-        let endMinutes = eventEndTime.getMinutes();
-        if (endMinutes < 10) {
-          endMinutes = `0${endMinutes}`;
-        }
         appointments[dayOfAppointment].push({
           calEventId: result[event].id,
-          name: result[event].plan_title,
-          start: `${startHours}:${startMinutes}`,
-          end: `${endHours}:${endMinutes}`,
-          type: `Be: ${result[event].tobeitem_title}`,
-          notification: result[event].eventnotification,
-          image: result[event].imageBackgroundUri
         })
       }
     }).then(() => {
@@ -71,7 +47,7 @@ const AgendaScreen = () => {
       <Agenda
         items={loadedAppointments}
         renderItem={(item) => {
-          return <CalEventItem item={item} />
+          return <CalEventItem appointment={item} />
         }}
         selected={Date('now')}
         //pastScrollRange={0}
