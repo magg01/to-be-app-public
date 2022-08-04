@@ -5,16 +5,33 @@ import { AddNewScreen } from './modules/screens/addNewScreen';
 import { HomeScreen } from './modules/screens/homeScreen';
 import ViewToBeScreen from './modules/screens/viewToBeScreen';
 import { AgendaScreen } from './modules/screens/agendaScreen';
-import * as Permissions from 'expo-permissions';
-import * as Notifications from 'expo-notifications';
+import { setNotificationHandler } from 'expo-notifications';
+import { fetchPermissionSettings, checkPermissionSettings } from './modules/components/testNotifications';
 
 
 const Stack = createStackNavigator();
 
-Notifications.setNotificationHandler({
+// Sets the handler function responsible for deciding
+// what to do with a notification that is received when the app is in foreground
+setNotificationHandler({
   handleNotification: async () => {
-    return {
-      shouldShowAlert: true
+    const permissionSettings = fetchPermissionSettings();
+    if(Platform.OS === 'ios'){
+      return {
+        shouldShowAlert: permissionSettings.ios?.allowsAlert,
+        shouldPlaySound: permissionSettings.ios?.allowsSound,
+        shouldSetBadge: false,
+        shouldShowAnnouncement: permissionSettings.ios?.allowsAnnouncements,
+      }
+    } else {
+      if (checkPermissionSettings(permissionSettings) === 'granted'){
+        return {
+          shouldShowAlert: true,
+          shouldPlaySound: true,
+          shouldSetBadge: false,
+          shouldShowAnnouncement: true,
+        }
+      }
     }
   }
 })

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Text, Alert, Modal, Button, Pressable } from 'react-native';
-import { confirmRemoveNotification, cancelNotificationEvent } from '../components/testNotifications';
+import { confirmRemoveNotification, cancelNotificationEvent, isScheduleNotificationAllowed } from '../components/testNotifications';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Notifications from 'expo-notifications';
 import * as db from '../database/database';
@@ -56,14 +56,21 @@ const CalEventItem = ({appointment}) => {
         //do nothing
       }
     } else {
-      //show modal
-      setNotificationModalVisible(true);
-      //try to add
-    
+      //check permissions, has the user granted permissions to send notifications?
+      const permissionGranted = isScheduleNotificationAllowed()
+      //if permissions granted
+      if(permissionGranted){
+        //show modal
+        setNotificationModalVisible(true);
+      //if permissions denied
+      } else {
+        //inform the user to update permissions if they want to use notifications
+        Alert.alert("Notifications not allowed", "You or your device settings have not allowed notifications to be scheduled. If you want to use the notification feature please enable notifications for this app in your device settings.");
+      }    
     }
   }
 
-  const addNotification = async (minutesPriorToStart) => {
+  const addNotificationMinBeforeStartTime = async (minutesPriorToStart) => {    
     //currently a hack work-around for setting exact times in trigger which needs special permissions is to calculate the number of seconds 
     //between the requested notification time and now and apply that to trigger. if the notification time is in the past it will trigger in the future by
     //the number of seconds between the two - which is a bug.
@@ -84,8 +91,6 @@ const CalEventItem = ({appointment}) => {
     })
     await db.addNotificationToCalEvent(calEventWithDetails.id, notificationID);
     setCalEventWithDetails(await db.getCalEventWithPlanDetailsByCalEventId(appointment.calEventId));
-    let notifications = await Notifications.getAllScheduledNotificationsAsync();
-    console.log("here ", notifications);
   }
 
   if(calEventWithDetails === undefined){
@@ -128,13 +133,13 @@ const CalEventItem = ({appointment}) => {
               <Button 
                 title={"30 minutes before"} 
                 onPress={() => {
-                  addNotification(30);
+                  addNotificationMinBeforeStartTime(30);
                 }}
               />
               <Button 
                 title={"At the time"} 
                 onPress={() => {
-                  addNotification(0);
+                  addNotificationMinBeforeStartTime(0);
                 }}
               />
               <Pressable

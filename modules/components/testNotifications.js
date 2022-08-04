@@ -1,35 +1,37 @@
 import * as Notifications from 'expo-notifications';
-import { Alert, Modal, Platform } from 'react-native';
-import { addNotificationToCalEvent } from '../database/database';
+import { Alert, Platform } from 'react-native';
 
-//async function which gets the current state of overall notification permission on IOS and Android.
+
+const fetchPermissionSettings = async () => {
+  const settings = await Notifications.getPermissionsAsync();
+  console.log(`Notification permission settings are: ${JSON.stringify(settings, null, 1)}`)
+  return settings;
+}
+
+// function which takes a NotificationPermissionsStatus object and 
 // returns a string:
 // 'allowed' - if notification permissions have been granted
+// 'provisional' - if notifications are allowed to be delivered quietly only (iOS)
 // 'denied' - if notification permissions have been explicitly denied or are otherwise not allowed by device settings
 // 'undetermined' - if the user has not yet made a decision
-async function allowsNotificationsAsync() {
-  const settings = await Notifications.getPermissionsAsync();
-  console.log(`settings are: ${JSON.stringify(settings, null, 1)}`)
+const checkPermissionSettings = (settings) => {
   if(Platform.OS === 'ios'){
     if(
       settings.ios?.status === Notifications.IosAuthorizationStatus.AUTHORIZED 
-      || settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL 
       || settings.ios?.status === Notifications.IosAuthorizationStatus.EPHEMERAL
     ){
-      return 'allowed';
+      return 'granted';
     } else if(settings.ios?.status === Notifications.IosAuthorizationStatus.DENIED){
       return 'denied';
+    } else if (settings.ios?.status === Notifications.IosAuthorizationStatus.PROVISIONAL){
+      return 'provisional';
     } else {
       return 'undetermined'
     }
   } else if (Platform.OS === 'android'){
-    if(
-      settings.granted 
-    ) {
-      return ('allowed')
-    } else if (
-      !settings.granted 
-    ) {
+    if(settings.granted) {
+      return ('granted')
+    } else if (!settings.granted) {
       return ('denied');
     } else {
       return ('undetermined');
@@ -39,24 +41,36 @@ async function allowsNotificationsAsync() {
   }
 }
 
-const checkOrGetNotificationPermission = async () => {
-  const permissionState = await allowsNotificationsAsync();
-  if(permissionState === 'allowed'){
-    Alert.alert("great, notifications are allowed")
-  }
-  else if(permissionState === 'denied'){
-    Alert.alert("You or your device settings have not allowed notifications from this app. If you'd like to enable notifications please allow them in your phone's settings.")
-  } else if(permissionState === 'undetermined'){
-    return await Notifications.requestPermissionsAsync({
+//function that returns true if scheduling a notification is allowed and false if not, based on current user permissions
+//if user has not determined - asks user for permission and returns true if granted and false if denied
+const isScheduleNotificationAllowed = async () => {
+  const settings = await fetchPermissionSettings();
+  let permissionState = checkPermissionSettings(settings);
+  if(permissionState === 'undetermined'){
+    //ask the user for a decision
+    let permissionRequestResponse = await Notifications.requestPermissionsAsync({
       ios: {
         allowAlert: true,
-        allowBadge: true,
+        allowBadge: false,
         allowSound: true,
         allowAnnouncements: true,
       },
     });
+    permissionState = checkPermissionSettings(permissionRequestResponse);
+  }
+  if(permissionState === 'granted'){
+    return true;
+  }
+  else if(permissionState === 'denied'){
+    return false;
   }
 }
+
+//function that checks the current permissions nad returns a state
+
+//function that requests permissions
+
+//function that 
 
 const triggerNotifications = async () => {
   await Notifications.scheduleNotificationAsync({
@@ -106,7 +120,7 @@ const cancelNotificationEvent = (notificationIdentifier) => {
     
 //   } else {
 //     //check permissions
-//     permissionState = await allowsNotificationsAsync();
+//     permissionState = await checkPermissionSettings();
 //     //if granted
 //     if(permissionState === 'allowed'){
 //       const notificationID = await Notifications.scheduleNotificationAsync({
@@ -145,10 +159,11 @@ const cancelNotificationEvent = (notificationIdentifier) => {
 //   }
 // }
       
-export { 
+export {
+  fetchPermissionSettings,
   triggerNotifications, 
-  allowsNotificationsAsync, 
-  checkOrGetNotificationPermission,
+  checkPermissionSettings, 
+  isScheduleNotificationAllowed,
   confirmRemoveNotification, 
   cancelNotificationEvent 
 }
