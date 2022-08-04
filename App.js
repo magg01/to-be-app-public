@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { AddNewScreen } from './modules/screens/addNewScreen';
@@ -37,7 +37,6 @@ setNotificationHandler({
 })
 
 export default function App() {
-
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{headerShown: false}}>

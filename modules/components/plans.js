@@ -19,6 +19,7 @@ export default PlanView = (props) => {
   }
 
   const deletePlan = (id) => {
+    //still need to delete all scheduled notifications on calEvents before deleting plan.
     deletePlanItemById(id).then((deleted) => {
       deleted ? getAllPlansByToBeId(toBeId).then((result) => setPlans(result)) : Alert.alert("Not deleted")
     })

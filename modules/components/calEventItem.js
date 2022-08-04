@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Alert, Modal, Button, Pressable } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Alert, Modal, Button, Pressable, ActivityIndicator } from 'react-native';
 import { confirmRemoveNotification, cancelNotificationEvent, isScheduleNotificationAllowed } from '../components/testNotifications';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Notifications from 'expo-notifications';
 import * as db from '../database/database';
 
-//move this to components section (with style)
 const CalEventItem = ({appointment}) => {
   const [calEventWithDetails, setCalEventWithDetails] = useState(undefined);
   const [eventDisplayStartTime, setEventDisplayStartTime] = useState(null);
@@ -57,9 +56,8 @@ const CalEventItem = ({appointment}) => {
       }
     } else {
       //check permissions, has the user granted permissions to send notifications?
-      const permissionGranted = isScheduleNotificationAllowed()
       //if permissions granted
-      if(permissionGranted){
+      if(isScheduleNotificationAllowed()){
         //show modal
         setNotificationModalVisible(true);
       //if permissions denied
@@ -97,7 +95,7 @@ const CalEventItem = ({appointment}) => {
     return (
       //need to add loading indicator here
       <View style={[styles.item, { height: appointment.height, flexDirection: 'row' }]}>
-        <Text>Loading</Text>
+        <ActivityIndicator />
       </View>
     )
   } else {
