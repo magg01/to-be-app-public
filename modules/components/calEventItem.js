@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Alert } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Alert, Modal, Button, Pressable } from 'react-native';
 import { confirmRemoveNotification, cancelNotificationEvent } from '../components/testNotifications';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Notifications from 'expo-notifications';
@@ -10,6 +10,7 @@ const CalEventItem = ({appointment}) => {
   const [calEventWithDetails, setCalEventWithDetails] = useState(undefined);
   const [eventDisplayStartTime, setEventDisplayStartTime] = useState(null);
   const [eventDisplayEndTime, setEventDisplayEndTime] = useState(null);
+  const [notificationModalVisible, setNotificationModalVisible] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -55,19 +56,36 @@ const CalEventItem = ({appointment}) => {
         //do nothing
       }
     } else {
+      //show modal
+      setNotificationModalVisible(true);
       //try to add
-      const notificationID = await Notifications.scheduleNotificationAsync({
-        content: {
-          title: `Be: ${calEventWithDetails.tobeitem_title}`,
-          body: calEventWithDetails.plan_title,
-        },
-        trigger: {
-          seconds: 3,
-        },
-      })
-      await db.addNotificationToCalEvent(calEventWithDetails.id, notificationID);
-      setCalEventWithDetails(await db.getCalEventWithPlanDetailsByCalEventId(appointment.calEventId));
+    
     }
+  }
+
+  const addNotification = async (minutesPriorToStart) => {
+    //currently a hack work-around for setting exact times in trigger which needs special permissions is to calculate the number of seconds 
+    //between the requested notification time and now and apply that to trigger. if the notification time is in the past it will trigger in the future by
+    //the number of seconds between the two - which is a bug.
+
+    //change this to use SchedulableNotificationTriggerInput with a DateTriggerInput - https://docs.expo.dev/versions/v46.0.0/sdk/notifications/#datetriggerinput
+    const MS_PER_MINUTE = 60000;
+    const notificationTime = new Date(new Date(calEventWithDetails.eventstarttime).getTime() - MS_PER_MINUTE * minutesPriorToStart).getTime();
+    const secondsTONotificationTime = Math.floor(Math.abs((new Date().getTime() - notificationTime) / 1000));
+
+    const notificationID = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `Be: ${calEventWithDetails.tobeitem_title}`,
+        body: calEventWithDetails.plan_title,
+      },
+      trigger: {
+        seconds: secondsTONotificationTime
+      },
+    })
+    await db.addNotificationToCalEvent(calEventWithDetails.id, notificationID);
+    setCalEventWithDetails(await db.getCalEventWithPlanDetailsByCalEventId(appointment.calEventId));
+    let notifications = await Notifications.getAllScheduledNotificationsAsync();
+    console.log("here ", notifications);
   }
 
   if(calEventWithDetails === undefined){
@@ -92,7 +110,42 @@ const CalEventItem = ({appointment}) => {
         </TouchableOpacity>
         <TouchableOpacity style={{alignSelf: 'center', }} onPress={() => onNotificationIconPressed()}>
           <Ionicons name="notifications-outline" size={24} color={calEventWithDetails.eventnotification != null ? "black" : "lightgrey" } />
-        </TouchableOpacity>        
+        </TouchableOpacity>
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={notificationModalVisible}
+          onRequestClose={() => {
+            setNotificationModalVisible(false);
+          }}
+          onDismiss={() => {
+            setNotificationModalVisible(false);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text>Add notification for {calEventWithDetails.plan_title}</Text>
+              <Button 
+                title={"30 minutes before"} 
+                onPress={() => {
+                  addNotification(30);
+                }}
+              />
+              <Button 
+                title={"At the time"} 
+                onPress={() => {
+                  addNotification(0);
+                }}
+              />
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setNotificationModalVisible(!notificationModalVisible)}
+              >
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>    
       </View>
     );
   }
@@ -106,6 +159,35 @@ const styles = StyleSheet.create({
     padding: 10,
     marginRight: 10,
     marginTop: 17,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
   },
 });
 

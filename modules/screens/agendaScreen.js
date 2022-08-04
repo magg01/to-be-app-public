@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, TouchableOpacity, Text, Alert, View, Button, Image, Modal } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Agenda, calendarTheme } from 'react-native-calendars';
@@ -9,8 +9,6 @@ import * as db from '../database/database';
 
 const AgendaScreen = () => {
   const [loadedAppointments, setLoadedAppointments] = useState(null)
-  const [modalVisible, setModalVisible] = useState(false);
-
           
   const renderEmptyItem = () => {
     return (
