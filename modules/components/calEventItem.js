@@ -57,7 +57,7 @@ const CalEventItem = ({appointment}) => {
     } else {
       //check permissions, has the user granted permissions to send notifications?
       //if permissions granted
-      if(isScheduleNotificationAllowed()){
+      if(await isScheduleNotificationAllowed()){
         //show modal
         setNotificationModalVisible(true);
       //if permissions denied
