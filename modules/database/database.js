@@ -48,9 +48,6 @@ const addToBeItem = (title, imageBackgroundUri) => {
   db.transaction(
     (tx) => {
       tx.executeSql("insert into tobeitems (done, title, imageBackgroundUri) values (0, ?, ?)", [title, imageBackgroundUri]);
-      tx.executeSql("select * from tobeitems", [], (_, { rows: {_array} }) =>{
-        console.log(JSON.stringify(_array,null, 1));
-      })
     },
     (e) => console.log(`addToBeItem encountered an error -> ${e}`),
     () => console.log(`addToBeItem: item with title:${title} successfully added to tobeitems table`)
