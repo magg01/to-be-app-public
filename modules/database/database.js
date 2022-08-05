@@ -448,8 +448,8 @@ const getAllPlansByToBeId = (id) => {
           }
         );
       },
+      //transaction failure callback
       (e) => {
-        //transaction failure callback
         console.log(`getAllPlansByToBeId encountered an error -> ${e}`)
         reject(false);
       },
