@@ -449,9 +449,11 @@ const getAllPlansByToBeId = (id) => {
         );
       },
       (e) => {
+        //transaction failure callback
         console.log(`getAllPlansByToBeId encountered an error -> ${e}`)
         reject(false);
       },
+      //transaction success callback
       () => {
         console.log(`getAllPlansByToBeId: plans for tobeitem id:${id} successfully retreived from plans table`);
         resolve(result);
