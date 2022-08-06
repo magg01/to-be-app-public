@@ -5,6 +5,7 @@ import { StyleSheet, Text, View, ActivityIndicator, FlatList, ImageBackground, D
 import { createApi } from "unsplash-js";
 import UnsplashKeys from '../../local/unsplashkeys';
 import { downloadRemoteImageToLocalStorage } from '../FileSystem/fileSystem';
+import CONSTANT_STRINGS from '../strings/constantStrings';
 
 setupURLPolyfill();
 const {width, height} = Dimensions.get('window');
@@ -120,7 +121,7 @@ export default function UnsplashImageSearch(props) {
           style={{width: props.width, backgroundColor: 'lightgray'}} 
           onSubmitEditing={(event) => setSearchQuery(event.nativeEvent.text)} 
           returnKeyType='search' 
-          placeholder={"Search Unsplash for images"}
+          placeholder={CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER}
         />
         <FlatList 
           ref={flatListRef} 
