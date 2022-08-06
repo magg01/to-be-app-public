@@ -18,7 +18,7 @@ const AgendaScreen = () => {
     );
   };
 
-  const testLoadItemsForMonth = (data) => {
+  const loadItemsForMonth = (data) => {
     //need to use data object passed to method here to judiciously get relevant calevents from the database based on their date. (not as currently getting all of them)
     let appointments = {}
     db.getAllCalEvents().then((result) => {
@@ -40,8 +40,8 @@ const AgendaScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Button title={'all events'} onPress={() => db.getAllCalEvents()} />
-      <Button title={'test join db'} onPress={() => db.getAllCalEventsWithPlanDetails()} />
+      {/* <Button title={'all events'} onPress={() => db.getAllCalEvents()} /> */}
+      {/* <Button title={'test join db'} onPress={() => db.getAllCalEventsWithPlanDetails()} /> */}
       <Agenda
         items={loadedAppointments}
         renderItem={(item) => {
@@ -53,7 +53,7 @@ const AgendaScreen = () => {
         renderEmptyData={renderEmptyItem}
         // renderEmptyDate={renderEmptyDate}
         //theme={calendarTheme}
-        loadItemsForMonth={testLoadItemsForMonth}
+        loadItemsForMonth={loadItemsForMonth}
       />
       <StatusBar style={"auto"}/>
     </SafeAreaView>
