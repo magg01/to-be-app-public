@@ -12,15 +12,19 @@ const {width, height} = Dimensions.get('window');
 
 const loadingImage = require('../../assets/icon.png');
 
+const api = createApi({
+  accessKey: UnsplashKeys.accessKey,
+});
+
+const apiGetPhotos = (args) => {
+  return api.search.getPhotos(args);
+}
+
 export default function UnsplashImageSearch(props) {
   const [searchQuery, setSearchQuery] = useState(props.searchQuery);
   const [data, setPhotosResponse] = useState(null);
   const [downloadStarted, setDownloadStarted] = useState(false);
   const flatListRef = useRef(null);
-
-  const api = createApi({
-    accessKey: UnsplashKeys.accessKey,
-  });
 
   useEffect(() => {
     if(flatListRef.current != null && data.response.results.length > 0) {
@@ -33,6 +37,7 @@ export default function UnsplashImageSearch(props) {
     api.search
       .getPhotos({ query: searchQuery.toLowerCase(), orientation: "portrait", page: 1, perPage: 30})
       .then(result => {
+        console.log(JSON.stringify(result));
         setPhotosResponse(result);
       })
       .catch((e) => {
@@ -148,3 +153,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export {apiGetPhotos}
