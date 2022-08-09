@@ -30,12 +30,12 @@ const UnsplashImageSearch = (props) => {
     console.log(`searchQuery is ${searchQuery.toLowerCase()}`);
     apiGetPhotos({ query: searchQuery.toLowerCase(), orientation: "portrait", page: 1, perPage: 30})
       .then(result => {
-        console.log(JSON.stringify(result));
         setPhotosResponse(result);
       })
       .catch((e) => {
         console.log(`DisplayWindow encountered an error -> ${e}`);
       });
+    }
   }, [searchQuery]);
 
   const PhotoItemForFlatList = ({ photo }) => {
@@ -91,7 +91,7 @@ const UnsplashImageSearch = (props) => {
   if (data === null) {
     return (
       <View style={{height: props.height, width: props.width}} >
-        <ActivityIndicator />
+        <ActivityIndicator accessibilityRole='progressbar' />
         <StatusBar style="auto" />
       </View>
     );
