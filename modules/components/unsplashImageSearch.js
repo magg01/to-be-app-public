@@ -1,26 +1,15 @@
-import { setupURLPolyfill } from 'react-native-url-polyfill';
 import React, { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ActivityIndicator, FlatList, ImageBackground, Dimensions, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { createApi } from "unsplash-js";
-import UnsplashKeys from '../../local/unsplashkeys';
 import { downloadRemoteImageToLocalStorage } from '../FileSystem/fileSystem';
 import CONSTANT_STRINGS from '../strings/constantStrings';
+import { apiGetPhotos, notifyUnsplashOfImageDownload } from '../utils/unsplashApi';
 
-setupURLPolyfill();
 const {width, height} = Dimensions.get('window');
 
 const loadingImage = require('../../assets/icon.png');
 
-const api = createApi({
-  accessKey: UnsplashKeys.accessKey,
-});
-
-const apiGetPhotos = (args) => {
-  return api.search.getPhotos(args);
-}
-
-export default function UnsplashImageSearch(props) {
+const UnsplashImageSearch = (props) => {
   const [searchQuery, setSearchQuery] = useState(props.searchQuery);
   const [data, setPhotosResponse] = useState(null);
   const [downloadStarted, setDownloadStarted] = useState(false);
@@ -34,8 +23,7 @@ export default function UnsplashImageSearch(props) {
 
   useEffect(() => {
     console.log(`searchQuery is ${searchQuery.toLowerCase()}`);
-    api.search
-      .getPhotos({ query: searchQuery.toLowerCase(), orientation: "portrait", page: 1, perPage: 30})
+    apiGetPhotos({ query: searchQuery.toLowerCase(), orientation: "portrait", page: 1, perPage: 30})
       .then(result => {
         console.log(JSON.stringify(result));
         setPhotosResponse(result);
@@ -95,15 +83,6 @@ export default function UnsplashImageSearch(props) {
     return downloadRemoteImageToLocalStorage(photo.urls.regular, photo.id);
   }
 
-  const notifyUnsplashOfImageDownload = (photo) => {
-    try{
-      api.photos.trackDownload({ downloadLocation: photo.links.download_location });
-    }
-    catch (error) {
-      console.error(`notifyUnsplashOfImageDownload: encountered an error -> ${error}`)
-    }
-  }
-
   if (data === null) {
     return (
       <View style={{height: props.height, width: props.width}} >
@@ -154,4 +133,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export {apiGetPhotos}
+export default UnsplashImageSearch;
