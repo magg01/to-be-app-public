@@ -10,7 +10,7 @@ const {width, height} = Dimensions.get('window');
 const loadingImage = require('../../assets/icon.png');
 
 const UnsplashImageSearch = (props) => {
-  const [searchQuery, setSearchQuery] = useState(props.searchQuery);
+  const [searchQuery, setSearchQuery] = useState(undefined);
   const [data, setPhotosResponse] = useState(null);
   const [downloadStarted, setDownloadStarted] = useState(false);
   const flatListRef = useRef(null);
@@ -22,6 +22,11 @@ const UnsplashImageSearch = (props) => {
   }, [data])
 
   useEffect(() => {
+    setSearchQuery(props.searchQuery)
+  }, [props.searchQuery])
+
+  useEffect(() => {
+    if(searchQuery != undefined){
     console.log(`searchQuery is ${searchQuery.toLowerCase()}`);
     apiGetPhotos({ query: searchQuery.toLowerCase(), orientation: "portrait", page: 1, perPage: 30})
       .then(result => {

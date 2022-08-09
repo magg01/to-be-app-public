@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { StyleSheet, View, ImageBackground, Text, TextInput, Button, Alert, Dimensions, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -10,10 +10,11 @@ const {height, width} = Dimensions.get('window');
 
 const AddNewScreen = ({navigation}) => {
   const [titleText, updateTitleText] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [showSaveButton, setShowSaveButton] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [imageBackgroundUri, setImageBackgroundUri] = useState(backgroundImage);
-
+  
   const updateImageBackground = (uri) => {
     setShowImagePicker(false);
     setImageBackgroundUri({uri: uri});
@@ -31,6 +32,7 @@ const AddNewScreen = ({navigation}) => {
           <TextInput
             style={styles.input} 
             onChangeText={updateTitleText}
+            onSubmitEditing={(e) => setSearchQuery(e.nativeEvent.text)}
             value={titleText} 
             textAlign={'center'}
             autoFocus={true}
@@ -38,7 +40,7 @@ const AddNewScreen = ({navigation}) => {
             selectionColor={'white'}
           />
           <Button title="show/hide" onPress={() => setShowImagePicker(!showImagePicker)} />
-          {showImagePicker ? <UnsplashImageSearch width={width*.75} height={height*.75} searchQuery={titleText} onImageDownload={updateImageBackground}></UnsplashImageSearch> : null}
+          {showImagePicker ? <UnsplashImageSearch width={width*.75} height={height*.75} searchQuery={searchQuery} onImageDownload={updateImageBackground}></UnsplashImageSearch> : null}
           <View style={{flex: 1}} />
           {showSaveButton ? <TouchableOpacity style={{backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4}} onPress={onNewSave} ><Text>Save</Text></TouchableOpacity> : null}
           <StatusBar style="auto" />
