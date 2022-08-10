@@ -11,6 +11,7 @@ const loadingImage = require('../../assets/icon.png');
 
 const UnsplashImageSearch = (props) => {
   const [searchQuery, setSearchQuery] = useState(undefined);
+  const [searchInput, setSearchInput] = useState("");
   const [data, setPhotosResponse] = useState(null);
   const [downloadStarted, setDownloadStarted] = useState(false);
   const flatListRef = useRef(null);
@@ -109,7 +110,9 @@ const UnsplashImageSearch = (props) => {
       <View style={{height: props.height, width: props.width}} >
         <TextInput 
           style={{width: props.width, backgroundColor: 'lightgray'}} 
-          onSubmitEditing={(event) => setSearchQuery(event.nativeEvent.text)} 
+          onSubmitEditing={() => setSearchQuery(searchInput)}
+          onChangeText={setSearchInput}
+          value={searchInput}
           returnKeyType='search' 
           placeholder={CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER}
         />
