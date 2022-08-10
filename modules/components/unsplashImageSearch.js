@@ -27,9 +27,10 @@ const UnsplashImageSearch = (props) => {
 
   useEffect(() => {
     if(searchQuery != undefined){
-    console.log(`searchQuery is ${searchQuery.toLowerCase()}`);
+    // console.log(`searchQuery is ${searchQuery.toLowerCase()}`);
     apiGetPhotos({ query: searchQuery.toLowerCase(), orientation: "portrait", page: 1, perPage: 30})
       .then(result => {
+        // console.log(JSON.stringify(result, null, 1))
         setPhotosResponse(result);
       })
       .catch((e) => {
@@ -99,7 +100,7 @@ const UnsplashImageSearch = (props) => {
     return (
       <View>
         <Text>{data.errors[0]}</Text>
-        <Text>We're sorry, there was an error getting images from Unsplash</Text>
+        <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_ERROR_RESPONSE_MESSAGE}</Text>
         <StatusBar style="auto" />
       </View>
     );
