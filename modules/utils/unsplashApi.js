@@ -9,6 +9,10 @@ const api = createApi({
 });
 
 const apiGetPhotos = (args) => {
+  // From the Unsplash API docs about the following function
+    // When making a request using this SDK, there are 2 possible outcomes to a request.
+    // Error: we return a result.errors object containing an array of strings (each one representing one error) and result.source describing the origin of the error (e.g. api, decoding). Typically, you will only have on item in this array.
+    // Success: we return a result.response object containing the data.
   return api.search.getPhotos(args);
 }
 
