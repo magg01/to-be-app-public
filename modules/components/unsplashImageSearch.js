@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ActivityIndicator, FlatList, ImageBackground, Dimensions, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { downloadRemoteImageToLocalStorage } from '../FileSystem/fileSystem';
 import CONSTANT_STRINGS from '../strings/constantStrings';
-import { apiGetPhotos, notifyUnsplashOfImageDownload } from '../utils/unsplashApi';
+import { apiMethods } from '../utils/unsplashApi';
 
 const {width, height} = Dimensions.get('window');
 
@@ -28,7 +28,7 @@ const UnsplashImageSearch = (props) => {
   useEffect(() => {
     if(searchQuery != undefined){
     // console.log(`searchQuery is ${searchQuery.toLowerCase()}`);
-    apiGetPhotos({ query: searchQuery.toLowerCase(), orientation: "portrait", page: 1, perPage: 30})
+    apiMethods.apiGetPhotos({ query: searchQuery.toLowerCase(), orientation: "portrait", page: 1, perPage: 30})
       .then(result => {
         // console.log(JSON.stringify(result, null, 1))
         setPhotosResponse(result);
@@ -85,7 +85,7 @@ const UnsplashImageSearch = (props) => {
   }
 
   const downloadImageFromUnsplash = (photo) => {
-    notifyUnsplashOfImageDownload(photo);
+    apiMethods.notifyUnsplashOfImageDownload(photo);
     return downloadRemoteImageToLocalStorage(photo.urls.regular, photo.id);
   }
 
