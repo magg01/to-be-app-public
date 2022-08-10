@@ -1,5 +1,5 @@
 // import React from 'react';
-import { render, screen, cleanup, waitFor, act} from '@testing-library/react-native';
+import { render, screen, cleanup, waitFor, act, fireEvent} from '@testing-library/react-native';
 import UnsplashImageSearch from './unsplashImageSearch';
 import { mockApiGetPhotosSuccessResponse, mockApiGetPhotosErrorResponse } from './__mocks__/unsplashImageSearch';
 import { apiMethods } from '../utils/unsplashApi';
@@ -46,6 +46,16 @@ describe('search input text', () => {
   it('should render', async () =>{
     render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
     await waitFor(() => expect(screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER)).toBeTruthy());
+  })
+
+  it('should hit the api with a new query upon submission of text', async () => {
+    render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
+    const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER));
+    const newSearchQuery = "mountains";
+    await act(async () => fireEvent.changeText(textInput, newSearchQuery));
+    expect(textInput.props.value).toBe(newSearchQuery);
+    await act(async() => fireEvent(textInput, 'submitEditing'));
+    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: newSearchQuery}));
   })
 })
 
