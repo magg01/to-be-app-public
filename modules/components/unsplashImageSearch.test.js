@@ -1,5 +1,5 @@
 // import React from 'react';
-import { render, screen, cleanup, waitFor, act, waitForElementToBeRemoved } from '@testing-library/react-native';
+import { render, screen, cleanup, waitFor, act} from '@testing-library/react-native';
 import UnsplashImageSearch from './unsplashImageSearch';
 import { mockApiGetPhotosSuccessResponse, mockApiGetPhotosErrorResponse } from './__mocks__/unsplashImageSearch';
 import { apiMethods } from '../utils/unsplashApi';
@@ -26,8 +26,20 @@ describe('UnsplashImageSearch Component effects', () => {
     expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: searchQueryProp}));
   });
 
-  it('should make a new call to the Unsplash API if the searchQuery prop is modified in the parent screen component', () => {
+  it.only('should make a new call to the Unsplash API if the searchQuery prop is modified', async () => {
     //TODO: implement test
+    spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosSuccessResponse);
+    let searchQueryProp = "mountains";
+    let newSearchQueryProp = "apples";
+    await waitFor(() => render(<UnsplashImageSearch searchQuery={searchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
+    //check the mocked method was called with the initial searchQuery prop
+    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: searchQueryProp}));
+    //clear the mock to reset call argument values
+    spiedApiGetPhotos.mockClear();
+    // //rerender the component with the new searchQuery prop
+    await act(async() => screen.rerender(<UnsplashImageSearch searchQuery={newSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));   
+    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: newSearchQueryProp}));
+    expect(spiedApiGetPhotos).not.toHaveBeenCalledWith(expect.objectContaining({query: searchQueryProp}));
   })
 
   it('should make a new call to the Unsplash API if the user submits new text to the component\'s text input', () => {
