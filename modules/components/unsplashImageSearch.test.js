@@ -5,29 +5,27 @@ import { mockApiGetPhotosSuccessResponse, mockApiGetPhotosErrorResponse } from '
 import { apiMethods } from '../utils/unsplashApi';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 
-const spiedApiGetPhotos = jest.spyOn(apiMethods, 'apiGetPhotos');
+//spy on the apiGetPhotos function, replace it with a mock with default implementation
+const spiedApiGetPhotos = jest.spyOn(apiMethods, 'apiGetPhotos').mockImplementation(() => Promise.resolve(mockApiGetPhotosSuccessResponse));
 
 // Unmounts React trees that were mounted with render and clears screen variable that holds latest render output
 afterEach(cleanup);
-//clear all info from the mock arrays of the mocked apiGetPhotos function and resets implementation to default (a function with no return value)
-beforeEach(() => spiedApiGetPhotos.mockReset());
+//clear all info from the mock arrays of the mocked apiGetPhotos function
+beforeEach(() => spiedApiGetPhotos.mockClear());
 
 describe('UnsplashImageSearch Component effects', () => {
   it('should make a call to the unsplash API on mount', async () => { 
-    spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosSuccessResponse);
     await waitFor(() => render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
     expect(spiedApiGetPhotos).toHaveBeenCalled();
   });
 
   it('should make a call to the unsplash API on mount with the searchQuery provided in the props', async () => { 
-    spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosSuccessResponse);
     let searchQueryProp = "mountains";
     await waitFor(() => render(<UnsplashImageSearch searchQuery={searchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
     expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: searchQueryProp}));
   });
 
   it('should make a new call to the Unsplash API if the searchQuery prop is modified', async () => {
-    spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosSuccessResponse);
     let searchQueryProp = "mountains";
     let newSearchQueryProp = "apples";
     render(<UnsplashImageSearch searchQuery={searchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
@@ -46,7 +44,6 @@ describe('UnsplashImageSearch Component effects', () => {
 
 describe('search input text', () => {
   it('should render', async () =>{
-    spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosSuccessResponse);
     render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
     await waitFor(() => expect(screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER)).toBeTruthy());
   })
@@ -54,13 +51,11 @@ describe('search input text', () => {
 
 describe('activity indicator', () => {
   it('should be shown initially', async () => {
-    spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosSuccessResponse);
     render(<UnsplashImageSearch searchQuery={""}></UnsplashImageSearch>);
     await waitFor(() => expect(screen.getByRole('progressbar')).toBeTruthy());
   })
 
   it('should be hidden once the api call resolves', async () => {
-    spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosSuccessResponse);
     //render the component (render is wrapped in an act() call so no need to use here)
     render(<UnsplashImageSearch searchQuery={""}></UnsplashImageSearch>);
     //get the result object value of the first call to the mocked apiGetPhotos function which should be a promise
@@ -77,7 +72,8 @@ describe('activity indicator', () => {
 
 describe('on error response from api', () => {
   it('should display the first error message from the errors object in the api response', async () => {
-    spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosErrorResponse);
+    //update the spiedApiGetPhotos mock to resolve to the unsplash error response the next time it is called
+    spiedApiGetPhotos.mockResolvedValueOnce(mockApiGetPhotosErrorResponse);
     //render the component (render is wrapped in an act() call so no need to use here)
     render(<UnsplashImageSearch searchQuery={""}></UnsplashImageSearch>);
     //get the result object value of the first call to the mocked apiGetPhotos function which should be a promise
@@ -91,7 +87,8 @@ describe('on error response from api', () => {
   })
 
   it('should display the UNSPLASH_IMAGE_SEARCH_ON_ERROR_RESPONSE_MESSAGE error message', async () => {
-    spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosErrorResponse);
+    //update the spiedApiGetPhotos mock to resolve to the unsplash error response the next time it is called
+    spiedApiGetPhotos.mockResolvedValueOnce(mockApiGetPhotosErrorResponse);
     //render the component (render is wrapped in an act() call so no need to use here)
     render(<UnsplashImageSearch searchQuery={""}></UnsplashImageSearch>);
     //get the result object value of the first call to the mocked apiGetPhotos function which should be a promise
