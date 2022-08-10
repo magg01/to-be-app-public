@@ -26,33 +26,37 @@ describe('UnsplashImageSearch Component effects', () => {
     expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: searchQueryProp}));
   });
 
-  it.only('should make a new call to the Unsplash API if the searchQuery prop is modified', async () => {
-    //TODO: implement test
+  it('should make a new call to the Unsplash API if the searchQuery prop is modified', async () => {
     spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosSuccessResponse);
     let searchQueryProp = "mountains";
     let newSearchQueryProp = "apples";
-    await waitFor(() => render(<UnsplashImageSearch searchQuery={searchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
+    render(<UnsplashImageSearch searchQuery={searchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
     //check the mocked method was called with the initial searchQuery prop
-    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: searchQueryProp}));
+    await waitFor(() => expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: searchQueryProp})));
     //clear the mock to reset call argument values
     spiedApiGetPhotos.mockClear();
-    // //rerender the component with the new searchQuery prop
-    await act(async() => screen.rerender(<UnsplashImageSearch searchQuery={newSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));   
+    //rerender the component with the new searchQuery prop
+    await act(async() => screen.rerender(<UnsplashImageSearch searchQuery={newSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
+    //check that the mocked method was called with the modified searchQuery prop...
     expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: newSearchQueryProp}));
+    //...and not with the original prop value
     expect(spiedApiGetPhotos).not.toHaveBeenCalledWith(expect.objectContaining({query: searchQueryProp}));
   })
+})
 
-  it('should make a new call to the Unsplash API if the user submits new text to the component\'s text input', () => {
-    //TODO: Implement test
+describe('search input text', () => {
+  it('should render', async () =>{
+    spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosSuccessResponse);
+    render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
+    await waitFor(() => expect(screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER)).toBeTruthy());
   })
-
 })
 
 describe('activity indicator', () => {
   it('should be shown initially', async () => {
     spiedApiGetPhotos.mockResolvedValue(mockApiGetPhotosSuccessResponse);
     render(<UnsplashImageSearch searchQuery={""}></UnsplashImageSearch>);
-    expect(await waitFor(() => screen.getByRole('progressbar'))).toBeTruthy();
+    await waitFor(() => expect(screen.getByRole('progressbar')).toBeTruthy());
   })
 
   it('should be hidden once the api call resolves', async () => {
@@ -69,10 +73,6 @@ describe('activity indicator', () => {
     //expect that the loading indicator has been removed from the component tree
     expect(screen.queryByRole('progressbar')).toBeNull();
   })
-})
-
-describe('UnsplashImageSearch Component effects', () => {
-  
 })
 
 describe('on error response from api', () => {
