@@ -1,4 +1,60 @@
-const mockApiGetPhotosResponse = {    
+const mockApiGetPhotosErrorResponse = {
+    "type": "error",
+    "status": 401,
+    "errors": [
+        "OAuth error: The access token is invalid"
+    ],
+    "source": "api",
+    "originalResponse": {
+        "type": "default",
+        "status": 401,
+        "ok": false,
+        "statusText": "",
+        "headers": {
+            "map": {
+                "accept-ranges": "bytes",
+                "access-control-allow-headers": "*",
+                "access-control-allow-origin": "*",
+                "access-control-expose-headers": "Link,X-Total,X-Per-Page,X-RateLimit-Limit,X-RateLimit-Remaining",
+                "access-control-request-method": "*",
+                "cache-control": "no-cache",
+                "content-language": "en",
+                "content-type": "application/json",
+                "date": "Wed, 10 Aug 2022 14:03:56 GMT",
+                "server": "Cowboy",
+                "strict-transport-security": "max-age=31536000; includeSubDomains",
+                "vary": "Accept-Encoding, Origin,Authorization,Accept-Language,client-geo-region,Accept",      
+                "via": "1.1 vegur, 1.1 varnish, 1.1 varnish",
+                "x-cache": "MISS, MISS",
+                "x-cache-hits": "0, 0",
+                "x-request-id": "a353cbfd-00d8-47d7-8607-40a65ca111cf",
+                "x-runtime": "0.012997",
+                "x-served-by": "cache-iad-kcgs7200101-IAD, cache-hhn4050-HHN",
+                "x-timer": "S1660140236.432421,VS0,VE113"
+            }
+        },
+        "url": "https://api.unsplash.com/search/photos?query=hi&per_page=30&page=1&orientation=portrait",
+        "bodyUsed": true,
+        "_bodyInit": {
+                "_data": {
+                "size": 55,
+                "offset": 0,
+                "blobId": "2fcd99b8-2c42-4eda-86b8-e9ce2e9dda52",
+                "__collector": {}
+            }
+        },
+        "_bodyBlob": {
+            "_data": {
+                "size": 55,
+                "offset": 0,
+                "blobId": "2fcd99b8-2c42-4eda-86b8-e9ce2e9dda52",
+                "__collector": {}
+            }
+        }
+    }
+}
+
+const mockApiGetPhotosSuccessResponse = {    
     "type": "success",
     "status": 200,
     "response": {
@@ -5389,4 +5445,4 @@ const mockApiGetPhotosResponse = {
     }
 }
 
-export {mockApiGetPhotosResponse}
+export {mockApiGetPhotosSuccessResponse, mockApiGetPhotosErrorResponse}
