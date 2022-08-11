@@ -28,15 +28,20 @@ const UnsplashImageSearch = (props) => {
 
   useEffect(() => {
     if(searchQuery != undefined){
-    // console.log(`searchQuery is ${searchQuery.toLowerCase()}`);
-    apiMethods.apiGetPhotos({ query: searchQuery.toLowerCase(), orientation: "portrait", page: 1, perPage: 30})
-      .then(result => {
-        // console.log(JSON.stringify(result, null, 1))
-        setPhotosResponse(result);
-      })
-      .catch((e) => {
-        console.log(`DisplayWindow encountered an error -> ${e}`);
-      });
+      setPhotosResponse(null)
+      if(searchQuery === ""){
+        //set data to no results without calling the api.
+        setPhotosResponse({response: {results: []}});
+      } else {
+        apiMethods.apiGetPhotos({ query: searchQuery.toLowerCase().trim(), orientation: "portrait", page: 1, perPage: 30})
+        .then(result => {
+          // console.log(JSON.stringify(result, null, 1))
+          setPhotosResponse(result);
+        })
+        .catch((e) => {
+          console.log(`DisplayWindow encountered an error -> ${e}`);
+        });
+      }
     }
   }, [searchQuery]);
 
@@ -90,47 +95,47 @@ const UnsplashImageSearch = (props) => {
     return downloadRemoteImageToLocalStorage(photo.urls.regular, photo.id);
   }
 
-  if (data === null) {
-    return (
-      <View style={{height: props.height, width: props.width}} >
-        <ActivityIndicator accessibilityRole='progressbar' />
-        <StatusBar style="auto" />
-      </View>
-    );
-  } else if (data.errors) {
-    return (
-      <View>
-        <Text>{data.errors[0]}</Text>
-        <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_ERROR_RESPONSE_MESSAGE}</Text>
-        <StatusBar style="auto" />
-      </View>
-    );
-  } else {
-    return (
-      <View style={{height: props.height, width: props.width}} >
-        <TextInput 
-          style={{width: props.width, backgroundColor: 'lightgray'}} 
-          onSubmitEditing={() => setSearchQuery(searchInput)}
-          onChangeText={setSearchInput}
-          value={searchInput}
-          returnKeyType='search' 
-          placeholder={CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER}
-        />
-        <FlatList 
-          ref={flatListRef} 
-          renderItem={({item}) => <PhotoItemForFlatList photo={item} />}
-          data={data.response.results} 
-          horizontal={true} 
-          keyExtractor={item => item.id} 
-          pagingEnabled={true}
-          decelerationRate={'fast'}
-          persistentScrollbar={true}
-          initialNumToRender={5}
-        />
-        <StatusBar style="auto" />
-      </View>
-    );
-  }
+  return (
+    <View style={{height: props.height, width: props.width}} >
+      <TextInput 
+        style={{width: props.width, backgroundColor: 'lightgray'}} 
+        onSubmitEditing={() => setSearchQuery(searchInput)}
+        onChangeText={setSearchInput}
+        value={searchInput}
+        returnKeyType='search' 
+        placeholder={CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER}
+      />
+      {(() => {
+        if(data === null){
+          return <ActivityIndicator accessibilityRole='progressbar' />
+        } else if (data.errors){
+          return (
+            <View>
+              <Text>{data.errors[0]}</Text>
+              <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_ERROR_RESPONSE_MESSAGE}</Text>
+            </View>
+          )
+        } else if (data.response.results == []){
+          return <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_NO_RESULTS_MESSAGE}</Text>
+        } else {
+          return (
+            <FlatList 
+              ref={flatListRef} 
+              renderItem={({item}) => <PhotoItemForFlatList photo={item} />}
+              data={data.response.results} 
+              horizontal={true} 
+              keyExtractor={item => item.id} 
+              pagingEnabled={true}
+              decelerationRate={'fast'}
+              persistentScrollbar={true}
+              initialNumToRender={5}
+            />
+          )
+        }
+      })()}
+      <StatusBar style="auto" />
+    </View>
+  );
 };
 
 
