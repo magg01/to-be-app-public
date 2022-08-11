@@ -23,7 +23,8 @@ const UnsplashImageSearch = (props) => {
   }, [data])
 
   useEffect(() => {
-    setSearchQuery(props.searchQuery)
+    setSearchInput("");
+    setSearchQuery(props.searchQuery);
   }, [props.searchQuery])
 
   useEffect(() => {
