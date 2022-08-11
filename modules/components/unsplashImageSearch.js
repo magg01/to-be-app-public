@@ -17,6 +17,7 @@ const UnsplashImageSearch = (props) => {
   const flatListRef = useRef(null);
 
   useEffect(() => {
+    //when the data object is modified and the response has images present scroll the flatlist to its beginning
     if(flatListRef.current != null && data.response.results.length > 0) {
       flatListRef.current.scrollToIndex({animated: false, index: 0})
     }
@@ -130,6 +131,7 @@ const UnsplashImageSearch = (props) => {
               decelerationRate={'fast'}
               persistentScrollbar={true}
               initialNumToRender={5}
+              testID={'photoItemFlatlist'}
             />
           )
         }
