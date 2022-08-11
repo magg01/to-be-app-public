@@ -103,7 +103,7 @@ const UnsplashImageSearch = (props) => {
         onChangeText={setSearchInput}
         value={searchInput}
         returnKeyType='search' 
-        placeholder={CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER}
+        placeholder={CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER}
       />
       {(() => {
         if(data === null){
@@ -112,11 +112,11 @@ const UnsplashImageSearch = (props) => {
           return (
             <View>
               <Text>{data.errors[0]}</Text>
-              <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_ERROR_RESPONSE_MESSAGE}</Text>
+              <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_ERROR_RESPONSE_MESSAGE}</Text>
             </View>
           )
         } else if (data.response.results.length === 0){
-          return <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_NO_RESULTS_MESSAGE}</Text>
+          return <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_NO_RESULTS_MESSAGE}</Text>
         } else {
           return (
             <FlatList 

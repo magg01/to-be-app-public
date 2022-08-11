@@ -55,12 +55,12 @@ describe('UnsplashImageSearch Component effects', () => {
 describe('search input text', () => {
   it('should render', async () =>{
     render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
-    await waitFor(() => expect(screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER)).toBeTruthy());
+    await waitFor(() => expect(screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER)).toBeTruthy());
   })
 
   it('should hit the api with a new query upon submission of non-blank text', async () => {
     render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
-    const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER));
+    const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER));
     const newSearchQuery = "mountains";
     await act(async () => fireEvent.changeText(textInput, newSearchQuery));
     expect(textInput.props.value).toBe(newSearchQuery);
@@ -70,7 +70,7 @@ describe('search input text', () => {
 
   it('should not hit the api with a new query upon submission of blank text', async () => {
     render(<UnsplashImageSearch searchQuery={"Query from props"} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
-    const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER));
+    const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER));
     const newSearchQuery = "";
     await act(async () => fireEvent.changeText(textInput, newSearchQuery));
     expect(textInput.props.value).toBe(newSearchQuery);
@@ -80,7 +80,7 @@ describe('search input text', () => {
 
   it('should send the lowercase transform of the input to the api', async () => {
     render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
-    const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER));
+    const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER));
     const newSearchQuery = "MOuNTaINS aND OtherS";
     await act(async () => fireEvent.changeText(textInput, newSearchQuery));
     expect(textInput.props.value).toBe(newSearchQuery);
@@ -90,7 +90,7 @@ describe('search input text', () => {
 
   it('should trim leading and trailing whitespace characters from the input before querying the api', async () => {
     render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
-    const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_INPUT_PLACEHOLDER));
+    const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER));
     const newSearchQuery = "\n  \r mountains  \n\r";
     await act(async () => fireEvent.changeText(textInput, newSearchQuery));
     expect(textInput.props.value).toBe(newSearchQuery);
@@ -133,7 +133,7 @@ describe('on no results response from api', () => {
       //wait for the result of the api call to be resolved and check the resolved value is the mocked response object
       await expect(resultOfApiCall).resolves.toEqual(mockApiGetPhotosEmptyResponse);
     });
-    expect(screen.getByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_NO_RESULTS_MESSAGE)).toBeDefined();
+    expect(screen.getByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_NO_RESULTS_MESSAGE)).toBeDefined();
   })
 })
 
@@ -165,6 +165,6 @@ describe('on error response from api', () => {
       //wait for the result of the api call to be resolved and check the resolved value is the mocked response object
       await expect(resultOfApiCall).resolves.toEqual(mockApiGetPhotosErrorResponse);
     });
-    expect(screen.getByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_ERROR_RESPONSE_MESSAGE)).toBeDefined();
+    expect(screen.getByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_ERROR_RESPONSE_MESSAGE)).toBeDefined();
   })
 })
