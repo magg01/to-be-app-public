@@ -48,7 +48,16 @@ describe('UnsplashImageSearch Component effects', () => {
   })
 
   it('should set the textInput value to empty string upon searchQuery prop change', async () => {
-    //TODO: implement
+    let searchQueryProp = "mountains";
+    let textInputValue = "valleys";
+    let newSearchQueryProp = "apples";
+    render(<UnsplashImageSearch searchQuery={searchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
+    const textInput = screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER);
+    await act(async () => fireEvent.changeText(textInput, textInputValue));
+    expect(textInput.props.value).toBe(textInputValue);
+    //rerender the component with the new searchQuery prop
+    await act(async() => screen.rerender(<UnsplashImageSearch searchQuery={newSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
+    expect(textInput.props.value).toBe("");
   })
 })
 
@@ -121,7 +130,7 @@ describe('activity indicator', () => {
 })
 
 describe('on no results response from api', () => {
-  it.only('should display the warning message', async () => {
+  it('should display the warning message', async () => {
     //update the spiedApiGetPhotos mock to resolve to the unsplash empty response the next time it is called
     spiedApiGetPhotos.mockResolvedValueOnce(mockApiGetPhotosEmptyResponse);
     //render the component (render is wrapped in an act() call so no need to use here)
