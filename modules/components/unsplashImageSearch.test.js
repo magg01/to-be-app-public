@@ -121,20 +121,20 @@ describe('activity indicator', () => {
 })
 
 describe('on no results response from api', () => {
-  // it.only('should display the warning message', async () => {
-  //   //update the spiedApiGetPhotos mock to resolve to the unsplash empty response the next time it is called
-  //   spiedApiGetPhotos.mockResolvedValueOnce(mockApiGetPhotosEmptyResponse);
-  //   //render the component (render is wrapped in an act() call so no need to use here)
-  //   render(<UnsplashImageSearch searchQuery={"test query"}></UnsplashImageSearch>);
-  //   //get the result object value of the first call to the mocked apiGetPhotos function which should be a promise
-  //   const resultOfApiCall = spiedApiGetPhotos.mock.results[0].value;
-  //   //wrap in act because once the promise resolves the state is updated. Await the fulfillment of act before continuing to prevent unexpected behaviour
-  //   await act(async () => {
-  //     //wait for the result of the api call to be resolved and check the resolved value is the mocked response object
-  //     await expect(resultOfApiCall).resolves.toEqual(mockApiGetPhotosEmptyResponse);
-  //   });
-  //   expect(screen.getByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_NO_RESULTS_MESSAGE)).toBeDefined();
-  // })
+  it.only('should display the warning message', async () => {
+    //update the spiedApiGetPhotos mock to resolve to the unsplash empty response the next time it is called
+    spiedApiGetPhotos.mockResolvedValueOnce(mockApiGetPhotosEmptyResponse);
+    //render the component (render is wrapped in an act() call so no need to use here)
+    render(<UnsplashImageSearch searchQuery={"test query"}></UnsplashImageSearch>);
+    //get the result object value of the first call to the mocked apiGetPhotos function which should be a promise
+    const resultOfApiCall = spiedApiGetPhotos.mock.results[0].value;
+    //wrap in act because once the promise resolves the state is updated. Await the fulfillment of act before continuing to prevent unexpected behaviour
+    await act(async () => {
+      //wait for the result of the api call to be resolved and check the resolved value is the mocked response object
+      await expect(resultOfApiCall).resolves.toEqual(mockApiGetPhotosEmptyResponse);
+    });
+    expect(screen.getByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_NO_RESULTS_MESSAGE)).toBeDefined();
+  })
 })
 
 describe('on error response from api', () => {
