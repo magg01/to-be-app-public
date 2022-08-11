@@ -115,7 +115,7 @@ const UnsplashImageSearch = (props) => {
               <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_ERROR_RESPONSE_MESSAGE}</Text>
             </View>
           )
-        } else if (data.response.results == []){
+        } else if (data.response.results.length === 0){
           return <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH_ON_NO_RESULTS_MESSAGE}</Text>
         } else {
           return (
