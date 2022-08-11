@@ -54,6 +54,72 @@ const mockApiGetPhotosErrorResponse = {
     }
 }
 
+const mockApiGetPhotosEmptyResponse = {
+    "type": "success",
+    "status": 200,
+    "response": {
+        "total": 0,
+        "total_pages": 0,
+        "results": []
+    },
+    "originalResponse": {
+        "type": "default",
+        "status": 200,
+        "ok": true,
+        "statusText": "",
+        "headers": {
+        "map": {
+        "accept-ranges": "bytes",
+        "access-control-allow-headers": "*",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "Link,X-Total,X-Per-Page,X-RateLimit-Limit,X-RateLimit-Remaining",
+        "access-control-request-method": "*",
+        "age": "0",
+        "cache-control": "max-age=86400,stale-if-error=3600,stale-while-revalidate=60",
+        "content-language": "en",
+        "content-type": "application/json",
+        "date": "Thu, 11 Aug 2022 18:29:06 GMT",
+        "etag": "W/\"7814e74bfa62dcc505522924e3c8cf4b\"",
+        "server": "Cowboy",
+        "strict-transport-security": "max-age=31536000; includeSubDomains",
+        "vary": "Accept-Encoding, Origin,Authorization,Accept-Language,client-geo-region,Accept",      
+        "via": "1.1 vegur, 1.1 varnish, 1.1 varnish",
+        "warning": "The tags property in this endpoint is deprecated. https://changelog.unsplash.com/deprecations/2021/07/12/tags-search-deprecation.html",
+        "x-cache": "MISS, MISS",
+        "x-cache-hits": "0, 0",
+        "x-per-page": "30",
+        "x-ratelimit-limit": "50",
+        "x-ratelimit-remaining": "43",
+        "x-request-id": "5af70c48-4137-4f9d-b9c8-6fd420fb1ef3",
+        "x-runtime": "0.049266",
+        "x-served-by": "cache-iad-kjyo7100100-IAD, cache-hhn4071-HHN",
+        "x-timer": "S1660242546.213579,VS0,VE165",
+        "x-total": "0",
+        "x-unsplash-version": "v1"
+        }
+        },
+        "url": "https://api.unsplash.com/search/photos?query=tesy&per_page=30&page=1&orientation=portrait",
+        "bodyUsed": true,
+        "_bodyInit": {
+        "_data": {
+        "size": 40,
+        "offset": 0,
+        "blobId": "0db5644c-7c8d-4ea9-a6eb-f24482435627",
+        "__collector": {}
+        }
+        },
+        "_bodyBlob": {
+        "_data": {
+        "size": 40,
+        "offset": 0,
+        "blobId": "0db5644c-7c8d-4ea9-a6eb-f24482435627",
+        "__collector": {}
+        }
+        }
+    }
+}
+
+
 const mockApiGetPhotosSuccessResponse = {    
     "type": "success",
     "status": 200,
@@ -5445,4 +5511,4 @@ const mockApiGetPhotosSuccessResponse = {
     }
 }
 
-export {mockApiGetPhotosSuccessResponse, mockApiGetPhotosErrorResponse}
+export {mockApiGetPhotosSuccessResponse, mockApiGetPhotosErrorResponse, mockApiGetPhotosEmptyResponse}
