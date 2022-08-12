@@ -7,7 +7,7 @@ export function ToBeTile(props){
 
   useEffect(() => {
     getToBeItemById(props.toBeId).then((toBeItem) => {
-      console.log(`here ${JSON.stringify(toBeItem, null, 1)}`)
+      // console.log(`here ${JSON.stringify(toBeItem, null, 1)}`)
       setToBeItemDetails(toBeItem);
     })
   }, [])

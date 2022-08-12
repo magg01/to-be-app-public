@@ -13,7 +13,7 @@ export default PlanView = (props) => {
   const PlanItemForFlatList = ({plan}) => {
     return (
       <TouchableOpacity key={plan.id} style={styles.planLine} onPress={() => deletePlan(plan.id)}>
-        <Text style={{color:'black'}}>{plan.title}</Text>
+        <Text style={{color:'rgba(75,75,75,1)'}}>{plan.title}</Text>
       </TouchableOpacity> 
     )
   }
@@ -27,24 +27,27 @@ export default PlanView = (props) => {
 
   return (
     <View style={styles.container}>
+      <Text style={{color: 'white', borderBottomWidth: 1, borderBottomColor: 'white', marginBottom: 8, fontSize: 20}}>Plans</Text>
       <FlatList
-        style={{width: "100%"}}
         renderItem={({item}) => <PlanItemForFlatList plan={item} />}
         data={plans} 
         keyExtractor={item => item.id} 
       />
-
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    width: 300,
-    height: 300,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: 8,
+    width: "100%",
+    justifyContent: 'flex-start',
+    maxHeight: "50%",
+    minHeight: "15%",
+    borderWidth: 1.5, 
+    borderColor: 'white', 
+    borderRadius: 6,
+    padding: "3%",
+    backgroundColor: 'rgba(200,200,200,0.2)',
   },
   planLine: {
     width: "100%",

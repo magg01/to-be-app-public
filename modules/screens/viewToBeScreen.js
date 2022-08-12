@@ -77,7 +77,7 @@ export default ViewToBeScreen = ({route, navigation}) => {
     return(
       <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
         <SafeAreaView style={styles.container}>
-          <Text style={{color: 'white', fontSize: 36}}>{toBeItem.title}</Text>
+          <Text style={{color: 'white', fontSize: 36, alignSelf: 'center'}}>{toBeItem.title}</Text>
           <Button title={"next"} onPress={() => {
             db.getNextToBeItemIdById(toBeId).then((result) => setToBeId(result))
           }}/>
@@ -127,8 +127,8 @@ export default ViewToBeScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: "8%",
   },
   addButton: {
     marginTop: 8,
