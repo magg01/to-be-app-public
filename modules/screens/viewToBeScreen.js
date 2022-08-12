@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, ImageBackground, Button, Alert, BackHandler, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, ImageBackground, Button, Alert, BackHandler, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar'; 
 import * as db from '../database/database';
@@ -14,11 +14,22 @@ export default ViewToBeScreen = ({route, navigation}) => {
   const [viewMode, setViewMode] = useState('overview');
 
   useEffect(() => {
-    db.getToBeItemById(toBeId)
-    .then((result) => {
-      console.log(`ViewToBeScreen: useEffect getToBeItemById = ${JSON.stringify(result,null, 1)}`)
-      setToBeItem(result);
-    })
+    if(__DEV__){
+      let dev_delay_timer = setTimeout(() => {
+        db.getToBeItemById(toBeId)
+        .then((result) => {
+          console.log(`ViewToBeScreen: useEffect getToBeItemById = ${JSON.stringify(result,null, 1)}`)
+          setToBeItem(result);
+        })
+      }, 500)
+      return (() => clearTimeout(dev_delay_timer))
+    } else {
+      db.getToBeItemById(toBeId)
+      .then((result) => {
+        console.log(`ViewToBeScreen: useEffect getToBeItemById = ${JSON.stringify(result,null, 1)}`)
+        setToBeItem(result);
+      })
+    }
   }, [toBeId])
 
   useFocusEffect(
@@ -48,7 +59,7 @@ export default ViewToBeScreen = ({route, navigation}) => {
   if(toBeItem === undefined){
     return (
       <SafeAreaView style={styles.container}>
-        <Text>Fetching from database</Text>
+        <ActivityIndicator size={'large'}/>
       </SafeAreaView>
     )
   } else if (viewMode === 'detail') {
