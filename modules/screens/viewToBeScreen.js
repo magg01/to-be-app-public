@@ -101,6 +101,7 @@ export default ViewToBeScreen = ({route, navigation}) => {
                     db.deleteToBeItemById(toBeId)
                     .then((deleted) => {
                       if(deleted){
+                        //TODO: implement check if this is the only use of the image before deleting (another tobe might be sharing this image filepath)
                         deleteLocallyStoredImage(toBeItem.imageBackgroundUri);
                         navigation.goBack(); 
                       } else {
