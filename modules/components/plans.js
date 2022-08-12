@@ -1,4 +1,5 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, {useEffect, useRef, useState} from 'react';
+import Animated, { FadeIn, FadeOut, ZoomInRotate, SlideInLeft, SlideOutDown, SlideOutUp } from 'react-native-reanimated';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { deletePlanItemById, getAllPlansByToBeId } from '../database/database';
 
@@ -12,9 +13,11 @@ export default PlanView = (props) => {
 
   const PlanItemForFlatList = ({plan}) => {
     return (
-      <TouchableOpacity key={plan.id} style={styles.planLine} onPress={() => deletePlan(plan.id)}>
-        <Text style={{color:'rgba(75,75,75,1)'}}>{plan.title}</Text>
-      </TouchableOpacity> 
+      <Animated.View style={{flex: 1}} entering={FadeIn.delay(800).duration(1000)}>
+        <TouchableOpacity key={plan.id} style={styles.planLine} onPress={() => deletePlan(plan.id)}>
+          <Text style={{color:'rgba(75,75,75,1)'}}>{plan.title}</Text>
+        </TouchableOpacity> 
+      </Animated.View>
     )
   }
 
@@ -26,14 +29,14 @@ export default PlanView = (props) => {
   }
 
   return (
-    <View style={styles.container}>
+    <Animated.View entering={FadeIn.duration(2000)} exiting={FadeOut.duration(500)} style={styles.container}>
       <Text style={{color: 'white', borderBottomWidth: 1, borderBottomColor: 'white', marginBottom: 8, fontSize: 20}}>Plans</Text>
       <FlatList
         renderItem={({item}) => <PlanItemForFlatList plan={item} />}
         data={plans} 
         keyExtractor={item => item.id} 
       />
-    </View>
+    </Animated.View>
   )
 }
 
