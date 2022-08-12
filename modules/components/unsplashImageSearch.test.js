@@ -14,7 +14,7 @@ afterEach(cleanup);
 beforeEach(() => spiedApiGetPhotos.mockClear());
 
 describe('UnsplashImageSearch Component effects', () => {
-  it('should make a call to the unsplash API on mount given a non-blank searchQuery props', async () => { 
+  it('should make a call to the unsplash API on mount given a non-blank searchQuery prop', async () => { 
     await waitFor(() => render(<UnsplashImageSearch searchQuery={"test query"} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
     expect(spiedApiGetPhotos).toHaveBeenCalled();
   });
@@ -94,7 +94,7 @@ describe('search input text', () => {
     await act(async () => fireEvent.changeText(textInput, newSearchQuery));
     expect(textInput.props.value).toBe(newSearchQuery);
     await act(async() => fireEvent(textInput, 'submitEditing'));
-    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: "mountains and others"}));
+    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: newSearchQuery.toLowerCase()}));
   })
 
   it('should trim leading and trailing whitespace characters from the input before querying the api', async () => {
@@ -129,7 +129,7 @@ describe('activity indicator', () => {
   })
 })
 
-describe('on no results response from api', () => {
+describe('on successful response from the api with no results', () => {
   it('should display only the warning message', async () => {
     //update the spiedApiGetPhotos mock to resolve to the unsplash empty response the next time it is called
     spiedApiGetPhotos.mockResolvedValueOnce(mockApiGetPhotosEmptyResponse);
@@ -143,6 +143,7 @@ describe('on no results response from api', () => {
       await expect(resultOfApiCall).resolves.toEqual(mockApiGetPhotosEmptyResponse);
     });
     expect(screen.getByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_NO_RESULTS_MESSAGE)).toBeDefined();
+    expect(screen.queryByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_ERROR_RESPONSE_MESSAGE)).toBeNull();
     expect(screen.queryByTestId('photoItemFlatlist')).toBeNull();
   })
 })
@@ -178,7 +179,7 @@ describe('on error response from api', () => {
     expect(screen.getByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_ERROR_RESPONSE_MESSAGE)).toBeDefined();
   })
 
-  it('should not render the flatlist', async () => {
+  it('should not render the flatlist or the no results warning message', async () => {
      //update the spiedApiGetPhotos mock to resolve to the unsplash error response the next time it is called
      spiedApiGetPhotos.mockResolvedValueOnce(mockApiGetPhotosErrorResponse);
      //render the component (render is wrapped in an act() call so no need to use here)
@@ -191,6 +192,7 @@ describe('on error response from api', () => {
        await expect(resultOfApiCall).resolves.toEqual(mockApiGetPhotosErrorResponse);
      });
     expect(screen.queryByTestId('photoItemFlatlist')).toBeNull();
+    expect(screen.queryByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_NO_RESULTS_MESSAGE)).toBeNull();
   })
 })
 
@@ -199,4 +201,6 @@ describe('on success response from the api', () => {
     render(<UnsplashImageSearch searchQuery={"test query"}></UnsplashImageSearch>);
     await waitFor(() => expect(screen.getByTestId('photoItemFlatlist')).toBeTruthy());
   })
+
+
 })
