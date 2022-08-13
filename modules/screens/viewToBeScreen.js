@@ -8,6 +8,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
 import PlanView from '../components/plans';
 import AddPlan from '../components/addPlan';
+import { animations } from '../utils/animations';
 
 export default ViewToBeScreen = ({route, navigation}) => {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
@@ -68,7 +69,11 @@ export default ViewToBeScreen = ({route, navigation}) => {
       <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.backgroundImage}>
         <SafeAreaView style={{flex: 1}}>
           <View style={[styles.container, viewMode === 'overview' ? {justifyContent:'center'} : {justifyContent:'flex-start'}]}>
-            <Animated.Text entering={FadeIn} layout={Layout.duration(1000)} style={styles.mainTitle}>{toBeItem.title}</Animated.Text>
+            <Animated.Text 
+              style={styles.mainTitle}
+              entering={animations.viewToBeScreen.mainTitleText.entering} 
+              layout={animations.viewToBeScreen.mainTitleText.layout} 
+            >{toBeItem.title}</Animated.Text>
             {viewMode === 'detail' ?
               <Fragment>
                 <PlanView toBeId={toBeId} />
@@ -78,7 +83,7 @@ export default ViewToBeScreen = ({route, navigation}) => {
               </Fragment>
               :
               viewMode === 'addPlan' ?
-                <AddPlan toBeId={toBeId} onAddNewPlan={onNewPlanAdded} />
+                <AddPlan toBeId={toBeId} onAddNewPlan={onNewPlanAdded} toBeItemTitle={toBeItem.title} />
               :
               null 
             }
