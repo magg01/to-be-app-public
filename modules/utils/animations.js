@@ -9,8 +9,8 @@ const animations = {
   },
   plans: {
     planView: {
-      entering: SlideInDown.duration(800),
-      exiting: SlideOutDown.duration(1000),
+      entering: FadeIn.duration(800),
+      exiting: FadeOut.duration(1000),
       layout: Layout.duration(1000),
     },
     planItemForFlatList: {
