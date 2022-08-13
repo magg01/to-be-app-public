@@ -1,49 +1,76 @@
-import React, {useEffect, useRef, useState} from 'react';
-import Animated from 'react-native-reanimated';
+import React, {useEffect, useRef, useState, useCallback} from 'react';
+import Animated, { Layout, ZoomIn } from 'react-native-reanimated';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity, Alert } from 'react-native';
 import { deletePlanItemById, getAllPlansByToBeId } from '../database/database';
 import { animations } from '../utils/animations';
 
 export default PlanView = (props) => {
   const toBeId = useRef(props.toBeId).current
-  const [plans, setPlans] = useState(undefined)
+  const refreshing = useRef(false);
+  const [plans, setPlans] = useState(undefined);
 
   useEffect(() => {
-    getAllPlansByToBeId(toBeId).then(result => setPlans(result))
+    if(plans != undefined){
+      refreshing.current = false;
+    }
+  }, [plans])
+
+  useEffect(() => {
+    getAllPlansByToBeId(toBeId).then(result => {
+      setPlans(result)
+    })
   }, [toBeId])
 
-  const PlanItemForFlatList = ({plan}) => {
-    return (
-      <Animated.View 
-        style={{flex: 1}} 
-        entering={animations.plans.planItemForFlatList.entering}
-      >
-        <TouchableOpacity key={plan.id} style={styles.planLine} onPress={() => deletePlan(plan.id)}>
-          <Text style={{color:'rgba(75,75,75,1)'}}>{plan.title}</Text>
-        </TouchableOpacity> 
-      </Animated.View>
-    )
-  }
 
-  const deletePlan = (id) => {
+  const deletePlan = useCallback((id) => {
     //still need to delete all scheduled notifications on calEvents before deleting plan.
     deletePlanItemById(id).then((deleted) => {
-      deleted ? getAllPlansByToBeId(toBeId).then((result) => setPlans(result)) : Alert.alert("Not deleted")
+      if(deleted){
+        // refreshing.current = true;
+        setPlans(currentPlans => {
+          return currentPlans.filter(item => item.id != id)
+        })
+      } else {
+        Alert.alert("Not deleted")
+      }
     })
-  }
+  }, [plans])
+
 
   return (
     <Animated.View 
       style={styles.container}
       entering={animations.plans.planView.entering} 
-      exiting={animations.plans.planView.exiting} 
+      exiting={animations.plans.planView.exiting}
+      layout={animations.plans.planView.layout}
     >
-      <Text style={{color: 'white', borderBottomWidth: 1, borderBottomColor: 'white', marginBottom: 8, fontSize: 20}}>Plans</Text>
+      <View style={{borderBottomWidth: 1.5, borderBottomColor: 'white', marginBottom: 8}}>
+        <Text style={{color: 'white', fontSize: 20}}>Plans</Text>
+      </View>
       <FlatList
-        renderItem={({item}) => <PlanItemForFlatList plan={item} />}
         data={plans} 
         keyExtractor={item => item.id} 
+        renderItem={({item}) => {
+          return (
+            <Animated.View 
+              style={{flex: 1}} 
+              entering={animations.plans.planItemForFlatList.entering}
+              exiting={animations.plans.planItemForFlatList.exiting}
+            >
+              <TouchableOpacity key={item.id} style={styles.planLine} onPress={() => deletePlan(item.id)}>
+                <Text style={{color:'rgba(75,75,75,1)'}}>{item.title}</Text>
+              </TouchableOpacity> 
+            </Animated.View>
+          )
+        }}
       />
+      <Animated.View
+        layout={animations.plans.planView.layout}  
+      >
+        <TouchableOpacity style={styles.addButton} onPress={() => props.onAddNewPressed()}>
+          <Text>new</Text>
+        </TouchableOpacity>
+      </Animated.View>
     </Animated.View>
   )
 }
@@ -51,8 +78,7 @@ export default PlanView = (props) => {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    justifyContent: 'flex-start',
-    maxHeight: "50%",
+    maxHeight: "75%",
     minHeight: "15%",
     borderWidth: 1.5, 
     borderColor: 'white', 
@@ -61,7 +87,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(200,200,200,0.2)',
   },
   planLine: {
-    width: "100%",
     height: 40,
     borderRadius: 4,
     marginBottom: 8,
@@ -70,4 +95,14 @@ const styles = StyleSheet.create({
     opacity: 1,
     justifyContent: 'center',
   },
+  addButton: {
+    marginTop: 8,
+    alignSelf: 'flex-end',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'white'
+  }
 })

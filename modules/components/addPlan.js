@@ -15,7 +15,7 @@ export default AddPlan = (props) => {
     db.addPlan(newPlanTitle, toBeId.current, calEvent.current)
     .then((success) => {
       if(success){
-        props.onAddNewPlan();
+        props.onAdd();
       } else {
         Alert.alert("Unable to add a new plan at this time.");
       }

@@ -75,15 +75,10 @@ export default ViewToBeScreen = ({route, navigation}) => {
               layout={animations.viewToBeScreen.mainTitleText.layout} 
             >{toBeItem.title}</Animated.Text>
             {viewMode === 'detail' ?
-              <Fragment>
-                <PlanView toBeId={toBeId} />
-                <TouchableOpacity style={styles.addButton} onPress={() => setViewMode('addPlan')}>
-                  <Text>new</Text>
-                </TouchableOpacity>
-              </Fragment>
+              <PlanView toBeId={toBeId} onAddNewPressed={() => setViewMode('addPlan')}/>
               :
               viewMode === 'addPlan' ?
-                <AddPlan toBeId={toBeId} onAddNewPlan={onNewPlanAdded} toBeItemTitle={toBeItem.title} />
+                <AddPlan toBeId={toBeId} onAdd={onNewPlanAdded} toBeItemTitle={toBeItem.title} />
               :
               null 
             }
@@ -180,16 +175,7 @@ const styles = StyleSheet.create({
   mainTitle: {
     color: 'white', 
     fontSize: 36,
-    alignSelf: 'center'
-  },
-  addButton: {
-    marginTop: 8,
-    alignSelf: 'flex-end',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: 'white'
+    alignSelf: 'center',
+    marginVertical: 20
   }
 });
