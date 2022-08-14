@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
 import { useFocusEffect } from '@react-navigation/native';
+import Animated from 'react-native-reanimated';
 
 const defaultBackgroundImage = require("../../assets/addNew.jpg");
 const {height, width} = Dimensions.get('window');
@@ -43,21 +44,24 @@ const AddNewScreen = ({navigation}) => {
   }
 
   return (
-    <ImageBackground source={imageBackgroundUri} resizeMode="cover" style={styles.container}>
-      <SafeAreaView style={styles.container}>
-        <TextInput
-          style={styles.input} 
-          onChangeText={updateTitleText}
-          onSubmitEditing={(e) => setSearchQuery(e.nativeEvent.text)}
-          value={titleText} 
-          textAlign={'center'}
-          autoFocus={true}
-          showSoftInputOnFocus={true}
-          selectionColor={'white'}
-        />
-        <Button title="show/hide" onPress={() => setShowImagePicker(!showImagePicker)} />
-        {showImagePicker ? <UnsplashImageSearch width={width*.75} height={height*.75} searchQuery={searchQuery} onImageDownload={updateImageBackground}></UnsplashImageSearch> : null}
-        <View style={{flex: 1}} />
+    <ImageBackground source={imageBackgroundUri} resizeMode="cover" style={styles.backgroundImage}>
+      <SafeAreaView style={{flex:1, alignItems: 'center', justifyContent: 'flex-start'}}>
+        <Animated.View style={[styles.container, showImagePicker ? {justifyContent: 'flex-start'} : {justifyContent: 'center'}]}>
+          <TextInput
+            style={styles.input} 
+            onChangeText={updateTitleText}
+            onSubmitEditing={(e) => {
+              setSearchQuery(e.nativeEvent.text)
+              setShowImagePicker(true);
+            }}
+            value={titleText} 
+            textAlign={'center'}
+            autoFocus={true}
+            showSoftInputOnFocus={true}
+            selectionColor={'white'}
+          />
+        </Animated.View>
+        {showImagePicker ? <UnsplashImageSearch width={width*.65} height={height*.65} searchQuery={searchQuery} onImageDownload={updateImageBackground}></UnsplashImageSearch> : null}
         {showSaveButton ? <TouchableOpacity style={{backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4}} onPress={onNewSave} ><Text>Save</Text></TouchableOpacity> : null}
         <StatusBar style="auto" />
       </SafeAreaView>
@@ -66,22 +70,24 @@ const AddNewScreen = ({navigation}) => {
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      width: "100%",
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'flex-start',
-    },
-    input: {
-      width: "50%",
-      margin: 12,
-      borderBottomWidth: 2,
-      borderBottomColor: 'white',
-      padding: 6,
-      fontSize: 30,
-      color: 'white'
-    },
-  });
+  backgroundImage: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: "8%",
+  },
+  input: {
+    width: "60%",
+    margin: 12,
+    borderBottomWidth: 2,
+    borderBottomColor: 'white',
+    padding: 6,
+    fontSize: 36,
+    color: 'white'
+  },
+});
 
 export { AddNewScreen }

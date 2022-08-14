@@ -108,7 +108,8 @@ export default ViewToBeScreen = ({route, navigation}) => {
                 null 
             }
           </View>
-          <Animated.View 
+          <Animated.View
+            style={{alignItems: 'center'}}
             entering={animations.viewToBeScreen.detailsButton.entering}
             exiting={animations.viewToBeScreen.detailsButton.exiting}
           >
@@ -201,17 +202,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: "8%",
+    alignItems: 'center',
   },
   mainTitle: {
     color: 'white', 
     fontSize: 36,
-    alignSelf: 'center',
     marginBottom: 24
   },
   bottomButton:{
     margin: 10,
     opacity: 0.85,
-    alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#fff',
