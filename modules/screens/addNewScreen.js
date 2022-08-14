@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { StyleSheet, View, ImageBackground, Text, TextInput, Button, Alert, Dimensions, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { useHeaderHeight } from '@react-navigation/elements';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
@@ -8,12 +10,15 @@ import { addToBeItem } from '../database/database';
 const backgroundImage = require("../../assets/addNew.jpg");
 const {height, width} = Dimensions.get('window');
 
+
 const AddNewScreen = ({navigation}) => {
   const [titleText, updateTitleText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showSaveButton, setShowSaveButton] = useState(false);
   const [showImagePicker, setShowImagePicker] = useState(false);
   const [imageBackgroundUri, setImageBackgroundUri] = useState(backgroundImage);
+  const insets = useSafeAreaInsets();
+  const headerHeight = useHeaderHeight();
   
   const updateImageBackground = (uri) => {
     setShowImagePicker(false);
@@ -30,7 +35,7 @@ const AddNewScreen = ({navigation}) => {
       <ImageBackground source={imageBackgroundUri} resizeMode="cover" style={styles.container}>
         <SafeAreaView style={styles.container}>
           <TextInput
-            style={styles.input} 
+            style={[styles.input, {marginTop: headerHeight - insets.top}]} 
             onChangeText={updateTitleText}
             onSubmitEditing={(e) => setSearchQuery(e.nativeEvent.text)}
             value={titleText} 

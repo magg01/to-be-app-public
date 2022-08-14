@@ -39,11 +39,22 @@ setNotificationHandler({
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{headerShown: false}}>
+      <Stack.Navigator 
+        initialRouteName="HomeScreen" 
+        screenOptions={{
+          headerTintColor: 'white',
+          headerTransparent: true,
+          title: ""
+        }}
+      >
         <Stack.Screen name="HomeScreen" component={HomeScreen}/>
         <Stack.Screen name="AddNewScreen" component={AddNewScreen}/>
         <Stack.Screen name="ViewToBeScreen" component={ViewToBeScreen} />
-        <Stack.Screen name="AgendaScreen" component={AgendaScreen} />
+        <Stack.Screen name="AgendaScreen" component={AgendaScreen} options={{
+          headerTintColor: 'rgba(75,75,75,1)',
+          headerTransparent: false,
+          title: "Plan calendar"
+        }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

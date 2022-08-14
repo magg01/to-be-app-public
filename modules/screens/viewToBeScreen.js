@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState, Fragment  } from 'react';
-import { StyleSheet, Text, ImageBackground, View, Button, Alert, BackHandler, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState, Fragment, useLayoutEffect  } from 'react';
+import { StyleSheet, Text, ImageBackground, View, Button, Alert, BackHandler, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
 import Animated, { FadeIn, Layout, LinearTransition } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { HeaderBackButton } from '@react-navigation/elements';
 import { StatusBar } from 'expo-status-bar'; 
 import * as db from '../database/database';
 import { useFocusEffect } from '@react-navigation/native';
@@ -54,6 +55,30 @@ export default ViewToBeScreen = ({route, navigation}) => {
     }, [viewMode])
   )
 
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => {
+       return (
+        <HeaderBackButton 
+          onPress={() => {
+            if (viewMode === 'addPlan'){
+              setViewMode('detail')
+            }
+            else if(viewMode === 'detail'){
+              setViewMode('overview')
+            } else {
+              navigation.goBack();
+            }
+          }} 
+          tintColor='white'
+          labelVisible = {Platform.OS === 'ios' ? true : false}
+          //TODO: add label here for ios, "back" perhaps but didn't seem to be working
+        />
+       )
+      }
+    })
+  })
+
   const onNewPlanAdded = () => {
     setViewMode('detail');
   }
@@ -79,13 +104,13 @@ export default ViewToBeScreen = ({route, navigation}) => {
               :
               viewMode === 'addPlan' ?
                 <AddPlan toBeId={toBeId} onAdd={onNewPlanAdded} toBeItemTitle={toBeItem.title} />
-              :
-              null 
+                :
+                null 
             }
           </View>
-          <Button title={"details"} onPress={() => {
-            setViewMode('detail')
-          }}/>
+          <TouchableOpacity style={styles.bottomButton} onPress={() => setViewMode('detail')}>
+            <Text>Details</Text>
+          </TouchableOpacity>
         </SafeAreaView>
       </ImageBackground>
     )
@@ -176,6 +201,17 @@ const styles = StyleSheet.create({
     color: 'white', 
     fontSize: 36,
     alignSelf: 'center',
-    marginVertical: 20
+    marginBottom: 24
+  },
+  bottomButton:{
+    margin: 10,
+    opacity: 0.85,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    width: 120,
+    height: 40
   }
 });

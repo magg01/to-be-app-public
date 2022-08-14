@@ -39,7 +39,7 @@ const AgendaScreen = () => {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {/* <Button title={'all events'} onPress={() => db.getAllCalEvents()} /> */}
       {/* <Button title={'test join db'} onPress={() => db.getAllCalEventsWithPlanDetails()} /> */}
       <Agenda
@@ -56,7 +56,7 @@ const AgendaScreen = () => {
         loadItemsForMonth={loadItemsForMonth}
       />
       <StatusBar style={"auto"}/>
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'stretch',
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
   },
 });
 
