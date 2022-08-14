@@ -13,6 +13,7 @@ const HomeScreen = () => {
       activeColor="#f0edf6"
       inactiveColor="#3e2465"
       barStyle={{ backgroundColor: 'rgba(105, 79, 173, 1)' }}
+      backBehavior={'initialRoute'}
     >
       <Tab.Screen 
         name="AddNew" 
