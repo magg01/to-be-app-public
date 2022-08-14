@@ -1,60 +1,32 @@
-import React, { useCallback, useState } from 'react';
-import { StyleSheet, FlatList, Button } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
-import { getAllToBeItems } from '../database/database';
-import { useFocusEffect } from '@react-navigation/native';
-import { ToBeTile } from '../components/toBeTile';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import { AgendaScreen } from './agendaScreen';
+import { AddNewScreen } from './addNewScreen';
+import { BeScreen } from './beScreen';
 
-const HomeScreen = ({navigation}) => {
-  const [allToBes, setAllToBes] = useState([]);
+const Tab = createMaterialBottomTabNavigator();
 
-  useFocusEffect(
-    useCallback(() => {
-      (async () => {
-        const toBes = await getAllToBeItems();
-        setAllToBes(toBes)
-      })();
-      //have to make sure we have empty dependency array here otherwise the effect runs on every render
-      //because arrays are compared by reference and even if the array contents haven't changed the
-      //array will appear to have changed because it's a different reference
-    }, [])    
-  )
-
-  const renderToBeTile = ({item}) => {
-    return (
-      <ToBeTile
-        key={item.id}
-        toBeId={item.id}
-        onPress={() => {
-          navigation.navigate("ViewToBeScreen", {toBeId: item.id})
-        }}
-      />
-    )
-  }
-
+const HomeScreen = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        style={{width: "100%"}}
-        data={allToBes}
-        renderItem={renderToBeTile}
-        keyExtractor={item => item.id}
-        numColumns={2}
+    <Tab.Navigator 
+      initialRouteName='Be'
+      activeColor="#f0edf6"
+      inactiveColor="#3e2465"
+      barStyle={{ backgroundColor: '#694fad' }}
+    >
+      <Tab.Screen 
+        name="AddNew" 
+        component={AddNewScreen} 
       />
-      <Button title={"Add new to be"} onPress={() => navigation.navigate("AddNewScreen")} />
-      <Button title={"Agenda"} onPress={() => navigation.navigate("AgendaScreen")} />
-      <StatusBar style={"auto"}/>
-    </SafeAreaView>
-  )
+      <Tab.Screen 
+        name="Be" 
+        component={BeScreen} 
+      />
+      <Tab.Screen 
+        name="Calendar" 
+        component={AgendaScreen} 
+      />
+    </Tab.Navigator>
+  )  
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
 
 export { HomeScreen }
