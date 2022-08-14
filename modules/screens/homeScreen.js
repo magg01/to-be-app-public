@@ -36,10 +36,6 @@ const HomeScreen = ({navigation}) => {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        // need to ensure flatlist expands to bottom of screen even if there's
-        // not enough data to fill it, otherwise animated cocktail tiles
-        // are not visible when moved beyond the extent of the flatlist container
-        // contentContainerStyle={{flexGrow: 1}}
         style={{width: "100%"}}
         data={allToBes}
         renderItem={renderToBeTile}

@@ -108,9 +108,14 @@ export default ViewToBeScreen = ({route, navigation}) => {
                 null 
             }
           </View>
-          <TouchableOpacity style={styles.bottomButton} onPress={() => setViewMode('detail')}>
-            <Text>Details</Text>
-          </TouchableOpacity>
+          <Animated.View 
+            entering={animations.viewToBeScreen.detailsButton.entering}
+            exiting={animations.viewToBeScreen.detailsButton.exiting}
+          >
+            <TouchableOpacity style={styles.bottomButton} onPress={() => setViewMode('detail')}>
+              <Text style={{fontSize: 16}}>Details</Text>
+            </TouchableOpacity>
+          </Animated.View>
         </SafeAreaView>
       </ImageBackground>
     )

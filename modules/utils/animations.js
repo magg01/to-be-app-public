@@ -5,6 +5,10 @@ const animations = {
     mainTitleText: {
       entering: FadeIn.duration(1000),
       layout: Layout.duration(800),
+    },
+    detailsButton: {
+      entering: FadeIn.duration(1000).delay(500),
+      exiting: FadeOut.duration(800),
     }
   },
   plans: {
@@ -17,7 +21,7 @@ const animations = {
       entering: FadeIn.duration(1000),
       exiting: FadeOut.duration(1000),
       layout: Layout.delay(2000),
-    }
+    },
   },
   addPlan: {
     addPlanView: {
