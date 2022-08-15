@@ -13,7 +13,7 @@ function BeScreen({ navigation }) {
     useCallback(() => {
       (async () => {
         const toBes = await getAllToBeItems();
-        setAllToBes(toBes)
+        setAllToBes(toBes);
       })();
       // have to make sure we have empty dependency array here otherwise
       // the effect runs on every render
