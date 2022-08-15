@@ -1,13 +1,10 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { AddNewScreen } from './modules/screens/addNewScreen';
-import { HomeScreen } from './modules/screens/homeScreen';
-import ViewToBeScreen from './modules/screens/viewToBeScreen';
-import { AgendaScreen } from './modules/screens/agendaScreen';
 import { setNotificationHandler } from 'expo-notifications';
+import HomeScreen from './modules/screens/homeScreen';
+import ViewToBeScreen from './modules/screens/viewToBeScreen';
 import { fetchPermissionSettings, checkPermissionSettings } from './modules/components/testNotifications';
-
 
 const Stack = createStackNavigator();
 
