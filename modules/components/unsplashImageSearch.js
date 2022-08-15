@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, ImageBackground, Dimensions, TextInput, TouchableOpacity, Alert } from 'react-native';
+import {
+  StyleSheet, Text, View, ActivityIndicator, FlatList, ImageBackground, TextInput, TouchableOpacity,
+} from 'react-native';
 import { downloadRemoteImageToLocalStorage } from '../FileSystem/fileSystem';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 import { apiMethods } from '../utils/unsplashApi';
 
-const {width, height} = Dimensions.get('window');
-
 const loadingImage = require('../../assets/icon.png');
 
-const UnsplashImageSearch = (props) => {
+function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQuery}) {
   const [searchQuery, setSearchQuery] = useState(undefined);
   const [searchInput, setSearchInput] = useState("");
   const [data, setPhotosResponse] = useState(null);
@@ -17,42 +17,48 @@ const UnsplashImageSearch = (props) => {
   const flatListRef = useRef(null);
 
   useEffect(() => {
-    //when the data object is modified and the response has images present scroll the flatlist to its beginning
-    if(flatListRef.current != null && data.response.results.length > 0) {
-      flatListRef.current.scrollToIndex({animated: false, index: 0})
+    // when the data object is modified and the response has images present
+    //  scroll the flatlist to its beginning
+    if (flatListRef.current != null && data.response.results.length > 0) {
+      flatListRef.current.scrollToIndex({ animated: false, index: 0 });
     }
-  }, [data])
+  }, [data]);
 
   useEffect(() => {
-    setSearchInput("");
-    setSearchQuery(props.searchQuery);
-  }, [props.searchQuery])
+    setSearchInput('');
+    setSearchQuery(providedSearchQuery);
+  }, [providedSearchQuery])
 
   useEffect(() => {
-    if(searchQuery != undefined){
-      setPhotosResponse(null)
-      if(searchQuery === ""){
-        //set data to no results without calling the api.
-        setPhotosResponse({response: {results: []}});
+    if (searchQuery !== undefined) {
+      setPhotosResponse(null);
+      if (searchQuery === '') {
+        // set data to no results without calling the api.
+        setPhotosResponse({ response: { results: [] } });
       } else {
-        apiMethods.apiGetPhotos({ query: searchQuery.toLowerCase().trim(), orientation: "portrait", page: 1, perPage: 30})
-        .then(result => {
-          // console.log(JSON.stringify(result, null, 1))
-          setPhotosResponse(result);
+        apiMethods.apiGetPhotos({
+          query: searchQuery.toLowerCase().trim(),
+          orientation: 'portrait',
+          page: 1,
+          perPage: 30,
         })
-        .catch((e) => {
-          console.log(`DisplayWindow encountered an error -> ${e}`);
-        });
+          .then((result) => {
+            // console.log(JSON.stringify(result, null, 1))
+            setPhotosResponse(result);
+          })
+          .catch((e) => {
+            console.log(`DisplayWindow encountered an error -> ${e}`);
+          });
       }
     }
   }, [searchQuery]);
 
-  const PhotoItemForFlatList = ({ photo }) => {
+  function PhotoItemForFlatList({ photo }) {
     const {urls, user} = photo;
     return (
       <ImageBackground 
         style={{
-          width: props.width, 
+          width: width, 
           flexDirection: 'column', 
           justifyContent:'flex-end', 
           alignItems: 'flex-end', 
@@ -78,69 +84,68 @@ const UnsplashImageSearch = (props) => {
         <Text style={{color: "white", fontSize: 10}}>{`${user.name} / Unsplash`}</Text>
       </ImageBackground>
     );
-  };
-
-  
-  const onImageSelectionMade = (photo) => {
-    setDownloadStarted(true);
-    downloadImageFromUnsplash(photo)
-    .then((localFileUri) => {
-      props.onImageDownload(localFileUri);
-    })
-    .catch((error) => {
-      console.error(`onImageSelectionMade encountered an error -> ${error}`);
-    });    
   }
 
   const downloadImageFromUnsplash = (photo) => {
     apiMethods.notifyUnsplashOfImageDownload(photo);
     return downloadRemoteImageToLocalStorage(photo.urls.regular, photo.id);
-  }
+  };
+
+  const onImageSelectionMade = (photo) => {
+    setDownloadStarted(true);
+    downloadImageFromUnsplash(photo)
+      .then((localFileUri) => {
+        onImageDownload(localFileUri);
+      })
+      .catch((error) => {
+        console.error(`onImageSelectionMade encountered an error -> ${error}`);
+      });
+  };
 
   return (
-    <View style={{height: props.height, width: props.width}} >
-      <TextInput 
-        style={{width: props.width, backgroundColor: 'lightgray'}} 
+    <View style={{height: height, width: width}}>
+      <TextInput
+        style={{width: width, backgroundColor: 'lightgray'}}
         onSubmitEditing={() => setSearchQuery(searchInput)}
         onChangeText={setSearchInput}
         value={searchInput}
-        returnKeyType='search' 
+        returnKeyType="search"
         placeholder={CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER}
       />
       {(() => {
-        if(data === null){
+        if (data === null) {
           return <ActivityIndicator accessibilityRole='progressbar' />
-        } else if (data.errors){
+        }
+        if (data.errors) {
           return (
             <View>
               <Text>{data.errors[0]}</Text>
               <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_ERROR_RESPONSE_MESSAGE}</Text>
             </View>
-          )
-        } else if (data.response.results.length === 0){
-          return <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_NO_RESULTS_MESSAGE}</Text>
-        } else {
-          return (
-            <FlatList 
-              ref={flatListRef} 
-              renderItem={({item}) => <PhotoItemForFlatList photo={item} />}
-              data={data.response.results} 
-              horizontal={true} 
-              keyExtractor={item => item.id} 
-              pagingEnabled={true}
-              decelerationRate={'fast'}
-              persistentScrollbar={true}
-              initialNumToRender={5}
-              testID={'photoItemFlatlist'}
-            />
-          )
+          );
         }
+        if (data.response.results.length === 0) {
+          return <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_NO_RESULTS_MESSAGE}</Text>;
+        }
+        return (
+          <FlatList
+            ref={flatListRef}
+            renderItem={({ item }) => <PhotoItemForFlatList photo={item} />}
+            data={data.response.results}
+            horizontal
+            keyExtractor={(item) => item.id}
+            pagingEnabled
+            decelerationRate="fast"
+            persistentScrollbar
+            initialNumToRender={5}
+            testID="photoItemFlatlist"
+          />
+        );
       })()}
       <StatusBar style="auto" />
     </View>
   );
-};
-
+}
 
 const styles = StyleSheet.create({
   container: {

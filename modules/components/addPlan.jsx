@@ -1,11 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react';
 import Animated from 'react-native-reanimated';
-import { StyleSheet, View, Text, TextInput, Alert, TouchableOpacity } from 'react-native'
+import {
+  StyleSheet, Text, TextInput, Alert, TouchableOpacity,
+} from 'react-native';
 import * as db from '../database/database';
 import DateTimePicker from './dateTimePicker';
-import { animations } from '../utils/animations';
+import animations from '../utils/animations';
 
-export default AddPlan = (props) => {
+function AddPlan(props) {
   const toBeId = useRef(props.toBeId);
   const [newPlanTitle, setNewPlanTitle] = useState('');
   const [showDateTimePicker, setShowDateTimePicker] = useState(false);
@@ -13,30 +15,30 @@ export default AddPlan = (props) => {
 
   const addPlan = () => {
     db.addPlan(newPlanTitle, toBeId.current, calEvent.current)
-    .then((success) => {
-      if(success){
-        props.onAdd();
-      } else {
-        Alert.alert("Unable to add a new plan at this time.");
-      }
-    });
-  }
+      .then((success) => {
+        if (success) {
+          props.onAdd();
+        } else {
+          Alert.alert("Unable to add a new plan at this time.");
+        }
+      });
+  };
 
   const addCalendar = () => {
     setShowDateTimePicker(true);
-  }
+  };
 
   const onDateTimeChange = (eventDate, eventStartTime, eventEndTime) => {
     calEvent.current = {
       date: eventDate.toISOString(),
       start: eventStartTime.toISOString(),
-      end: eventEndTime.toISOString()
-    }
+      end: eventEndTime.toISOString(),
+    };
     setShowDateTimePicker(false);
-  }
+  };
 
   return (
-    <Animated.View 
+    <Animated.View
       style={styles.container}
       entering={animations.addPlan.addPlanView.entering}
       exiting={animations.addPlan.addPlanView.exiting}
@@ -50,13 +52,18 @@ export default AddPlan = (props) => {
       <TouchableOpacity style={styles.addButton} onPress={addCalendar}>
         <Text>Cal</Text>
       </TouchableOpacity>
-      {showDateTimePicker && <DateTimePicker 
+      {showDateTimePicker && (
+      <DateTimePicker
         calEvent={calEvent.current}
-        onDateTimeChange={(eventDate, eventStartTime, eventEndTime) => onDateTimeChange(eventDate, eventStartTime, eventEndTime)} 
+        onDateTimeChange={
+          // eslint-disable-next-line max-len
+          (eventDate, eventStartTime, eventEndTime) => onDateTimeChange(eventDate, eventStartTime, eventEndTime)
+        }
         onCancel={() => setShowDateTimePicker(false)}
-      />} 
+      />
+      )}
     </Animated.View>
-  )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -86,4 +93,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     backgroundColor: 'white'
   }
-})
+});
+
+export default AddPlan;

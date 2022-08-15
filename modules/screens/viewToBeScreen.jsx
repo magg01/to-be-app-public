@@ -1,17 +1,30 @@
-import React, { useCallback, useEffect, useRef, useState, Fragment, useLayoutEffect  } from 'react';
-import { StyleSheet, Text, ImageBackground, View, Button, Alert, BackHandler, TouchableOpacity, ActivityIndicator, Platform } from 'react-native';
-import Animated, { FadeIn, Layout, LinearTransition } from 'react-native-reanimated';
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useLayoutEffect,
+} from 'react';
+import {
+  StyleSheet,
+  Text,
+  ImageBackground,
+  View,
+  BackHandler,
+  TouchableOpacity,
+  ActivityIndicator,
+  Platform,
+} from 'react-native';
+import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { HeaderBackButton } from '@react-navigation/elements';
-import { StatusBar } from 'expo-status-bar'; 
-import * as db from '../database/database';
+import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
-import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
+import * as db from '../database/database';
 import PlanView from '../components/plans';
 import AddPlan from '../components/addPlan';
-import { animations } from '../utils/animations';
+import animations from '../utils/animations';
 
-export default ViewToBeScreen = ({route, navigation}) => {
+function ViewToBeScreen({route, navigation}) {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
   const [toBeItem, setToBeItem] = useState(undefined);
   const [viewMode, setViewMode] = useState('overview');
@@ -33,27 +46,27 @@ export default ViewToBeScreen = ({route, navigation}) => {
         setToBeItem(result);
       })
     }
-  }, [toBeId])
+  }, [toBeId]);
 
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        if(viewMode === 'detail'){
+        if (viewMode === 'detail') {
           setViewMode('overview');
-          return true
-        } else if(viewMode === 'addPlan') {
-          setViewMode('detail')
-          return true
-        } else {
-          return false
+          return true;
         }
+        if (viewMode === 'addPlan') {
+          setViewMode('detail');
+          return true;
+        }
+        return false;
       };
 
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
       return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [viewMode])
-  )
+    }, [viewMode]),
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -72,7 +85,6 @@ export default ViewToBeScreen = ({route, navigation}) => {
           }} 
           tintColor='white'
           labelVisible = {Platform.OS === 'ios' ? true : false}
-          //TODO: add label here for ios, "back" perhaps but didn't seem to be working
         />
        )
       }
@@ -81,46 +93,48 @@ export default ViewToBeScreen = ({route, navigation}) => {
 
   const onNewPlanAdded = () => {
     setViewMode('detail');
-  }
+  };
 
-  if(toBeItem === undefined){
+  if (toBeItem === undefined) {
     return (
       <SafeAreaView style={[styles.container, {justifyContent:'center'}]}>
         <ActivityIndicator size={'large'}/>
       </SafeAreaView>
     )
-  } else {
-    return (
-      <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.backgroundImage}>
-        <SafeAreaView style={{flex: 1}}>
-          <View style={[styles.container, viewMode === 'overview' ? {justifyContent:'center'} : {justifyContent:'flex-start'}]}>
-            <Animated.Text 
-              style={styles.mainTitle}
-              entering={animations.viewToBeScreen.mainTitleText.entering} 
-              layout={animations.viewToBeScreen.mainTitleText.layout} 
-            >{toBeItem.title}</Animated.Text>
-            {viewMode === 'detail' ?
-              <PlanView toBeId={toBeId} onAddNewPressed={() => setViewMode('addPlan')}/>
-              :
-              viewMode === 'addPlan' ?
-                <AddPlan toBeId={toBeId} onAdd={onNewPlanAdded} toBeItemTitle={toBeItem.title} />
-                :
-                null 
-            }
-          </View>
-          <Animated.View
-            style={{alignItems: 'center'}}
-            entering={animations.viewToBeScreen.detailsButton.entering}
-            exiting={animations.viewToBeScreen.detailsButton.exiting}
-          >
-            <TouchableOpacity style={styles.bottomButton} onPress={() => setViewMode('detail')}>
-              <Text style={{fontSize: 16}}>Details</Text>
-            </TouchableOpacity>
-          </Animated.View>
-        </SafeAreaView>
-      </ImageBackground>
-    )
   }
+  return (
+    <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.backgroundImage}>
+      <SafeAreaView style={{flex: 1}}>
+        <View style={[styles.container, viewMode === 'overview' ? {justifyContent:'center'} : {justifyContent:'flex-start'}]}>
+          <Animated.Text
+            style={styles.mainTitle}
+            entering={animations.viewToBeScreen.mainTitleText.entering} 
+            layout={animations.viewToBeScreen.mainTitleText.layout} 
+          >
+            {toBeItem.title}
+          </Animated.Text>
+          {viewMode === 'detail' ?
+            <PlanView providedToBeId={toBeId} onAddNewPressed={() => setViewMode('addPlan')}/>
+            :
+            viewMode === 'addPlan' ?
+              <AddPlan toBeId={toBeId} onAdd={onNewPlanAdded} toBeItemTitle={toBeItem.title} />
+              :
+              null 
+          }
+        </View>
+        <Animated.View
+          style={{alignItems: 'center'}}
+          entering={animations.viewToBeScreen.detailsButton.entering}
+          exiting={animations.viewToBeScreen.detailsButton.exiting}
+        >
+          <TouchableOpacity style={styles.bottomButton} onPress={() => setViewMode('detail')}>
+            <Text style={{fontSize: 16}}>Details</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </SafeAreaView>
+      <StatusBar style="auto" />
+    </ImageBackground>
+  );
   // } else if (viewMode === 'detail') {
   //   return (
   //     <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
@@ -218,5 +232,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     width: 120,
     height: 40
-  }
+  },
 });
+
+export default ViewToBeScreen;

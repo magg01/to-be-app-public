@@ -1,26 +1,35 @@
-import React, { useState, useRef } from "react";
-import { Button, View, Text } from "react-native";
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+import React, { useState, useRef } from 'react';
+import { Button, View, Text } from 'react-native';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
-//look into proptypes library in order to codify the necessary functions to supply as props
-const DateTimePicker = (props) => {
+// look into proptypes library in order to codify the necessary functions to supply as props
+function DateTimePicker(props) {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [datePicked, setDatePicked] = useState(props.calEvent ? new Date(props.calEvent.date) : new Date());
-  const [startTimePicked, setStartTimePicked] = useState(props.calEvent ? new Date(props.calEvent.start) : new Date());
-  const [endTimePicked, setEndTimePicked] = useState(props.calEvent ? new Date(props.calEvent.end) : new Date());
+  const [datePicked, setDatePicked] = useState(
+    // eslint-disable-next-line comma-dangle
+    props.calEvent ? new Date(props.calEvent.date) : new Date()
+  );
+  const [startTimePicked, setStartTimePicked] = useState(
+    // eslint-disable-next-line comma-dangle
+    props.calEvent ? new Date(props.calEvent.start) : new Date()
+  );
+  const [endTimePicked, setEndTimePicked] = useState(
+    // eslint-disable-next-line comma-dangle
+    props.calEvent ? new Date(props.calEvent.end) : new Date()
+  );
   const pickerMode = useRef('date');
   const updateValue = useRef('date');
 
   const showDatePicker = (mode) => {
-    if(mode === 'date'){
+    if (mode === 'date') {
       pickerMode.current = 'date';
-      updateValue.current = 'date'  
-    } else if (mode === 'startTime'){
+      updateValue.current = 'date';
+    } else if (mode === 'startTime') {
       pickerMode.current = 'time';
-      updateValue.current = 'startTime'  
-    } else if (mode === 'endTime'){
+      updateValue.current = 'startTime';
+    } else if (mode === 'endTime') {
       pickerMode.current = 'time';
-      updateValue.current = 'endTime'  
+      updateValue.current = 'endTime';
     }
     setDatePickerVisibility(true);
   };
@@ -30,36 +39,35 @@ const DateTimePicker = (props) => {
   };
 
   const handleConfirm = (date) => {
-    if(updateValue.current === 'date'){
-      console.log("A date has been picked: ", date);
+    if (updateValue.current === 'date') {
+      console.log('A date has been picked: ', date);
       setDatePicked(date);
-    } else if(updateValue.current === 'startTime'){
-      console.log("A time has been picked: ", date);
+    } else if (updateValue.current === 'startTime') {
+      console.log('A time has been picked: ', date);
       setStartTimePicked(date);
-    } else if(updateValue.current === 'endTime'){
-      console.log("A time has been picked: ", date);
+    } else if (updateValue.current === 'endTime') {
+      console.log('A time has been picked: ', date);
       setEndTimePicked(date);
     }
     hideDatePicker();
   };
 
   const zeroPadTime = (time) => {
-    //would rather use .toLocaleString on Date objects here but doesn't work for Android see (https://stackoverflow.com/questions/41408025/react-native-tolocalestring-not-working-on-android)
-    //could get around it (see: https://expo.canny.io/feature-requests/p/add-intl-support) but wouldn't work in Expo Go. 
-    if(time < 10){
+    // would rather use .toLocaleString on Date objects here but doesn't work for Android see (https://stackoverflow.com/questions/41408025/react-native-tolocalestring-not-working-on-android)
+    // could get around it (see: https://expo.canny.io/feature-requests/p/add-intl-support) but wouldn't work in Expo Go.
+    if (time < 10) {
       return `0${time}`;
-    } else {
-      return time;
     }
-  }
+    return time;
+  };
 
   const onClose = (shouldUpdateDateTime) => {
-    if(shouldUpdateDateTime){
+    if (shouldUpdateDateTime) {
       props.onDateTimeChange(datePicked, startTimePicked, endTimePicked);
     } else {
       props.onCancel();
     }
-  }
+  };
 
   return (
     <View>
@@ -85,6 +93,6 @@ const DateTimePicker = (props) => {
       />
     </View>
   );
-};
+}
 
 export default DateTimePicker;

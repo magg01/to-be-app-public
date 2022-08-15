@@ -1,6 +1,6 @@
 // import React from 'react';
 import { render, screen, cleanup, waitFor, act, fireEvent} from '@testing-library/react-native';
-import UnsplashImageSearch from './unsplashImageSearch';
+import UnsplashImageSearch from './UnsplashImageSearch';
 import { mockApiGetPhotosSuccessResponse, mockApiGetPhotosErrorResponse, mockApiGetPhotosEmptyResponse } from './__mocks__/unsplashImageSearch';
 import { apiMethods } from '../utils/unsplashApi';
 import CONSTANT_STRINGS from '../strings/constantStrings';
@@ -14,109 +14,109 @@ afterEach(cleanup);
 beforeEach(() => spiedApiGetPhotos.mockClear());
 
 describe('UnsplashImageSearch Component effects', () => {
-  it('should make a call to the unsplash API on mount given a non-blank searchQuery prop', async () => { 
-    await waitFor(() => render(<UnsplashImageSearch searchQuery={"test query"} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
+  it('should make a call to the unsplash API on mount given a non-blank providedSearchQuery prop', async () => { 
+    await waitFor(() => render(<UnsplashImageSearch providedSearchQuery={"test query"} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
     expect(spiedApiGetPhotos).toHaveBeenCalled();
   });
 
-  it('should make a call to the unsplash API on mount with the searchQuery provided in the props', async () => { 
-    let searchQueryProp = "mountains";
-    await waitFor(() => render(<UnsplashImageSearch searchQuery={searchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
-    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: searchQueryProp}));
+  it('should make a call to the unsplash API on mount with the providedSearchQuery provided in the props', async () => { 
+    let providedSearchQueryProp = "mountains";
+    await waitFor(() => render(<UnsplashImageSearch providedSearchQuery={providedSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
+    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: providedSearchQueryProp}));
   });
 
-  it('should not make a call to the unsplash API on mount if the searchQuery provided in the props = ""', async () => { 
-    let searchQueryProp = "";
-    await waitFor(() => render(<UnsplashImageSearch searchQuery={searchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
+  it('should not make a call to the unsplash API on mount if the providedSearchQuery provided in the props = ""', async () => { 
+    let providedSearchQueryProp = "";
+    await waitFor(() => render(<UnsplashImageSearch providedSearchQuery={providedSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
     expect(spiedApiGetPhotos).not.toHaveBeenCalled();
   });
 
-  it('should make a new call to the Unsplash API if the searchQuery prop is modified', async () => {
-    let searchQueryProp = "mountains";
-    let newSearchQueryProp = "apples";
-    render(<UnsplashImageSearch searchQuery={searchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
-    //check the mocked method was called with the initial searchQuery prop
-    await waitFor(() => expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: searchQueryProp})));
+  it('should make a new call to the Unsplash API if the providedSearchQuery prop is modified', async () => {
+    let providedSearchQueryProp = "mountains";
+    let newProvidedSearchQueryProp = "apples";
+    render(<UnsplashImageSearch providedSearchQuery={providedSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
+    //check the mocked method was called with the initial providedSearchQuery prop
+    await waitFor(() => expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: providedSearchQueryProp})));
     //clear the mock to reset call argument values
     spiedApiGetPhotos.mockClear();
-    //rerender the component with the new searchQuery prop
-    await act(async() => screen.rerender(<UnsplashImageSearch searchQuery={newSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
-    //check that the mocked method was called with the modified searchQuery prop...
-    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: newSearchQueryProp}));
+    //rerender the component with the new providedSearchQuery prop
+    await act(async() => screen.rerender(<UnsplashImageSearch providedSearchQuery={newProvidedSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
+    //check that the mocked method was called with the modified providedSearchQueryProp ...
+    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: newProvidedSearchQueryProp}));
     //...and not with the original prop value
-    expect(spiedApiGetPhotos).not.toHaveBeenCalledWith(expect.objectContaining({query: searchQueryProp}));
+    expect(spiedApiGetPhotos).not.toHaveBeenCalledWith(expect.objectContaining({query: providedSearchQueryProp}));
   })
 
-  it('should set the textInput value to empty string upon searchQuery prop change', async () => {
-    let searchQueryProp = "mountains";
+  it('should set the textInput value to empty string upon providedSearchQuery prop change', async () => {
+    let providedSearchQueryProp = "mountains";
     let textInputValue = "valleys";
-    let newSearchQueryProp = "apples";
-    render(<UnsplashImageSearch searchQuery={searchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
+    let newProvidedSearchQueryProp = "apples";
+    render(<UnsplashImageSearch providedSearchQuery={providedSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
     const textInput = screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER);
     await act(async () => fireEvent.changeText(textInput, textInputValue));
     expect(textInput.props.value).toBe(textInputValue);
-    //rerender the component with the new searchQuery prop
-    await act(async() => screen.rerender(<UnsplashImageSearch searchQuery={newSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
+    //rerender the component with the new providedSearchQuery prop
+    await act(async() => screen.rerender(<UnsplashImageSearch providedSearchQuery={newProvidedSearchQueryProp} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>));
     expect(textInput.props.value).toBe("");
   })
 })
 
 describe('search input text', () => {
   it('should render', async () =>{
-    render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
+    render(<UnsplashImageSearch providedSearchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
     await waitFor(() => expect(screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER)).toBeTruthy());
   })
 
   it('should hit the api with a new query upon submission of non-blank text', async () => {
-    render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
+    render(<UnsplashImageSearch providedSearchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
     const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER));
-    const newSearchQuery = "mountains";
-    await act(async () => fireEvent.changeText(textInput, newSearchQuery));
-    expect(textInput.props.value).toBe(newSearchQuery);
+    const newProvidedSearchQuery = "mountains";
+    await act(async () => fireEvent.changeText(textInput, newProvidedSearchQuery));
+    expect(textInput.props.value).toBe(newProvidedSearchQuery);
     await act(async() => fireEvent(textInput, 'submitEditing'));
-    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: newSearchQuery}));
+    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: newProvidedSearchQuery}));
   })
 
   it('should not hit the api with a new query upon submission of blank text', async () => {
-    render(<UnsplashImageSearch searchQuery={"Query from props"} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
+    render(<UnsplashImageSearch providedSearchQuery={"Query from props"} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
     const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER));
-    const newSearchQuery = "";
-    await act(async () => fireEvent.changeText(textInput, newSearchQuery));
-    expect(textInput.props.value).toBe(newSearchQuery);
+    const newProvidedSearchQuery = "";
+    await act(async () => fireEvent.changeText(textInput, newProvidedSearchQuery));
+    expect(textInput.props.value).toBe(newProvidedSearchQuery);
     await act(async() => fireEvent(textInput, 'submitEditing'));
     expect(spiedApiGetPhotos).not.toHaveBeenCalledWith(expect.objectContaining({query: ""}));
   })
 
   it('should send the lowercase transform of the input to the api', async () => {
-    render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
+    render(<UnsplashImageSearch providedSearchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
     const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER));
-    const newSearchQuery = "MOuNTaINS aND OtherS";
-    await act(async () => fireEvent.changeText(textInput, newSearchQuery));
-    expect(textInput.props.value).toBe(newSearchQuery);
+    const newProvidedSearchQuery = "MOuNTaINS aND OtherS";
+    await act(async () => fireEvent.changeText(textInput, newProvidedSearchQuery));
+    expect(textInput.props.value).toBe(newProvidedSearchQuery);
     await act(async() => fireEvent(textInput, 'submitEditing'));
-    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: newSearchQuery.toLowerCase()}));
+    expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: newProvidedSearchQuery.toLowerCase()}));
   })
 
   it('should trim leading and trailing whitespace characters from the input before querying the api', async () => {
-    render(<UnsplashImageSearch searchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
+    render(<UnsplashImageSearch providedSearchQuery={""} onImageDownload={null} width={"100"} height={"100"}></UnsplashImageSearch>);
     const textInput = await waitFor(() => screen.getByPlaceholderText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER));
-    const newSearchQuery = "\n  \r mountains  \n\r";
-    await act(async () => fireEvent.changeText(textInput, newSearchQuery));
-    expect(textInput.props.value).toBe(newSearchQuery);
+    const newProvidedSearchQuery = "\n  \r mountains  \n\r";
+    await act(async () => fireEvent.changeText(textInput, newProvidedSearchQuery));
+    expect(textInput.props.value).toBe(newProvidedSearchQuery);
     await act(async() => fireEvent(textInput, 'submitEditing'));
     expect(spiedApiGetPhotos).toHaveBeenCalledWith(expect.objectContaining({query: "mountains"}));
   })
 })
 
 describe('activity indicator', () => {
-  it('should be shown on initial render, given a non-blank searchQuery prop', async () => {
-    render(<UnsplashImageSearch searchQuery={"test query"}></UnsplashImageSearch>);
+  it('should be shown on initial render, given a non-blank providedSearchQuery prop', async () => {
+    render(<UnsplashImageSearch providedSearchQuery={"test query"}></UnsplashImageSearch>);
     await waitFor(() => expect(screen.getByRole('progressbar')).toBeTruthy());
   })
 
   it('should be hidden once the api call resolves', async () => {
     //render the component (render is wrapped in an act() call so no need to use here)
-    render(<UnsplashImageSearch searchQuery={"test query"}></UnsplashImageSearch>);
+    render(<UnsplashImageSearch providedSearchQuery={"test query"}></UnsplashImageSearch>);
     //get the result object value of the first call to the mocked apiGetPhotos function which should be a promise
     const resultOfApiCall = spiedApiGetPhotos.mock.results[0].value;
     //wrap in act because once the promise resolves the state is updated. Await the fulfillment of act before continuing to prevent unexpected behaviour
@@ -134,7 +134,7 @@ describe('on successful response from the api with no results', () => {
     //update the spiedApiGetPhotos mock to resolve to the unsplash empty response the next time it is called
     spiedApiGetPhotos.mockResolvedValueOnce(mockApiGetPhotosEmptyResponse);
     //render the component (render is wrapped in an act() call so no need to use here)
-    render(<UnsplashImageSearch searchQuery={"test query"}></UnsplashImageSearch>);
+    render(<UnsplashImageSearch providedSearchQuery={"test query"}></UnsplashImageSearch>);
     //get the result object value of the first call to the mocked apiGetPhotos function which should be a promise
     const resultOfApiCall = spiedApiGetPhotos.mock.results[0].value;
     //wrap in act because once the promise resolves the state is updated. Await the fulfillment of act before continuing to prevent unexpected behaviour
@@ -153,7 +153,7 @@ describe('on error response from api', () => {
     //update the spiedApiGetPhotos mock to resolve to the unsplash error response the next time it is called
     spiedApiGetPhotos.mockResolvedValueOnce(mockApiGetPhotosErrorResponse);
     //render the component (render is wrapped in an act() call so no need to use here)
-    render(<UnsplashImageSearch searchQuery={"test query"}></UnsplashImageSearch>);
+    render(<UnsplashImageSearch providedSearchQuery={"test query"}></UnsplashImageSearch>);
     //get the result object value of the first call to the mocked apiGetPhotos function which should be a promise
     const resultOfApiCall = spiedApiGetPhotos.mock.results[0].value;
     //wrap in act because once the promise resolves the state is updated. Await the fulfillment of act before continuing to prevent unexpected behaviour
@@ -168,7 +168,7 @@ describe('on error response from api', () => {
     //update the spiedApiGetPhotos mock to resolve to the unsplash error response the next time it is called
     spiedApiGetPhotos.mockResolvedValueOnce(mockApiGetPhotosErrorResponse);
     //render the component (render is wrapped in an act() call so no need to use here)
-    render(<UnsplashImageSearch searchQuery={"test query"}></UnsplashImageSearch>);
+    render(<UnsplashImageSearch providedSearchQuery={"test query"}></UnsplashImageSearch>);
     //get the result object value of the first call to the mocked apiGetPhotos function which should be a promise
     const resultOfApiCall = spiedApiGetPhotos.mock.results[0].value;
     //wrap in act because once the promise resolves the state is updated. Await the fulfillment of act before continuing to prevent unexpected behaviour
@@ -183,7 +183,7 @@ describe('on error response from api', () => {
      //update the spiedApiGetPhotos mock to resolve to the unsplash error response the next time it is called
      spiedApiGetPhotos.mockResolvedValueOnce(mockApiGetPhotosErrorResponse);
      //render the component (render is wrapped in an act() call so no need to use here)
-     render(<UnsplashImageSearch searchQuery={"test query"}></UnsplashImageSearch>);
+     render(<UnsplashImageSearch providedSearchQuery={"test query"}></UnsplashImageSearch>);
      //get the result object value of the first call to the mocked apiGetPhotos function which should be a promise
      const resultOfApiCall = spiedApiGetPhotos.mock.results[0].value;
      //wrap in act because once the promise resolves the state is updated. Await the fulfillment of act before continuing to prevent unexpected behaviour
@@ -198,9 +198,7 @@ describe('on error response from api', () => {
 
 describe('on success response from the api', () => {
   it('should render flatlist element', async () => {
-    render(<UnsplashImageSearch searchQuery={"test query"}></UnsplashImageSearch>);
+    render(<UnsplashImageSearch providedSearchQuery={"test query"}></UnsplashImageSearch>);
     await waitFor(() => expect(screen.getByTestId('photoItemFlatlist')).toBeTruthy());
   })
-
-
 })

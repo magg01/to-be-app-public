@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { setNotificationHandler } from 'expo-notifications';
 import HomeScreen from './modules/screens/homeScreen';
 import ViewToBeScreen from './modules/screens/viewToBeScreen';
-import { fetchPermissionSettings, checkPermissionSettings } from './modules/components/testNotifications';
+import { fetchPermissionSettings, checkPermissionSettings } from './modules/utils/notifications';
 
 const Stack = createStackNavigator();
 
@@ -13,7 +13,7 @@ const Stack = createStackNavigator();
 setNotificationHandler({
   handleNotification: async () => {
     const permissionSettings = fetchPermissionSettings();
-    if(Platform.OS === 'ios'){
+    if (Platform.OS === 'ios'){
       return {
         shouldShowAlert: permissionSettings.ios?.allowsAlert,
         shouldPlaySound: permissionSettings.ios?.allowsSound,

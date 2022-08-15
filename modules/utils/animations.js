@@ -1,4 +1,4 @@
-import { FadeIn, Layout, FadeOut, SlideInRight, SlideInUp, SlideInDown, SlideOutDown } from "react-native-reanimated";
+import { FadeIn, Layout, FadeOut } from 'react-native-reanimated';
 
 const animations = {
   viewToBeScreen: {
@@ -9,7 +9,7 @@ const animations = {
     detailsButton: {
       entering: FadeIn.duration(1000).delay(500),
       exiting: FadeOut.duration(800),
-    }
+    },
   },
   plans: {
     planView: {
@@ -27,9 +27,8 @@ const animations = {
     addPlanView: {
       entering: FadeIn.duration(500),
       exiting: FadeOut.duration(500),
-    }
-  }
+    },
+  },
+};
 
-}
-
-export { animations }
+export default animations;
