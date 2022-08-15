@@ -77,7 +77,7 @@ export default PlanView = (props) => {
 
 const styles = StyleSheet.create({
   container: {
-    
+    width: "100%",
     maxHeight: "75%",
     minHeight: "15%",
     borderWidth: 1.5, 
