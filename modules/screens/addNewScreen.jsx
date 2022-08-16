@@ -2,7 +2,7 @@ import React, {
   useState, useRef, useCallback, useEffect,
 } from 'react';
 import {
-  StyleSheet, View, ImageBackground, Text, TextInput, Dimensions, TouchableOpacity,
+  StyleSheet, View, ImageBackground, Text, TextInput, Dimensions, TouchableOpacity, BackHandler,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -34,6 +34,28 @@ function AddNewScreen({ navigation }) {
     }, []),
   );
 
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (showImagePicker) {
+          setShowImagePicker(false);
+          return true;
+        }
+        if (showSaveButton) {
+          setImageBackgroundUri(defaultBackgroundImage);
+          setShowSaveButton(false);
+          setShowImagePicker(true);
+          return true;
+        }
+        return false;
+      };
+
+      BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+      return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+    }, [showImagePicker, showSaveButton]),
+  );
+
   // useFocusEffect(
   //   useCallback(() => {
   //     if (textInputRef.current !== null) {
@@ -41,12 +63,6 @@ function AddNewScreen({ navigation }) {
   //     }
   //   }, [textInputRef]),
   // );
-
-  useEffect(() => {
-    if (searchQuery !== '') {
-      setShowImagePicker(true);
-    }
-  }, [searchQuery]);
 
   const updateImageBackground = (uri) => {
     setShowImagePicker(false);
@@ -73,10 +89,11 @@ function AddNewScreen({ navigation }) {
           >
             <TextInput
               ref={textInputRef}
-              style={styles.input}
+              style={showSaveButton ? styles.titleText : styles.input}
               onChangeText={updateTitleText}
               onSubmitEditing={(e) => {
                 setSearchQuery(e.nativeEvent.text);
+                setShowImagePicker(true);
               }}
               value={titleText}
               textAlign="center"
@@ -90,26 +107,14 @@ function AddNewScreen({ navigation }) {
         {showImagePicker
             && (
             <>
-              <Animated.View
-                style={{ width: "100%", alignItems: 'center' }}
+              <Animated.Text
+                style={styles.titleText}
                 entering={FadeIn.duration(1000).delay(250)}
                 exiting={FadeOut.duration(500)}
                 key="test"
               >
-                <TextInput
-                  ref={textInputRef}
-                  style={styles.input}
-                  onChangeText={updateTitleText}
-                  onSubmitEditing={(e) => {
-                    setSearchQuery(e.nativeEvent.text);
-                  }}
-                  value={titleText}
-                  textAlign="center"
-                  showSoftInputOnFocus
-                  selectionColor="white"
-                  returnKeyType="done"
-                />
-              </Animated.View>
+                {titleText}
+              </Animated.Text>
               <Animated.View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start' }} entering={FadeIn.duration(1000).delay(500)}>
                 <UnsplashImageSearch
                   width={width * 0.75}
@@ -152,6 +157,13 @@ const styles = StyleSheet.create({
     margin: 12,
     borderBottomWidth: 2,
     borderBottomColor: 'white',
+    padding: 6,
+    fontSize: 36,
+    color: 'white',
+  },
+  titleText: {
+    alignSelf: 'center',
+    margin: 12,
     padding: 6,
     fontSize: 36,
     color: 'white',
