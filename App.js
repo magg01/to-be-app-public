@@ -5,6 +5,7 @@ import { setNotificationHandler } from 'expo-notifications';
 import HomeScreen from './modules/screens/homeScreen';
 import ViewToBeScreen from './modules/screens/viewToBeScreen';
 import { fetchPermissionSettings, checkPermissionSettings } from './modules/utils/notifications';
+import AddNewScreen from './modules/screens/addNewScreen';
 
 const Stack = createStackNavigator();
 
@@ -46,6 +47,7 @@ export default function App() {
       >
         <Stack.Screen name="HomeScreen" component={HomeScreen}/>
         <Stack.Screen name="ViewToBeScreen" component={ViewToBeScreen} />
+        <Stack.Screen name="AddNewScreen" component={AddNewScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

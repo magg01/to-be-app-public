@@ -1,5 +1,5 @@
 import React, {
-  useState, useRef, useCallback, useEffect,
+  useState, useRef, useCallback, useLayoutEffect,
 } from 'react';
 import {
   StyleSheet, View, ImageBackground, Text, TextInput, Dimensions, TouchableOpacity, BackHandler,
@@ -7,6 +7,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import { HeaderBackButton } from '@react-navigation/elements';
 import Animated, { EntryExitTransition, FadeIn, Layout, FadeOut, ZoomIn, ZoomOut, FadeOutUp, withDelay, SlideOutUp } from 'react-native-reanimated';
 import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
@@ -55,6 +56,31 @@ function AddNewScreen({ navigation }) {
       return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
     }, [showImagePicker, showSaveButton]),
   );
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <Animated.View entering={FadeIn.duration(1000)} exiting={FadeOut.duration(1000)}>
+          <HeaderBackButton 
+            onPress={() => {
+              if (showImagePicker){
+                setShowImagePicker(false);
+              }
+              else if(showSaveButton){
+                setImageBackgroundUri(defaultBackgroundImage);
+                setShowImagePicker(true);
+                setShowSaveButton(false);
+              } else {
+                navigation.goBack();
+              }
+            }} 
+            tintColor='white'
+            labelVisible = {Platform.OS === 'ios' ? true : false}
+          />
+        </Animated.View>
+      )
+    });
+  });
 
   // useFocusEffect(
   //   useCallback(() => {

@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import { StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
@@ -41,6 +41,9 @@ function BeScreen({ navigation }) {
         keyExtractor={item => item.id}
         numColumns={2}
       />
+      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
+        <Text>New</Text>
+      </TouchableOpacity>
       <StatusBar style={"auto"}/>
     </SafeAreaView>
   );
@@ -52,6 +55,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  fab: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    bottom: 20,
+    right: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    x: 20,
+    backgroundColor: 'white',
+    position: 'absolute',
+    opacity: 0.9,
+  }
 });
 
 export default BeScreen;
