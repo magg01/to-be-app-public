@@ -1,5 +1,5 @@
 import React, {
-  useState, useRef, useCallback, useEffect,
+  useState, useRef, useCallback, useLayoutEffect,
 } from 'react';
 import {
   StyleSheet, View, ImageBackground, Text, TextInput, Dimensions, TouchableOpacity, BackHandler,
@@ -7,6 +7,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import { HeaderBackButton } from '@react-navigation/elements';
 import Animated, { EntryExitTransition, FadeIn, Layout, FadeOut, ZoomIn, ZoomOut, FadeOutUp, withDelay, SlideOutUp } from 'react-native-reanimated';
 import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
@@ -56,13 +57,43 @@ function AddNewScreen({ navigation }) {
     }, [showImagePicker, showSaveButton]),
   );
 
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (textInputRef.current !== null) {
-  //       textInputRef.current.focus();
-  //     }
-  //   }, [textInputRef]),
-  // );
+  useLayoutEffect(() => {
+    if (showImagePicker || showSaveButton) {
+      navigation.setOptions({
+        headerLeft: () => (
+          <Animated.View entering={FadeIn.duration(1000)} exiting={FadeOut.duration(1000)}>
+            <HeaderBackButton 
+              onPress={() => {
+                if (showImagePicker){
+                  setShowImagePicker(false);
+                  navigation.setOptions({
+                    headerLeft: null,
+                  })
+                }
+                else if(showSaveButton){
+                  setImageBackgroundUri(defaultBackgroundImage);
+                  setShowImagePicker(true);
+                  setShowSaveButton(false);
+                } else {
+                  navigation.goBack();
+                }
+              }} 
+              tintColor='white'
+              labelVisible = {Platform.OS === 'ios' ? true : false}
+            />
+          </Animated.View>
+        )
+      });
+    }
+  });
+
+  useFocusEffect(
+    useCallback(() => {
+      if (textInputRef.current !== null) {
+        textInputRef.current.focus();
+      }
+    }, [textInputRef]),
+  );
 
   const updateImageBackground = (uri) => {
     setShowImagePicker(false);
@@ -72,6 +103,9 @@ function AddNewScreen({ navigation }) {
 
   const onNewSave = () => {
     addToBeItem(titleText, imageBackgroundUri.uri);
+    navigation.setOptions({
+      headerLeft: null,
+    });
     navigation.goBack();
   };
 
