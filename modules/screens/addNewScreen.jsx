@@ -7,7 +7,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import Animated, { Layout } from 'react-native-reanimated';
+import Animated, { EntryExitTransition, FadeIn, Layout, FadeOut, ZoomIn, ZoomOut } from 'react-native-reanimated';
 import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
 
@@ -55,9 +55,9 @@ function AddNewScreen({ navigation }) {
 
   return (
     <ImageBackground source={imageBackgroundUri} resizeMode='cover' style={styles.backgroundImage}>
-      <SafeAreaView style={{flex:1, alignItems: 'center', justifyContent: 'flex-start'}}>
-        <View style={[styles.container, showImagePicker ? {justifyContent: 'flex-start'} : {justifyContent: 'center'}]}>
-          <Animated.View layout={showImagePicker ? Layout.duration(1000) : null}>
+      <SafeAreaView style={{flex: 1, borderWidth:1, borderColor: 'red'}}>
+        <View style={[styles.container, {borderWidth: 1, borderColor: 'yellow', flexGrow: 1}, showImagePicker ? {justifyContent: 'flex-start'} : {justifyContent: 'center'}]}>
+          <Animated.View entering={FadeIn.duration(1000)}>
             <TextInput
               ref={textInputRef}
               style={styles.input}
@@ -76,22 +76,26 @@ function AddNewScreen({ navigation }) {
         </View>
         {showImagePicker
           ? (
-            <UnsplashImageSearch
-              width={width*0.65}
-              height={height*0.65}
-              providedSearchQuery={searchQuery}
-              onImageDownload={updateImageBackground}
-            />
+            <Animated.View style={{flexGrow: 1, borderWidth: 1, borderColor: 'green', alignItems: 'center', justifyContent: 'center'}} entering={FadeIn.duration(1000)}>
+              <UnsplashImageSearch
+                width={width*0.65}
+                height={height*0.65}
+                providedSearchQuery={searchQuery}
+                onImageDownload={updateImageBackground}
+              />
+            </Animated.View>
           )
           : null}
         {showSaveButton
           ? (
-            <TouchableOpacity
-              style={{backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4}}
-              onPress={onNewSave}
-            >
-              <Text>Save</Text>
-            </TouchableOpacity>
+            <Animated.View style={{borderWidth: 1, borderColor: 'green', alignItems: 'center'}} entering={FadeIn.duration(1000)}>
+              <TouchableOpacity
+                style={{backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4}}
+                onPress={onNewSave}
+              >
+                <Text>Save</Text>
+              </TouchableOpacity>
+            </Animated.View>
           )
           : null}
         <StatusBar style="auto" />
@@ -103,7 +107,6 @@ function AddNewScreen({ navigation }) {
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    justifyContent: 'center',
   },
   container: {
     flex: 1,

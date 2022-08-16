@@ -58,17 +58,17 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
     return (
       <ImageBackground 
         style={{
-          width: width, 
-          flexDirection: 'column', 
-          justifyContent:'flex-end', 
-          alignItems: 'flex-end', 
-          resizeMode:"contain",
-        }} 
+          width: width,
+          justifyContent: 'flex-end', 
+          alignItems: 'center',
+          resizeMode: 'contain',
+          paddingHorizontal: 3
+        }}
         source={{uri: urls.regular}}
         defaultSource={loadingImage}
       >
         <TouchableOpacity 
-          style={{width: 100, height: 25, backgroundColor:'#ccc', opacity: 0.8, alignItems: 'center', justifyContent: 'center', alignSelf:'center', borderRadius: 5, marginBottom: 10}}
+          style={{width: 100, height: 25, backgroundColor:'#ccc', opacity: 0.8, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginBottom: 10}}
           onPress={() =>
             downloadStarted ?
             null
@@ -81,7 +81,7 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
               <Text style={{color: 'white'}}>Choose image</Text>
             }
         </TouchableOpacity>
-        <Text style={{color: "white", fontSize: 10}}>{`${user.name} / Unsplash`}</Text>
+        <Text style={{color: "white", fontSize: 10, alignSelf: 'flex-end'}}>{`${user.name} / Unsplash`}</Text>
       </ImageBackground>
     );
   }
@@ -103,9 +103,9 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
   };
 
   return (
-    <View style={{height: height, width: width}}>
+    <View style={{height: height, width: width, alignItems: 'center'}}>
       <TextInput
-        style={{width: width, backgroundColor: 'lightgray'}}
+        style={{width: width * 0.8, backgroundColor: 'white', marginBottom: 20, borderRadius: 5, padding: 6, opacity: 0.9}}
         onSubmitEditing={() => setSearchQuery(searchInput)}
         onChangeText={setSearchInput}
         value={searchInput}
@@ -128,18 +128,20 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
           return <Text>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_NO_RESULTS_MESSAGE}</Text>;
         }
         return (
-          <FlatList
-            ref={flatListRef}
-            renderItem={({ item }) => <PhotoItemForFlatList photo={item} />}
-            data={data.response.results}
-            horizontal
-            keyExtractor={(item) => item.id}
-            pagingEnabled
-            decelerationRate="fast"
-            persistentScrollbar
-            initialNumToRender={5}
-            testID="photoItemFlatlist"
-          />
+          <View style={{flex: 1, borderRadius: 6, overflow: 'hidden'}}>
+            <FlatList
+              ref={flatListRef}
+              renderItem={({ item }) => <PhotoItemForFlatList photo={item} />}
+              data={data.response.results}
+              horizontal
+              keyExtractor={(item) => item.id}
+              pagingEnabled
+              decelerationRate="fast"
+              persistentScrollbar
+              initialNumToRender={5}
+              testID="photoItemFlatlist"
+            />
+          </View>
         );
       })()}
       <StatusBar style="auto" />
