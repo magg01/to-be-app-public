@@ -1,5 +1,5 @@
 import React, {
-  useState, useRef, useCallback,
+  useState, useRef, useCallback, useEffect,
 } from 'react';
 import {
   StyleSheet, View, ImageBackground, Text, TextInput, Dimensions, TouchableOpacity,
@@ -7,7 +7,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import Animated, { EntryExitTransition, FadeIn, Layout, FadeOut, ZoomIn, ZoomOut } from 'react-native-reanimated';
+import Animated, { EntryExitTransition, FadeIn, Layout, FadeOut, ZoomIn, ZoomOut, FadeOutUp, withDelay, SlideOutUp } from 'react-native-reanimated';
 import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
 
@@ -34,13 +34,19 @@ function AddNewScreen({ navigation }) {
     }, []),
   );
 
-  useFocusEffect(
-    useCallback(() => {
-      if (textInputRef.current != null) {
-        textInputRef.current.focus();
-      }
-    }, [textInputRef]),
-  );
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     if (textInputRef.current !== null) {
+  //       textInputRef.current.focus();
+  //     }
+  //   }, [textInputRef]),
+  // );
+
+  useEffect(() => {
+    if (searchQuery !== '') {
+      setShowImagePicker(true);
+    }
+  }, [searchQuery]);
 
   const updateImageBackground = (uri) => {
     setShowImagePicker(false);
@@ -55,16 +61,22 @@ function AddNewScreen({ navigation }) {
 
   return (
     <ImageBackground source={imageBackgroundUri} resizeMode='cover' style={styles.backgroundImage}>
-      <SafeAreaView style={{flex: 1, borderWidth:1, borderColor: 'red'}}>
-        <View style={[styles.container, {borderWidth: 1, borderColor: 'yellow', flexGrow: 1}, showImagePicker ? {justifyContent: 'flex-start'} : {justifyContent: 'center'}]}>
-          <Animated.View entering={FadeIn.duration(1000)}>
+      <SafeAreaView style={{flex: 1}}>
+        <View style={styles.container}>
+          {!showImagePicker && (
+          <Animated.View
+            style={{width: "100%", alignItems: 'center'}}
+            entering={FadeIn.duration(1000).delay(500)}
+            exiting={FadeOut.duration(1000)}
+            layout={Layout.duration(1000)}
+            key="test2"
+          >
             <TextInput
               ref={textInputRef}
               style={styles.input}
               onChangeText={updateTitleText}
               onSubmitEditing={(e) => {
                 setSearchQuery(e.nativeEvent.text);
-                setShowImagePicker(true);
               }}
               value={titleText}
               textAlign="center"
@@ -73,22 +85,44 @@ function AddNewScreen({ navigation }) {
               returnKeyType="done"
             />
           </Animated.View>
+          )}
         </View>
         {showImagePicker
-          ? (
-            <Animated.View style={{flexGrow: 1, borderWidth: 1, borderColor: 'green', alignItems: 'center', justifyContent: 'center'}} entering={FadeIn.duration(1000)}>
-              <UnsplashImageSearch
-                width={width*0.65}
-                height={height*0.65}
-                providedSearchQuery={searchQuery}
-                onImageDownload={updateImageBackground}
-              />
-            </Animated.View>
-          )
-          : null}
+            && (
+            <>
+              <Animated.View
+                style={{ width: "100%", alignItems: 'center' }}
+                entering={FadeIn.duration(1000).delay(250)}
+                exiting={FadeOut.duration(500)}
+                key="test"
+              >
+                <TextInput
+                  ref={textInputRef}
+                  style={styles.input}
+                  onChangeText={updateTitleText}
+                  onSubmitEditing={(e) => {
+                    setSearchQuery(e.nativeEvent.text);
+                  }}
+                  value={titleText}
+                  textAlign="center"
+                  showSoftInputOnFocus
+                  selectionColor="white"
+                  returnKeyType="done"
+                />
+              </Animated.View>
+              <Animated.View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start' }} entering={FadeIn.duration(1000).delay(500)}>
+                <UnsplashImageSearch
+                  width={width * 0.75}
+                  height={height * 0.75}
+                  providedSearchQuery={searchQuery}
+                  onImageDownload={updateImageBackground} 
+                />
+              </Animated.View>
+            </>
+            )}
         {showSaveButton
-          ? (
-            <Animated.View style={{borderWidth: 1, borderColor: 'green', alignItems: 'center'}} entering={FadeIn.duration(1000)}>
+          && (
+            <Animated.View style={{alignItems: 'center'}} entering={FadeIn.duration(1000)}>
               <TouchableOpacity
                 style={{backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4}}
                 onPress={onNewSave}
@@ -96,8 +130,7 @@ function AddNewScreen({ navigation }) {
                 <Text>Save</Text>
               </TouchableOpacity>
             </Animated.View>
-          )
-          : null}
+          )}
         <StatusBar style="auto" />
       </SafeAreaView>
     </ImageBackground>
@@ -112,6 +145,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     paddingHorizontal: '8%',
+    justifyContent: 'center',
   },
   input: {
     width: '60%',

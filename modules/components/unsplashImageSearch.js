@@ -47,7 +47,7 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
             setPhotosResponse(result);
           })
           .catch((e) => {
-            console.log(`DisplayWindow encountered an error -> ${e}`);
+            console.log(`apiGetPhotos encountered an error -> ${JSON.stringify(e, null, 1)}`);
           });
       }
     }

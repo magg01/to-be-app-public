@@ -100,7 +100,7 @@ function ViewToBeScreen({route, navigation}) {
       <SafeAreaView style={[styles.container, {justifyContent:'center'}]}>
         <ActivityIndicator size={'large'}/>
       </SafeAreaView>
-    )
+    );
   }
   return (
     <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.backgroundImage}>
@@ -108,8 +108,8 @@ function ViewToBeScreen({route, navigation}) {
         <View style={[styles.container, viewMode === 'overview' ? {justifyContent:'center'} : {justifyContent:'flex-start'}]}>
           <Animated.Text
             style={styles.mainTitle}
-            entering={animations.viewToBeScreen.mainTitleText.entering} 
-            layout={animations.viewToBeScreen.mainTitleText.layout} 
+            entering={animations.viewToBeScreen.mainTitleText.entering}
+            layout={animations.viewToBeScreen.mainTitleText.layout}
           >
             {toBeItem.title}
           </Animated.Text>
