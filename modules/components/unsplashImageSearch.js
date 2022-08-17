@@ -1,19 +1,17 @@
+/* eslint-disable */
 import React, { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
-  StyleSheet, Text, View, ActivityIndicator, FlatList, ImageBackground, TextInput, TouchableOpacity,
+  StyleSheet, Text, View, ActivityIndicator, FlatList, TextInput,
 } from 'react-native';
-import { downloadRemoteImageToLocalStorage } from '../FileSystem/fileSystem';
+import UnsplashPhotoItemForFlatList from './unsplashPhotoItemForFlatlist';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 import { apiMethods } from '../utils/unsplashApi';
 
-const loadingImage = require('../../assets/icon.png');
-
 function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQuery}) {
   const [searchQuery, setSearchQuery] = useState(undefined);
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState('');
   const [data, setPhotosResponse] = useState(null);
-  const [downloadStarted, setDownloadStarted] = useState(false);
   const flatListRef = useRef(null);
 
   useEffect(() => {
@@ -22,12 +20,14 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
     if (flatListRef.current != null && data.response.results.length > 0) {
       flatListRef.current.scrollToIndex({ animated: false, index: 0 });
     }
+    console.log(`the [data] useEffect fired`);
   }, [data]);
 
   useEffect(() => {
     setSearchInput('');
     setSearchQuery(providedSearchQuery);
-  }, [providedSearchQuery])
+    console.log("the [providedSearchQuery] useEffect fired");
+  }, [providedSearchQuery]);
 
   useEffect(() => {
     if (searchQuery !== undefined) {
@@ -43,7 +43,6 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
           perPage: 30,
         })
           .then((result) => {
-            // console.log(JSON.stringify(result, null, 1))
             setPhotosResponse(result);
           })
           .catch((e) => {
@@ -51,56 +50,9 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
           });
       }
     }
+    console.log("the [searchQuery] useEffect fired");
   }, [searchQuery]);
 
-  function PhotoItemForFlatList({ photo }) {
-    const {urls, user} = photo;
-    return (
-      <ImageBackground 
-        style={{
-          width: width,
-          justifyContent: 'flex-end', 
-          alignItems: 'center',
-          resizeMode: 'contain',
-          paddingHorizontal: 3
-        }}
-        source={{uri: urls.regular}}
-        defaultSource={loadingImage}
-      >
-        <TouchableOpacity 
-          style={{width: 100, height: 25, backgroundColor:'#ccc', opacity: 0.8, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginBottom: 10}}
-          onPress={() =>
-            downloadStarted ?
-            null
-            :
-            onImageSelectionMade(photo)}
-        >
-            { downloadStarted ? 
-              <ActivityIndicator /> 
-              :
-              <Text style={{color: 'white'}}>Choose image</Text>
-            }
-        </TouchableOpacity>
-        <Text style={{color: "white", fontSize: 10, alignSelf: 'flex-end'}}>{`${user.name} / Unsplash`}</Text>
-      </ImageBackground>
-    );
-  }
-
-  const downloadImageFromUnsplash = (photo) => {
-    apiMethods.notifyUnsplashOfImageDownload(photo);
-    return downloadRemoteImageToLocalStorage(photo.urls.regular, photo.id);
-  };
-
-  const onImageSelectionMade = (photo) => {
-    setDownloadStarted(true);
-    downloadImageFromUnsplash(photo)
-      .then((localFileUri) => {
-        onImageDownload(localFileUri);
-      })
-      .catch((error) => {
-        console.error(`onImageSelectionMade encountered an error -> ${error}`);
-      });
-  };
 
   return (
     <View style={{height: height, width: width, alignItems: 'center'}}>
@@ -131,7 +83,7 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
           <View style={{flex: 1, borderRadius: 6, overflow: 'hidden'}}>
             <FlatList
               ref={flatListRef}
-              renderItem={({ item }) => <PhotoItemForFlatList photo={item} />}
+              renderItem={({ item }) => <UnsplashPhotoItemForFlatList photo={item} onImageDownload={onImageDownload} width={width} height={height} />}
               data={data.response.results}
               horizontal
               keyExtractor={(item) => item.id}
