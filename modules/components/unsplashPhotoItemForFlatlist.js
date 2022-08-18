@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState } from 'react';
 import {
-  Text, ActivityIndicator, ImageBackground, TouchableOpacity,
+  Text, ActivityIndicator, ImageBackground, TouchableOpacity, View
 } from 'react-native';
 import { downloadRemoteImageToLocalStorage } from '../FileSystem/fileSystem';
 import { apiMethods } from '../utils/unsplashApi';
@@ -11,8 +11,9 @@ const downloadImageFromUnsplash = (photo) => {
   return downloadRemoteImageToLocalStorage(photo.urls.regular, photo.id);
 };
 
-function UnsplashPhotoItemForFlatList({ photo, onImageDownload, width, height }) {
+function UnsplashPhotoItemForFlatList({ photo, onImageDownload, width }) {
   const [downloadStarted, setDownloadStarted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const {urls, user} = photo;
 
   const onImageSelectionMade = (photo) => {
@@ -26,7 +27,6 @@ function UnsplashPhotoItemForFlatList({ photo, onImageDownload, width, height })
       });
   };
 
-  console.log(photo.id)
   return (
     <ImageBackground 
       style={{
@@ -37,7 +37,26 @@ function UnsplashPhotoItemForFlatList({ photo, onImageDownload, width, height })
         resizeMode: 'contain',
       }}
       source={{uri: urls.regular}}
+      onLoad={() => {
+        setIsLoading(false);
+      }}
     >
+      {(() => {
+        if (isLoading) {
+          return(
+            <View 
+              style={{
+                flex: 1,
+                width: width,
+                justifyContent: 'center', 
+                alignItems: 'center',
+              }}
+            >
+              <ActivityIndicator size={'large'}/>
+            </View>
+          );
+        }
+      })()}
       <TouchableOpacity 
         style={{width: 100, height: 25, backgroundColor:'#ccc', opacity: 0.8, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginBottom: 10}}
         onPress={() =>
