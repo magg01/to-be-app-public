@@ -1,14 +1,16 @@
 import React, {
-  useState, useRef, useCallback, useLayoutEffect,
+  useState, useRef, useCallback, useLayoutEffect, useEffect
 } from 'react';
 import {
-  StyleSheet, View, ImageBackground, Text, TextInput, Dimensions, TouchableOpacity, BackHandler,
+  StyleSheet, View, ImageBackground, Text, TextInput, Dimensions, TouchableOpacity, BackHandler, Alert,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { HeaderBackButton, useHeaderHeight } from '@react-navigation/elements';
 import Animated, { FadeIn, Layout, FadeOut } from 'react-native-reanimated';
+import ColorPicker from 'react-native-wheel-color-picker';
 import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
 import CONSTANT_STRINGS from '../strings/constantStrings';
@@ -26,6 +28,8 @@ function AddNewScreen({ navigation }) {
   const [titleText, updateTitleText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState(viewEnum.default);
+  const [colorPickerVisible, setColorPickerVisible] = useState(false);
+  const [tintColor, setTintColor] = useState("#ffffff");
   const headerHeight = useHeaderHeight();
 
   const [imageBackgroundUri, setImageBackgroundUri] = useState(defaultBackgroundImage);
@@ -36,10 +40,35 @@ function AddNewScreen({ navigation }) {
       setViewMode(viewEnum.default);
     },
     backToImagePickerView: () => {
+      setTintColor('#ffffff');
+      setColorPickerVisible(false);
       setImageBackgroundUri(defaultBackgroundImage);
       setViewMode(viewEnum.imagePicker);
+      navigation.setOptions({
+        headerRight: () => null,
+      });
     },
   };
+
+  useEffect(() => {
+    if (viewMode === viewEnum.review) {
+      navigation.setOptions({
+        headerRight: () => (
+          <Ionicons 
+            onPress={() => setColorPickerVisible(!colorPickerVisible)} 
+            style={{marginRight: 10}} 
+            name={colorPickerVisible ? "close-circle-outline" : "color-palette-outline"} 
+            size={26} 
+            color={tintColor} 
+          />
+        ),
+      });
+    } else {
+      navigation.setOptions({
+        headerRight: () => null,
+      });
+    }
+  }, [colorPickerVisible, navigation, tintColor, viewMode]);
 
   // reset the screen to initial state when focussed. When switching tabs this resets this screen
   // when blurred and then refocussed
@@ -87,11 +116,11 @@ function AddNewScreen({ navigation }) {
                 navigation.goBack();
               }
             }}
-            tintColor='white'
+            tintColor={tintColor}
             labelVisible = {Platform.OS === 'ios' ? true : false}
           />
         </Animated.View>
-      )
+      ),
     });
   });
 
@@ -168,28 +197,59 @@ function AddNewScreen({ navigation }) {
         {viewMode === viewEnum.review
           && (
             <>
-            <View style={[styles.container, styles.containerReview]}>
-              <Animated.Text
-                style={styles.titleTextReview}
-                entering={FadeIn.duration(1000).delay(250)}
-                exiting={FadeOut.duration(500)}
-                key="test"
-              >
-                {titleText}
-              </Animated.Text>
-            </View>
-            <Animated.View style={{ alignItems: 'center' }} entering={FadeIn.duration(1000)} exiting={FadeOut.duration(1000)}>
-              <TouchableOpacity
-                style={{ backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4 }}
-                onPress={onNewSave}
-              >
-                <Text>Save</Text>
-              </TouchableOpacity>
-            </Animated.View>
-          </>
+              <View style={[styles.container, styles.containerReview]}>
+                <Animated.Text
+                  style={[styles.titleTextReview, {color: tintColor}]}
+                  entering={FadeIn.duration(1000).delay(250)}
+                  exiting={FadeOut.duration(500)}
+                  key="test"
+                >
+                  {titleText}
+                </Animated.Text>
+              </View>
+              {colorPickerVisible
+              && (
+                <Animated.View
+                  style={{
+                    width: 250,
+                    height: 200,
+                    backgroundColor: 'rgba(200,200,200,0.2)', 
+                    borderRadius: 6,
+                    padding: 2,
+                    position: 'absolute',
+                    top: headerHeight,
+                    right: 10,
+                    borderColor: tintColor,
+                    borderWidth: 1,
+                  }}
+                  entering={FadeIn.duration(1000)}
+                  exiting={FadeOut.duration(500)}
+                >
+                  <ColorPicker
+                    color={tintColor}
+                    onColorChange={(color) => setTintColor(color)}
+                    onColorChangeComplete={(color) => console.log(`final color: ${color}`)}
+                    thumbSize={30}
+                    gapSize={10}
+                    sliderSize={20}
+                    noSnap
+                    row
+                    swatches={false}
+                  />
+                </Animated.View>
+              )}
+              <Animated.View style={{ alignItems: 'center' }} entering={FadeIn.duration(1000)} exiting={FadeOut.duration(1000)}>
+                <TouchableOpacity
+                  style={{ backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4 }}
+                  onPress={onNewSave}
+                >
+                  <Text>Save</Text>
+                </TouchableOpacity>
+              </Animated.View>
+            </>
           )}
-        <StatusBar style="light" />
       </SafeAreaView>
+      <StatusBar style="light" />
     </ImageBackground>
   );
 }
