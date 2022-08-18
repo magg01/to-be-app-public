@@ -49,7 +49,6 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
           });
       }
     }
-    console.log("the [searchQuery] useEffect fired");
   }, [searchQuery]);
 
   return (
@@ -61,11 +60,12 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
         value={searchInput}
         returnKeyType="search"
         placeholder={CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER}
+        placeholderTextColor="#444" 
       />
       {(() => {
         if (data === null) {
           return (
-            <View style={styles.dataDisplay}>
+            <View style={styles.dataDisplayImages}>
               <ActivityIndicator accessibilityRole='progressbar' size={'large'}/>
             </View>
           );
@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dataDisplayMessage: {
+    flex: 1,
     justifyContent: 'flex-start',
     paddingTop: '20%',
   },
