@@ -3,7 +3,7 @@ import { StatusBar } from 'expo-status-bar';
 import {
   StyleSheet, Text, View, ActivityIndicator, FlatList, TextInput,
 } from 'react-native';
-import UnsplashPhotoItemForFlatList from './unsplashPhotoItemForFlatlist';
+import UnsplashPhotoListItem from './unsplashPhotoListItem';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 import { apiMethods } from '../utils/unsplashApi';
 
@@ -52,7 +52,6 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
     console.log("the [searchQuery] useEffect fired");
   }, [searchQuery]);
 
-
   return (
     <View style={{height: height, width: width, alignItems: 'center'}}>
       <TextInput
@@ -76,14 +75,18 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
             <View style={styles.dataDisplayMessage}>
               <Text style={styles.messageText}>{data.errors[0]}</Text>
               <Text style={styles.messageText}>{"\n\n"}</Text>
-              <Text style={styles.messageText}>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_ERROR_RESPONSE_MESSAGE}</Text>
+              <Text style={styles.messageText}>
+                {CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_ERROR_RESPONSE_MESSAGE}
+              </Text>
             </View>
           );
         }
         if (data.response.results.length === 0) {
           return (
             <View style={styles.dataDisplayMessage}>
-              <Text style={styles.messageText}>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_NO_RESULTS_MESSAGE}</Text>
+              <Text style={styles.messageText}>
+                {CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_NO_RESULTS_MESSAGE}
+              </Text>
             </View>
           );
         }
@@ -91,7 +94,13 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
           <View style={styles.dataDisplayImages}>
             <FlatList
               ref={flatListRef}
-              renderItem={({ item }) => <UnsplashPhotoItemForFlatList photo={item} onImageDownload={onImageDownload} width={width} />}
+              renderItem={({ item }) => (
+                <UnsplashPhotoListItem
+                  photo={item}
+                  onImageDownload={onImageDownload}
+                  width={width}
+                />
+              )}
               data={data.response.results}
               horizontal
               keyExtractor={(item) => item.id}

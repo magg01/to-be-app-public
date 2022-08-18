@@ -11,7 +11,7 @@ const downloadImageFromUnsplash = (photo) => {
   return downloadRemoteImageToLocalStorage(photo.urls.regular, photo.id);
 };
 
-function UnsplashPhotoItemForFlatList({ photo, onImageDownload, width }) {
+function UnsplashPhotoListItem({ photo, onImageDownload, width }) {
   const [downloadStarted, setDownloadStarted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const {urls, user} = photo;
@@ -76,4 +76,4 @@ function UnsplashPhotoItemForFlatList({ photo, onImageDownload, width }) {
   );
 }
 
-export default UnsplashPhotoItemForFlatList;
+export default UnsplashPhotoListItem;
