@@ -7,28 +7,45 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
-import { HeaderBackButton } from '@react-navigation/elements';
-import Animated, { EntryExitTransition, FadeIn, Layout, FadeOut, ZoomIn, ZoomOut, FadeOutUp, withDelay, SlideOutUp } from 'react-native-reanimated';
+import { HeaderBackButton, useHeaderHeight } from '@react-navigation/elements';
+import Animated, { FadeIn, Layout, FadeOut } from 'react-native-reanimated';
 import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
+import CONSTANT_STRINGS from '../strings/constantStrings';
 
 const { height, width } = Dimensions.get('window');
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
 
+const viewEnum = {
+  default: 0,
+  imagePicker: 1,
+  review: 2,
+};
+
 function AddNewScreen({ navigation }) {
   const [titleText, updateTitleText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [showSaveButton, setShowSaveButton] = useState(false);
-  const [showImagePicker, setShowImagePicker] = useState(false);
+  const [viewMode, setViewMode] = useState(viewEnum.default);
+  const headerHeight = useHeaderHeight();
+
   const [imageBackgroundUri, setImageBackgroundUri] = useState(defaultBackgroundImage);
   const textInputRef = useRef(null);
+
+  const backMethods = {
+    backToDefaultView: () => {
+      setViewMode(viewEnum.default);
+    },
+    backToImagePickerView: () => {
+      setImageBackgroundUri(defaultBackgroundImage);
+      setViewMode(viewEnum.imagePicker);
+    },
+  };
 
   // reset the screen to initial state when focussed. When switching tabs this resets this screen
   // when blurred and then refocussed
   useFocusEffect(
     useCallback(() => {
-      setShowSaveButton(false);
-      setShowImagePicker(false);
+      setViewMode(viewEnum.default);
       updateTitleText('');
       setSearchQuery('');
       setImageBackgroundUri(defaultBackgroundImage);
@@ -38,14 +55,12 @@ function AddNewScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        if (showImagePicker) {
-          setShowImagePicker(false);
+        if (viewMode === viewEnum.imagePicker) {
+          backMethods.backToDefaultView();
           return true;
         }
-        if (showSaveButton) {
-          setImageBackgroundUri(defaultBackgroundImage);
-          setShowSaveButton(false);
-          setShowImagePicker(true);
+        if (viewMode === viewEnum.review) {
+          backMethods.backToImagePickerView();
           return true;
         }
         return false;
@@ -54,7 +69,7 @@ function AddNewScreen({ navigation }) {
       BackHandler.addEventListener('hardwareBackPress', onBackPress);
 
       return () => BackHandler.removeEventListener('hardwareBackPress', onBackPress);
-    }, [showImagePicker, showSaveButton]),
+    }, [viewMode, backMethods]),
   );
 
   useLayoutEffect(() => {
@@ -63,17 +78,15 @@ function AddNewScreen({ navigation }) {
         <Animated.View entering={FadeIn.duration(1000)} exiting={FadeOut.duration(1000)}>
           <HeaderBackButton 
             onPress={() => {
-              if (showImagePicker){
-                setShowImagePicker(false);
+              if (viewMode === viewEnum.imagePicker){
+                backMethods.backToDefaultView();
               }
-              else if(showSaveButton){
-                setImageBackgroundUri(defaultBackgroundImage);
-                setShowImagePicker(true);
-                setShowSaveButton(false);
+              else if(viewMode === viewEnum.review){
+                backMethods.backToImagePickerView();
               } else {
                 navigation.goBack();
               }
-            }} 
+            }}
             tintColor='white'
             labelVisible = {Platform.OS === 'ios' ? true : false}
           />
@@ -90,10 +103,9 @@ function AddNewScreen({ navigation }) {
   //   }, [textInputRef]),
   // );
 
-  const updateImageBackground = (uri) => {
-    setShowImagePicker(false);
+  const proceedToReviewView = (uri) => {
     setImageBackgroundUri({ uri });
-    setShowSaveButton(true);
+    setViewMode(viewEnum.review);
   };
 
   const onNewSave = () => {
@@ -104,10 +116,9 @@ function AddNewScreen({ navigation }) {
   return (
     <ImageBackground source={imageBackgroundUri} resizeMode='cover' style={styles.backgroundImage}>
       <SafeAreaView style={{flex: 1}}>
-        <View style={styles.container}>
-          {!showImagePicker && (
+        {viewMode === viewEnum.default && (
           <Animated.View
-            style={{width: "100%", alignItems: 'center'}}
+            style={styles.container}
             entering={FadeIn.duration(1000).delay(500)}
             exiting={FadeOut.duration(1000)}
             layout={Layout.duration(1000)}
@@ -115,11 +126,11 @@ function AddNewScreen({ navigation }) {
           >
             <TextInput
               ref={textInputRef}
-              style={showSaveButton ? styles.titleText : styles.input}
+              style={styles.input}
               onChangeText={updateTitleText}
               onSubmitEditing={(e) => {
                 setSearchQuery(e.nativeEvent.text);
-                setShowImagePicker(true);
+                setViewMode(viewEnum.imagePicker);
               }}
               value={titleText}
               textAlign="center"
@@ -128,41 +139,56 @@ function AddNewScreen({ navigation }) {
               returnKeyType="done"
             />
           </Animated.View>
-          )}
-        </View>
-        {showImagePicker
+        )}
+        {viewMode === viewEnum.imagePicker
             && (
-            <>
+            <View style={[styles.container, styles.containerImagePicker(headerHeight)]}>
               <Animated.Text
-                style={styles.titleText}
+                style={styles.imagePickerInstructions}
+                entering={FadeIn.duration(1000).delay(250)}
+                exiting={FadeOut.duration(500)}
+                key="test3"
+              >
+                {CONSTANT_STRINGS.ADD_NEW_SCREEN.IMAGE_PICKER_INSTRUCTION}
+              </Animated.Text>
+              <Animated.View 
+                style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start' }} 
+                entering={FadeIn.duration(1000).delay(500)}
+                exiting={FadeOut.duration(500)}
+              >
+                <UnsplashImageSearch
+                  width={width * 0.75}
+                  height={height * 0.75}
+                  providedSearchQuery={searchQuery}
+                  onImageDownload={proceedToReviewView}
+                />
+              </Animated.View>
+            </View>
+            )}
+        {viewMode === viewEnum.review
+          && (
+            <>
+            <View style={[styles.container, styles.containerReview]}>
+              <Animated.Text
+                style={styles.titleTextReview}
                 entering={FadeIn.duration(1000).delay(250)}
                 exiting={FadeOut.duration(500)}
                 key="test"
               >
                 {titleText}
               </Animated.Text>
-              <Animated.View style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start' }} entering={FadeIn.duration(1000).delay(500)}>
-                <UnsplashImageSearch
-                  width={width * 0.75}
-                  height={height * 0.75}
-                  providedSearchQuery={searchQuery}
-                  onImageDownload={updateImageBackground} 
-                />
-              </Animated.View>
-            </>
-            )}
-        {showSaveButton
-          && (
-            <Animated.View style={{alignItems: 'center'}} entering={FadeIn.duration(1000)}>
+            </View>
+            <Animated.View style={{ alignItems: 'center' }} entering={FadeIn.duration(1000)} exiting={FadeOut.duration(1000)}>
               <TouchableOpacity
-                style={{backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4}}
+                style={{ backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4 }}
                 onPress={onNewSave}
               >
                 <Text>Save</Text>
               </TouchableOpacity>
             </Animated.View>
+          </>
           )}
-        <StatusBar style="auto" />
+        <StatusBar style="light" />
       </SafeAreaView>
     </ImageBackground>
   );
@@ -175,9 +201,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    paddingHorizontal: '8%',
     justifyContent: 'center',
+    paddingHorizontal: '8%',
   },
+  containerReview: {
+    flexGrow: 1,
+  },
+  containerImagePicker: (headerHeight) => ({
+    marginTop: headerHeight / 2,
+  }),
   input: {
     width: '60%',
     margin: 12,
@@ -187,11 +219,22 @@ const styles = StyleSheet.create({
     fontSize: 36,
     color: 'white',
   },
-  titleText: {
+  titleTextImagePicker: {
+    alignSelf: 'center',
+    marginBottom: 12,
+    fontSize: 36,
+    color: 'white',
+  },
+  titleTextReview: {
     alignSelf: 'center',
     margin: 12,
-    padding: 6,
     fontSize: 36,
+    color: 'white',
+  },
+  imagePickerInstructions: {
+    marginBottom: 24,
+    marginTop: 12,
+    fontSize: 20,
     color: 'white',
   },
 });
