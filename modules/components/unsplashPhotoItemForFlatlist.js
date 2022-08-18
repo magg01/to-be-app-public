@@ -71,7 +71,7 @@ function UnsplashPhotoItemForFlatList({ photo, onImageDownload, width }) {
             <Text style={{color: 'white'}}>Choose image</Text>
           }
       </TouchableOpacity>
-      <Text style={{color: "white", fontSize: 10, alignSelf: 'flex-end'}}>{`${user.name} / Unsplash`}</Text>
+      <Text style={{color: "white", fontSize: 10, alignSelf: 'flex-end', marginRight: 4}}>{`${user.name} / Unsplash`}</Text>
     </ImageBackground>
   );
 }
