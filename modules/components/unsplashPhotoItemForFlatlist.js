@@ -1,11 +1,9 @@
 /* eslint-disable */
-import React, { useState, useEffect, useRef } from 'react';
-import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
 import {
-  StyleSheet, Text, View, ActivityIndicator, FlatList, ImageBackground, TextInput, TouchableOpacity, Dimensions
+  Text, ActivityIndicator, ImageBackground, TouchableOpacity,
 } from 'react-native';
 import { downloadRemoteImageToLocalStorage } from '../FileSystem/fileSystem';
-import CONSTANT_STRINGS from '../strings/constantStrings';
 import { apiMethods } from '../utils/unsplashApi';
 
 const downloadImageFromUnsplash = (photo) => {
