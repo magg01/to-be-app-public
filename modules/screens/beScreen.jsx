@@ -1,59 +1,67 @@
-import React, { useCallback, useState, useEffect } from 'react';
-import { StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
 import { getAllToBeItems } from '../database/database';
 import { Entypo } from '@expo/vector-icons';
+import OptimisedToBeTile from '../components/optimisedToBeTile';
+
+const defaultImageBackground = require('../../assets/beScreenBackground7.jpg');
 
 function BeScreen({ navigation }) {
   const [allToBes, setAllToBes] = useState([]);
-  const [refreshToBes, setRefreshToBes] = useState(false);
+  const [isRetreiving, setIsRetreiving] = useState(false);
+
+  const retreiveData = async () => {
+    setAllToBes(await getAllToBeItems());
+    setIsRetreiving(false);
+  };
+
+  const onRefresh = useCallback(() => {
+    setIsRetreiving(true);
+    retreiveData();
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
-      (async () => {
-        const toBes = await getAllToBeItems();
-        setAllToBes(toBes);
-      })();
+      onRefresh();
       // have to make sure we have empty dependency array here otherwise
       // the effect runs on every render
       // because arrays are compared by reference and even if the array contents haven't changed the
       // array will appear to have changed because it's a different reference
-    }, []),
+    }, [onRefresh]),
   );
 
-  useEffect(() => {
-    (async () => {
-      setAllToBes(await getAllToBeItems());
-    })();
-  }, [refreshToBes]);
-
-  const renderToBeTile = ({ item }) => (
-    <ToBeTile
-      key={item.id}
+  const renderOptimisedToBeTile = useCallback(({ item }) => (
+    <OptimisedToBeTile
       toBeId={item.id}
-      onPress={() => {
-        navigation.navigate('ViewToBeScreen', { toBeId: item.id });
-      }}
-      onDelete={() => { setRefreshToBes(!refreshToBes); }}
+      title={item.title}
+      imageBackgroundUri={item.imageBackgroundUri}
+      tintColor={item.tintColor}
+      onDelete={onRefresh}
+      navigation={navigation}
     />
-  );
+  ), [navigation, onRefresh]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        style={{width: "100%"}}
-        data={allToBes}
-        renderItem={renderToBeTile}
-        keyExtractor={item => item.id}
-        numColumns={2}
-      />
-      <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
+    <ImageBackground source={defaultImageBackground} resizeMode='cover' style={styles.backgroundImage}>
+      <SafeAreaView style={styles.container}>
+        <FlatList
+          style={{width: "100%"}}
+          data={allToBes}
+          renderItem={renderOptimisedToBeTile}
+          keyExtractor={(item) => item.id}
+          numColumns={2}
+          onRefresh={onRefresh}
+          refreshing={isRetreiving}
+        />
+        <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
           <Entypo name="add-to-list" size={24} color="black" />
-      </TouchableOpacity>
-      <StatusBar style={"auto"}/>
-    </SafeAreaView>
+        </TouchableOpacity>
+        <StatusBar style={"auto"}/>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
 

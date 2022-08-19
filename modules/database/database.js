@@ -270,7 +270,7 @@ const getAllToBeItems = () => {
     db.readTransaction(
       (tx) => {
         tx.executeSql(
-          "select * from tobeitems", 
+          "select * from tobeitems;", 
           [], 
           (_, { rows: {_array} }) =>{
             console.log(`getAllToBeItems: _array is ${JSON.stringify(_array,null, 1)}`)
