@@ -17,7 +17,7 @@ import {
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { HeaderBackButton } from '@react-navigation/elements';
+import { HeaderBackButton, useHeaderHeight } from '@react-navigation/elements';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
 import * as db from '../database/database';
@@ -30,10 +30,11 @@ function ViewToBeScreen({route, navigation}) {
   const [toBeItem, setToBeItem] = useState(undefined);
   const [viewMode, setViewMode] = useState('overview');
   const [tintColor, setTintColor] = useState('#ffffff');
+  const headerHeight = useHeaderHeight();
 
   useEffect(() => {
     if (toBeItem !== undefined) {
-      setTintColor(toBeItem.tintColor)
+      setTintColor(toBeItem.tintColor);
     }
   }, [toBeItem, tintColor])
 
@@ -105,7 +106,7 @@ function ViewToBeScreen({route, navigation}) {
 
   if (toBeItem === undefined) {
     return (
-      <SafeAreaView style={[styles.container, {justifyContent:'center'}]}>
+      <SafeAreaView style={[styles.container(headerHeight), {justifyContent:'center'}]}>
         <ActivityIndicator size={'large'}/>
       </SafeAreaView>
     );
@@ -113,7 +114,7 @@ function ViewToBeScreen({route, navigation}) {
   return (
     <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.backgroundImage}>
       <SafeAreaView style={{flex: 1}}>
-        <View style={[styles.container, viewMode === 'overview' ? {justifyContent:'center'} : {justifyContent:'flex-start'}]}>
+        <View style={[styles.container(headerHeight), viewMode === 'overview' ? {justifyContent:'center'} : {justifyContent:'flex-start'}]}>
           <Animated.Text
             style={[styles.mainTitle, {color: tintColor}]}
             entering={animations.viewToBeScreen.mainTitleText.entering}
@@ -221,13 +222,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
-  container: {
+  container: (headerHeight) => ({
     flex: 1,
+    marginTop: headerHeight / 2,
     paddingHorizontal: "8%",
     alignItems: 'center',
-  },
+  }),
   mainTitle: {
     fontSize: 36,
+    marginBottom: 12,
   },
   bottomButton:{
     margin: 10,
