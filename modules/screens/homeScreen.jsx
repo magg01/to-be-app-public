@@ -10,9 +10,9 @@ function HomeScreen() {
   return (
     <Tab.Navigator
       initialRouteName="Be"
-      activeColor="#f0edf6"
-      inactiveColor="#3e2465"
-      barStyle={{ backgroundColor: 'rgba(105, 79, 173, 1)' }}
+      activeColor="#34DDE6"
+      inactiveColor="#176266"
+      barStyle={{ backgroundColor: '#321F71' }}
       backBehavior="initialRoute"
     >
       <Tab.Screen

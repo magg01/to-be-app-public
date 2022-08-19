@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
 import { getAllToBeItems } from '../database/database';
-import ToBeTile from '../components/toBeTile';
+import { Entypo } from '@expo/vector-icons';
 
 function BeScreen({ navigation }) {
   const [allToBes, setAllToBes] = useState([]);
@@ -50,7 +50,7 @@ function BeScreen({ navigation }) {
         numColumns={2}
       />
       <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
-        <Text>New</Text>
+          <Entypo name="add-to-list" size={24} color="black" />
       </TouchableOpacity>
       <StatusBar style={"auto"}/>
     </SafeAreaView>
@@ -75,7 +75,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     position: 'absolute',
     opacity: 0.9,
-  }
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 7
+  },
+  backgroundImage: {
+    flex: 1,
+  },
 });
 
 export default BeScreen;
