@@ -4,13 +4,20 @@ import { getToBeItemById } from '../database/database';
 
 function ToBeTile({ toBeId, onPress }) {
   const [toBeItemDetails, setToBeItemDetails] = useState(undefined);
+  const [tintColor, setTintColor] = useState('#ffffff');
 
   useEffect(() => {
     getToBeItemById(toBeId).then((toBeItem) => {
       // console.log(`here ${JSON.stringify(toBeItem, null, 1)}`)
       setToBeItemDetails(toBeItem);
     });
-  }, []);
+  }, [toBeId]);
+
+  useEffect(() => {
+    if(toBeItemDetails !== undefined){
+      setTintColor(toBeItemDetails.tintColor);
+    }
+  }, [toBeItemDetails]);
 
 if (toBeItemDetails === undefined) {
     return (
@@ -23,7 +30,7 @@ if (toBeItemDetails === undefined) {
     <TouchableHighlight
       style={styles.toBeTile}
       onPress={onPress}
-      underlayColor={'white'}
+      underlayColor={'#ffffff'}
     >
       <ImageBackground
         style={styles.tileImageBackground}
@@ -31,7 +38,7 @@ if (toBeItemDetails === undefined) {
         source={{uri: toBeItemDetails.imageBackgroundUri}}
         // defaultSource={require("./assets/cocktail-shaker.png")}
       >
-        <Text style={{color: 'white', fontSize: 22}}>
+        <Text style={{color: tintColor, fontSize: 22}}>
           {toBeItemDetails.title}
         </Text>
       </ImageBackground>

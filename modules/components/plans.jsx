@@ -8,7 +8,7 @@ import {
 import { deletePlanItemById, getAllPlansByToBeId } from '../database/database';
 import animations from '../utils/animations';
 
-function PlanView({providedToBeId, onAddNewPressed}) {
+function PlanView({providedToBeId, onAddNewPressed, tintColor}) {
   const toBeId = useRef(providedToBeId);
   const refreshing = useRef(false);
   const [plans, setPlans] = useState(undefined);
@@ -41,13 +41,13 @@ function PlanView({providedToBeId, onAddNewPressed}) {
 
   return (
     <Animated.View
-      style={styles.container}
+      style={[styles.container, {borderColor: tintColor}]}
       entering={animations.plans.planView.entering}
       exiting={animations.plans.planView.exiting}
       layout={animations.plans.planView.layout}
     >
-      <View style={{borderBottomWidth: 1.5, borderBottomColor: 'white', marginBottom: 8}}>
-        <Text style={{color: 'white', fontSize: 20}}>Plans</Text>
+      <View style={{borderBottomWidth: 1.5, borderBottomColor: tintColor, marginBottom: 8}}>
+        <Text style={{color: tintColor, fontSize: 20}}>Plans</Text>
       </View>
       <FlatList
         data={plans}
@@ -85,7 +85,6 @@ const styles = StyleSheet.create({
     maxHeight: "75%",
     minHeight: "15%",
     borderWidth: 1.5, 
-    borderColor: 'white', 
     borderRadius: 6,
     padding: "3%",
     backgroundColor: 'rgba(200,200,200,0.2)',

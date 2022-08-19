@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useState,
   useLayoutEffect,
+  useRef
 } from 'react';
 import {
   StyleSheet,
@@ -28,6 +29,13 @@ function ViewToBeScreen({route, navigation}) {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
   const [toBeItem, setToBeItem] = useState(undefined);
   const [viewMode, setViewMode] = useState('overview');
+  const [tintColor, setTintColor] = useState('#ffffff');
+
+  useEffect(() => {
+    if (toBeItem !== undefined) {
+      setTintColor(toBeItem.tintColor)
+    }
+  }, [toBeItem, tintColor])
 
   useEffect(() => {
     if(__DEV__){
@@ -83,7 +91,7 @@ function ViewToBeScreen({route, navigation}) {
               navigation.goBack();
             }
           }} 
-          tintColor='white'
+          tintColor={tintColor}
           labelVisible = {Platform.OS === 'ios' ? true : false}
         />
        )
@@ -107,17 +115,17 @@ function ViewToBeScreen({route, navigation}) {
       <SafeAreaView style={{flex: 1}}>
         <View style={[styles.container, viewMode === 'overview' ? {justifyContent:'center'} : {justifyContent:'flex-start'}]}>
           <Animated.Text
-            style={styles.mainTitle}
+            style={[styles.mainTitle, {color: tintColor}]}
             entering={animations.viewToBeScreen.mainTitleText.entering}
             layout={animations.viewToBeScreen.mainTitleText.layout}
           >
             {toBeItem.title}
           </Animated.Text>
           {viewMode === 'detail' ?
-            <PlanView providedToBeId={toBeId} onAddNewPressed={() => setViewMode('addPlan')}/>
+            <PlanView providedToBeId={toBeId} onAddNewPressed={() => setViewMode('addPlan')} tintColor={tintColor}/>
             :
             viewMode === 'addPlan' ?
-              <AddPlan toBeId={toBeId} onAdd={onNewPlanAdded} toBeItemTitle={toBeItem.title} />
+              <AddPlan toBeId={toBeId} onAdd={onNewPlanAdded} toBeItemTitle={toBeItem.title} tintColor={tintColor}/>
               :
               null 
           }
@@ -219,9 +227,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mainTitle: {
-    color: 'white', 
     fontSize: 36,
-    marginBottom: 24
   },
   bottomButton:{
     margin: 10,

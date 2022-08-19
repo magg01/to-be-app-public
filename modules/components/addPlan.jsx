@@ -44,8 +44,8 @@ function AddPlan(props) {
       exiting={animations.addPlan.addPlanView.exiting}
     >
 
-      <Text style={{color: 'white', fontSize: 20}}>How can you be more {props.toBeItemTitle.toLowerCase()}?</Text>
-      <TextInput style={styles.input} onChangeText={(text) => setNewPlanTitle(text)} />
+      <Text style={{color: props.tintColor, fontSize: 20}}>How can you be more {props.toBeItemTitle.toLowerCase()}?</Text>
+      <TextInput style={[styles.input, {borderBottomColor: props.tintColor, color: props.tintColor}]} onChangeText={(text) => setNewPlanTitle(text)} />
       <TouchableOpacity style={styles.addButton} onPress={addPlan}>
         <Text>Add</Text>
       </TouchableOpacity>
@@ -78,10 +78,8 @@ const styles = StyleSheet.create({
     width: "50%",
     margin: 12,
     borderBottomWidth: 2,
-    borderBottomColor: 'white',
     padding: 6,
     fontSize: 20,
-    color: 'white'
   },
   addButton: {
     marginTop: 8,

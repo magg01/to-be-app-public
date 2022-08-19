@@ -138,7 +138,7 @@ function AddNewScreen({ navigation }) {
   };
 
   const onNewSave = () => {
-    addToBeItem(titleText, imageBackgroundUri.uri);
+    addToBeItem(titleText, imageBackgroundUri.uri, tintColor);
     navigation.goBack();
   };
 

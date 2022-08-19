@@ -31,7 +31,7 @@ if (DEBUG) {
 db.transaction(
   (tx) => {    
     tx.executeSql(        
-      "create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text);"
+      "create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text, tintColor text);"
     );
     tx.executeSql(
       "create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);"
@@ -44,13 +44,13 @@ db.transaction(
   () => console.log("setUpTables: success")
 );
 
-const addToBeItem = (title, imageBackgroundUri) => {
+const addToBeItem = (title, imageBackgroundUri, tintColor) => {
   db.transaction(
     (tx) => {
-      tx.executeSql("insert into tobeitems (done, title, imageBackgroundUri) values (0, ?, ?)", [title, imageBackgroundUri]);
+      tx.executeSql("insert into tobeitems (done, title, imageBackgroundUri, tintColor) values (0, ?, ?, ?)", [title, imageBackgroundUri, tintColor]);
     },
     (e) => console.log(`addToBeItem encountered an error -> ${e}`),
-    () => console.log(`addToBeItem: item with title:${title} successfully added to tobeitems table`)
+    () => console.log(`addToBeItem: item with title:${title} successfully added to tobeitems table`),
   );
 };
 
