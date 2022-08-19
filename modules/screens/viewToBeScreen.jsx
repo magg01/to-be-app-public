@@ -3,7 +3,6 @@ import React, {
   useEffect,
   useState,
   useLayoutEffect,
-  useRef
 } from 'react';
 import {
   StyleSheet,
@@ -14,12 +13,14 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Platform,
+  Alert
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { HeaderBackButton, useHeaderHeight } from '@react-navigation/elements';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
+import { Feather } from '@expo/vector-icons';
 import * as db from '../database/database';
 import PlanView from '../components/plans';
 import AddPlan from '../components/addPlan';
@@ -79,8 +80,7 @@ function ViewToBeScreen({route, navigation}) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerLeft: () => {
-       return (
+      headerLeft: () => (
         <HeaderBackButton 
           onPress={() => {
             if (viewMode === 'addPlan'){
@@ -95,10 +95,20 @@ function ViewToBeScreen({route, navigation}) {
           tintColor={tintColor}
           labelVisible = {Platform.OS === 'ios' ? true : false}
         />
-       )
-      }
-    })
-  })
+      ),
+      headerRight: () => (
+        viewMode === 'detail' 
+        && (
+          <Animated.View 
+            entering={animations.viewToBeScreen.mainTitleText.entering}
+            exiting={animations.viewToBeScreen.detailsButton.exiting}
+          >
+            <Feather style={{marginRight: 10}} name="edit-2" size={24} color={tintColor} onPress={() => Alert.alert("pressed")} />
+          </Animated.View>
+        )
+      ),
+    });
+  });
 
   const onNewPlanAdded = () => {
     setViewMode('detail');
