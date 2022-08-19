@@ -2,7 +2,7 @@ import React, {
   useState, useRef, useCallback, useLayoutEffect, useEffect
 } from 'react';
 import {
-  StyleSheet, View, ImageBackground, Text, TextInput, Dimensions, TouchableOpacity, BackHandler, Alert,
+  StyleSheet, View, ImageBackground, Text, TextInput, Dimensions, TouchableOpacity, BackHandler,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,7 +19,7 @@ const { height, width } = Dimensions.get('window');
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
 
 const viewEnum = {
-  default: 0,
+  titleInput: 0,
   imagePicker: 1,
   review: 2,
 };
@@ -27,7 +27,7 @@ const viewEnum = {
 function AddNewScreen({ navigation }) {
   const [titleText, updateTitleText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState(viewEnum.default);
+  const [viewMode, setViewMode] = useState(viewEnum.titleInput);
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
   const [tintColor, setTintColor] = useState("#ffffff");
   const headerHeight = useHeaderHeight();
@@ -36,8 +36,8 @@ function AddNewScreen({ navigation }) {
   const textInputRef = useRef(null);
 
   const backMethods = {
-    backToDefaultView: () => {
-      setViewMode(viewEnum.default);
+    backTotitleInputView: () => {
+      setViewMode(viewEnum.titleInput);
     },
     backToImagePickerView: () => {
       setTintColor('#ffffff');
@@ -74,7 +74,7 @@ function AddNewScreen({ navigation }) {
   // when blurred and then refocussed
   useFocusEffect(
     useCallback(() => {
-      setViewMode(viewEnum.default);
+      setViewMode(viewEnum.titleInput);
       updateTitleText('');
       setSearchQuery('');
       setImageBackgroundUri(defaultBackgroundImage);
@@ -85,7 +85,7 @@ function AddNewScreen({ navigation }) {
     useCallback(() => {
       const onBackPress = () => {
         if (viewMode === viewEnum.imagePicker) {
-          backMethods.backToDefaultView();
+          backMethods.backTotitleInputView();
           return true;
         }
         if (viewMode === viewEnum.review) {
@@ -108,7 +108,7 @@ function AddNewScreen({ navigation }) {
           <HeaderBackButton 
             onPress={() => {
               if (viewMode === viewEnum.imagePicker){
-                backMethods.backToDefaultView();
+                backMethods.backTotitleInputView();
               }
               else if(viewMode === viewEnum.review){
                 backMethods.backToImagePickerView();
@@ -145,7 +145,7 @@ function AddNewScreen({ navigation }) {
   return (
     <ImageBackground source={imageBackgroundUri} resizeMode='cover' style={styles.backgroundImage}>
       <SafeAreaView style={{flex: 1}}>
-        {viewMode === viewEnum.default && (
+        {viewMode === viewEnum.titleInput && (
           <Animated.View
             style={styles.container}
             entering={FadeIn.duration(1000).delay(500)}

@@ -13,7 +13,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Platform,
-  Alert
+  Alert,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -26,10 +26,16 @@ import PlanView from '../components/plans';
 import AddPlan from '../components/addPlan';
 import animations from '../utils/animations';
 
+const viewEnum = {
+  overview: 0,
+  details: 1,
+  addPlan: 2,
+};
+
 function ViewToBeScreen({route, navigation}) {
   const [toBeId, setToBeId] = useState(route.params.toBeId);
   const [toBeItem, setToBeItem] = useState(undefined);
-  const [viewMode, setViewMode] = useState('overview');
+  const [viewMode, setViewMode] = useState(viewEnum.overview);
   const [tintColor, setTintColor] = useState('#ffffff');
   const headerHeight = useHeaderHeight();
 
@@ -61,12 +67,12 @@ function ViewToBeScreen({route, navigation}) {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        if (viewMode === 'detail') {
-          setViewMode('overview');
+        if (viewMode === viewEnum.details) {
+          setViewMode(viewEnum.overview);
           return true;
         }
-        if (viewMode === 'addPlan') {
-          setViewMode('detail');
+        if (viewMode === viewEnum.addPlan) {
+          setViewMode(viewEnum.details);
           return true;
         }
         return false;
@@ -83,11 +89,11 @@ function ViewToBeScreen({route, navigation}) {
       headerLeft: () => (
         <HeaderBackButton 
           onPress={() => {
-            if (viewMode === 'addPlan'){
-              setViewMode('detail')
+            if (viewMode === viewEnum.addPlan){
+              setViewMode(viewEnum.details)
             }
-            else if(viewMode === 'detail'){
-              setViewMode('overview')
+            else if(viewMode === viewEnum.details){
+              setViewMode(viewEnum.overview)
             } else {
               navigation.goBack();
             }
@@ -97,7 +103,7 @@ function ViewToBeScreen({route, navigation}) {
         />
       ),
       headerRight: () => (
-        viewMode === 'detail' 
+        viewMode === viewEnum.details 
         && (
           <Animated.View 
             entering={animations.viewToBeScreen.mainTitleText.entering}
@@ -111,7 +117,7 @@ function ViewToBeScreen({route, navigation}) {
   });
 
   const onNewPlanAdded = () => {
-    setViewMode('detail');
+    setViewMode(viewEnum.details);
   };
 
   if (toBeItem === undefined) {
@@ -124,7 +130,7 @@ function ViewToBeScreen({route, navigation}) {
   return (
     <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.backgroundImage}>
       <SafeAreaView style={{flex: 1}}>
-        <View style={[styles.container(headerHeight), viewMode === 'overview' ? {justifyContent:'center'} : {justifyContent:'flex-start'}]}>
+        <View style={[styles.container(headerHeight), viewMode === viewEnum.overview ? {justifyContent:'center'} : {justifyContent:'flex-start'}]}>
           <Animated.Text
             style={[styles.mainTitle, {color: tintColor}]}
             entering={animations.viewToBeScreen.mainTitleText.entering}
@@ -132,10 +138,10 @@ function ViewToBeScreen({route, navigation}) {
           >
             {toBeItem.title}
           </Animated.Text>
-          {viewMode === 'detail' ?
-            <PlanView providedToBeId={toBeId} onAddNewPressed={() => setViewMode('addPlan')} tintColor={tintColor}/>
+          {viewMode === viewEnum.details ?
+            <PlanView providedToBeId={toBeId} onAddNewPressed={() => setViewMode(viewEnum.addPlan)} tintColor={tintColor}/>
             :
-            viewMode === 'addPlan' ?
+            viewMode === viewEnum.addPlan ?
               <AddPlan toBeId={toBeId} onAdd={onNewPlanAdded} toBeItemTitle={toBeItem.title} tintColor={tintColor}/>
               :
               null 
@@ -146,7 +152,7 @@ function ViewToBeScreen({route, navigation}) {
           entering={animations.viewToBeScreen.detailsButton.entering}
           exiting={animations.viewToBeScreen.detailsButton.exiting}
         >
-          <TouchableOpacity style={styles.bottomButton} onPress={() => setViewMode('detail')}>
+          <TouchableOpacity style={styles.bottomButton} onPress={() => setViewMode(viewEnum.details)}>
             <Text style={{fontSize: 16}}>Details</Text>
           </TouchableOpacity>
         </Animated.View>
@@ -154,20 +160,20 @@ function ViewToBeScreen({route, navigation}) {
       <StatusBar style="auto" />
     </ImageBackground>
   );
-  // } else if (viewMode === 'detail') {
+  // } else if (viewMode === viewEnum.details) {
   //   return (
   //     <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
   //       <SafeAreaView style={styles.container}>
   //         <Text style={{color: 'white', fontSize: 36}}>{toBeItem.title}</Text>
   //         <PlanView toBeId={toBeId} />
-  //         <TouchableOpacity style={styles.addButton} onPress={() => setViewMode('addPlan')}>
+  //         <TouchableOpacity style={styles.addButton} onPress={() => setViewMode(viewEnum.addPlan)}>
   //           <Text>new</Text>
   //         </TouchableOpacity>
   //       </SafeAreaView>
   //       <StatusBar style={'light'} />
   //     </ImageBackground>
   //   )
-  // } else if (viewMode === 'addPlan') {
+  // } else if (viewMode === viewEnum.addPlan) {
   //   return (
   //     <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
   //       <SafeAreaView style={styles.container}>
@@ -187,7 +193,7 @@ function ViewToBeScreen({route, navigation}) {
   //         <Button title={"previous"} onPress={() => {
   //           db.getPreviousToBeItemIdById(toBeId).then((result) => setToBeId(result))
   //         }}/>
-  //         <Button title={"details"} onPress={() => {setViewMode('detail')}} />
+  //         <Button title={"details"} onPress={() => {setViewMode(viewEnum.details)}} />
   //         <Button title={"delete"} onPress={() => {
   //           Alert.alert(
   //             'Are you sure?',
