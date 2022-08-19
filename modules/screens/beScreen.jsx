@@ -44,17 +44,25 @@ function BeScreen({ navigation }) {
     />
   ), [navigation, onRefresh]);
 
+  const ListEmptyComponent = () => (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', padding: "8%"}}>
+      <Text style={{color: 'white', fontSize: 26}}>To get started, add a new 'to be' to your list.</Text>
+    </View>
+  );
+
   return (
     <ImageBackground source={defaultImageBackground} resizeMode='cover' style={styles.backgroundImage}>
       <SafeAreaView style={styles.container}>
         <FlatList
           style={{width: "100%"}}
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-start' }}
           data={allToBes}
           renderItem={renderOptimisedToBeTile}
           keyExtractor={(item) => item.id}
           numColumns={2}
           onRefresh={onRefresh}
           refreshing={isRetreiving}
+          ListEmptyComponent={ListEmptyComponent}
         />
         <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
           <Entypo name="add-to-list" size={24} color="black" />
@@ -66,6 +74,9 @@ function BeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     alignItems: 'center',
