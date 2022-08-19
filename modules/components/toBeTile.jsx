@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, View, ImageBackground, TouchableHighlight, Text, Alert } from 'react-native';
+import {StyleSheet, View, ImageBackground, TouchableHighlight, Text, Alert, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { getToBeItemById, deleteToBeItemById } from '../database/database';
 import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
+
+const defaultBackgroundImage = require('../../assets/addNew.jpg');
 
 function ToBeTile({ toBeId, onPress, onDelete }) {
   const [toBeItem, setToBeItem] = useState(undefined);
@@ -10,10 +12,18 @@ function ToBeTile({ toBeId, onPress, onDelete }) {
   const [tintColor, setTintColor] = useState('#ffffff');
 
   useEffect(() => {
-    getToBeItemById(toBeId).then((toBeItem) => {
-      // console.log(`here ${JSON.stringify(toBeItem, null, 1)}`)
-      setToBeItem(toBeItem);
-    });
+    // console.log(`here ${JSON.stringify(toBeItem, null, 1)}`)
+    if (__DEV__) {
+      const devDelayTimer = setTimeout(() => {
+        getToBeItemById(toBeId)
+          .then((result) => {
+            setToBeItem(result);
+          });
+      }, 500);
+      return (() => clearTimeout(devDelayTimer));
+    }
+    getToBeItemById(toBeId)
+      .then((result) => setToBeItem(result));
   }, [toBeId]);
 
   useEffect(() => {
@@ -58,15 +68,20 @@ function ToBeTile({ toBeId, onPress, onDelete }) {
     );
   };
 
-
   if (toBeItem === undefined) {
     return (
-      <View style={[styles.tileImageAndTitle, {backgroundColor: 'red'}]}>
-        <Text>Loading</Text>
+      <View style={styles.toBeTile}>
+        <ImageBackground
+          style={styles.tileImageBackground}
+          imageStyle={{ borderRadius: 4 }}
+          source={defaultBackgroundImage}
+        >
+          <ActivityIndicator size={'large'} />
+        </ImageBackground>
       </View>
     );
   }
-  return(
+  return (
     <TouchableHighlight
       style={styles.toBeTile}
       onPress={onPress}
@@ -75,9 +90,9 @@ function ToBeTile({ toBeId, onPress, onDelete }) {
     >
       <ImageBackground
         style={styles.tileImageBackground}
-        imageStyle={{borderRadius: 4}}
-        source={{uri: toBeItem.imageBackgroundUri}}
-        // defaultSource={require("./assets/cocktail-shaker.png")}
+        imageStyle={{ borderRadius: 4 }}
+        source={{ uri: toBeItem.imageBackgroundUri }}
+        // defaultSource={require()}
       >
         {!deleteMode
         && (
