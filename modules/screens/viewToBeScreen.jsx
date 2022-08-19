@@ -109,7 +109,7 @@ function ViewToBeScreen({route, navigation}) {
             entering={animations.viewToBeScreen.mainTitleText.entering}
             exiting={animations.viewToBeScreen.detailsButton.exiting}
           >
-            <Feather style={{marginRight: 10}} name="edit-2" size={24} color={tintColor} onPress={() => Alert.alert("pressed")} />
+            <Feather style={{marginRight: 10}} name="edit-2" size={24} color={tintColor} onPress={() => Alert.alert("Implement edit mode here")} />
           </Animated.View>
         )
       ),
@@ -194,38 +194,6 @@ function ViewToBeScreen({route, navigation}) {
   //           db.getPreviousToBeItemIdById(toBeId).then((result) => setToBeId(result))
   //         }}/>
   //         <Button title={"details"} onPress={() => {setViewMode(viewEnum.details)}} />
-  //         <Button title={"delete"} onPress={() => {
-  //           Alert.alert(
-  //             'Are you sure?',
-  //             'All associated data will be lost',
-  //             [
-  //               {
-  //                 text: 'Cancel',
-  //                 onPress: () => null,
-  //                 style: 'cancel',
-  //               },
-  //               {
-  //                 text: 'Delete',
-  //                 onPress: () =>  {
-  //                   db.deleteToBeItemById(toBeId)
-  //                   .then((deleted) => {
-  //                     if(deleted){
-  //                       //TODO: implement check if this is the only use of the image before deleting (another tobe might be sharing this image filepath)
-  //                       deleteLocallyStoredImage(toBeItem.imageBackgroundUri);
-  //                       navigation.goBack(); 
-  //                     } else {
-  //                       Alert.alert("There was a problem deleting your to be. Please try again.");
-  //                     }
-  //                   })
-  //                 },
-  //                 style: 'destructive',
-  //               },
-  //             ],
-  //             {
-  //               cancelable: true,
-  //             }
-  //           );
-  //         }} />
   //       </SafeAreaView>
   //       <StatusBar style={'light'} />
   //     </ImageBackground>

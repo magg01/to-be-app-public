@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { StyleSheet, FlatList, Text, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
@@ -8,6 +8,7 @@ import ToBeTile from '../components/toBeTile';
 
 function BeScreen({ navigation }) {
   const [allToBes, setAllToBes] = useState([]);
+  const [refreshToBes, setRefreshToBes] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -22,6 +23,12 @@ function BeScreen({ navigation }) {
     }, []),
   );
 
+  useEffect(() => {
+    (async () => {
+      setAllToBes(await getAllToBeItems());
+    })();
+  }, [refreshToBes]);
+
   const renderToBeTile = ({ item }) => (
     <ToBeTile
       key={item.id}
@@ -29,6 +36,7 @@ function BeScreen({ navigation }) {
       onPress={() => {
         navigation.navigate('ViewToBeScreen', { toBeId: item.id });
       }}
+      onDelete={() => { setRefreshToBes(!refreshToBes); }}
     />
   );
 

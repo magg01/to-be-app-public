@@ -1,25 +1,65 @@
 import React, { useEffect, useState } from 'react';
-import {StyleSheet, View, ImageBackground, TouchableHighlight, Text } from 'react-native';
-import { getToBeItemById } from '../database/database';
+import {StyleSheet, View, ImageBackground, TouchableHighlight, Text, Alert } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { getToBeItemById, deleteToBeItemById } from '../database/database';
+import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
 
-function ToBeTile({ toBeId, onPress }) {
-  const [toBeItemDetails, setToBeItemDetails] = useState(undefined);
+function ToBeTile({ toBeId, onPress, onDelete }) {
+  const [toBeItem, setToBeItem] = useState(undefined);
+  const [deleteMode, setDeleteMode] = useState(false);
   const [tintColor, setTintColor] = useState('#ffffff');
 
   useEffect(() => {
     getToBeItemById(toBeId).then((toBeItem) => {
       // console.log(`here ${JSON.stringify(toBeItem, null, 1)}`)
-      setToBeItemDetails(toBeItem);
+      setToBeItem(toBeItem);
     });
   }, [toBeId]);
 
   useEffect(() => {
-    if(toBeItemDetails !== undefined){
-      setTintColor(toBeItemDetails.tintColor);
+    if (toBeItem !== undefined) {
+      setTintColor(toBeItem.tintColor);
     }
-  }, [toBeItemDetails]);
+  }, [toBeItem]);
 
-if (toBeItemDetails === undefined) {
+  const confirmDelete = () => {
+    Alert.alert(
+      'Are you sure?',
+      `All data associated with your to be item "${toBeItem.title}" will be lost.`,
+      [
+        {
+          text: 'Cancel',
+          onPress: () => setDeleteMode(!deleteMode),
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: () => {
+            deleteToBeItemById(toBeId)
+              .then((deleted) => {
+                if (deleted) {
+                  // TODO: implement check if this is the only use of the image
+                  // before deleting (another tobe might be sharing this image filepath)
+                  deleteLocallyStoredImage(toBeItem.imageBackgroundUri);
+                  onDelete();
+                }
+              })
+              .catch((err) => {
+                console.error(`confirmDelete encountered an error -> ${err}`);
+                Alert.alert("There was a problem deleting your to be. Please try again.");
+              });
+          },
+          style: 'destructive',
+        },
+      ],
+      {
+        cancelable: false,
+      },
+    );
+  };
+
+
+  if (toBeItem === undefined) {
     return (
       <View style={[styles.tileImageAndTitle, {backgroundColor: 'red'}]}>
         <Text>Loading</Text>
@@ -31,16 +71,26 @@ if (toBeItemDetails === undefined) {
       style={styles.toBeTile}
       onPress={onPress}
       underlayColor={'#ffffff'}
+      onLongPress={() => setDeleteMode(!deleteMode)}
     >
       <ImageBackground
         style={styles.tileImageBackground}
         imageStyle={{borderRadius: 4}}
-        source={{uri: toBeItemDetails.imageBackgroundUri}}
+        source={{uri: toBeItem.imageBackgroundUri}}
         // defaultSource={require("./assets/cocktail-shaker.png")}
       >
-        <Text style={{color: tintColor, fontSize: 22}}>
-          {toBeItemDetails.title}
-        </Text>
+        {!deleteMode
+        && (
+          <Text style={{color: tintColor, fontSize: 22}}>
+            {toBeItem.title}
+          </Text>
+        )}
+        {deleteMode
+        && (
+          <View style={styles.deleteView}>
+            <Ionicons name="trash-outline" size={42} color={tintColor} onPress={confirmDelete} />
+          </View>
+        )}
       </ImageBackground>
     </TouchableHighlight>
   );
@@ -50,7 +100,7 @@ const styles = StyleSheet.create({
   toBeTile: {
     flex: 1,
     margin: 6,
-    borderRadius: 4,
+    borderRadius: 6,
     elevation: 4,
   },
   tileImageBackground: {
@@ -61,6 +111,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  deleteView: {
+    flexGrow: 1,
+    width: "100%",
+    borderWidth: 2,
+    borderColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 6,
+  }
 });
 
 export default ToBeTile;
