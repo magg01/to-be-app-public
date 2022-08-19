@@ -43,22 +43,20 @@ function ViewToBeScreen({route, navigation}) {
     if (toBeItem !== undefined) {
       setTintColor(toBeItem.tintColor);
     }
-  }, [toBeItem, tintColor])
+  }, [toBeItem, tintColor]);
 
   useEffect(() => {
-    if(__DEV__){
+    if (__DEV__) {
       let dev_delay_timer = setTimeout(() => {
         db.getToBeItemById(toBeId)
-        .then((result) => {
-          console.log(`ViewToBeScreen: useEffect getToBeItemById = ${JSON.stringify(result,null, 1)}`)
-          setToBeItem(result);
-        })
-      }, 500)
-      return (() => clearTimeout(dev_delay_timer))
+          .then((result) => {
+            setToBeItem(result);
+          });
+      }, 1000);
+      return (() => clearTimeout(dev_delay_timer));
     } else {
       db.getToBeItemById(toBeId)
       .then((result) => {
-        console.log(`ViewToBeScreen: useEffect getToBeItemById = ${JSON.stringify(result,null, 1)}`)
         setToBeItem(result);
       })
     }
