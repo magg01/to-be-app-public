@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, ImageBackground } from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, ImageBackground, Text, View, InteractionManager } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
@@ -25,7 +25,10 @@ function BeScreen({ navigation }) {
 
   useFocusEffect(
     useCallback(() => {
-      onRefresh();
+      const task = InteractionManager.runAfterInteractions(() => {
+        onRefresh();
+      });
+      return () => task.cancel();
       // have to make sure we have empty dependency array here otherwise
       // the effect runs on every render
       // because arrays are compared by reference and even if the array contents haven't changed the
@@ -102,9 +105,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 7
-  },
-  backgroundImage: {
-    flex: 1,
   },
 });
 
