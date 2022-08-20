@@ -70,7 +70,7 @@ function BeScreen({ navigation }) {
         <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
           <Entypo name="add-to-list" size={24} color="black" />
         </TouchableOpacity>
-        <StatusBar style={"auto"}/>
+        <StatusBar style={"light"}/>
       </SafeAreaView>
     </ImageBackground>
   );
