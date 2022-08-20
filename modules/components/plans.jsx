@@ -1,12 +1,16 @@
 import React, {
   useEffect, useRef, useState, useCallback,
 } from 'react';
-import Animated from 'react-native-reanimated';
+import Animated, { color } from 'react-native-reanimated';
 import {
   StyleSheet, View, Text, FlatList, TouchableOpacity, Alert,
 } from 'react-native';
+import { Entypo } from '@expo/vector-icons';
 import { deletePlanItemById, getAllPlansByToBeId } from '../database/database';
 import animations from '../utils/animations';
+import { confirmDelete } from '../utils/deleteConfirmation';
+import PlanItem from './planItem';
+import colors from '../utils/colors';
 
 function PlanView({providedToBeId, onAddNewPressed, tintColor}) {
   const toBeId = useRef(providedToBeId);
@@ -25,19 +29,29 @@ function PlanView({providedToBeId, onAddNewPressed, tintColor}) {
     });
   }, [toBeId]);
 
-  const deletePlan = useCallback((id) => {
+  const deletePlan = (id) => {
     // still need to delete all scheduled notifications on calEvents before deleting plan.
-    deletePlanItemById(id).then((deleted) => {
-      if (deleted) {
-        // refreshing.current = true;
-        setPlans((currentPlans) => (
-          currentPlans.filter((item) => item.id !== id)
-        ));
-      } else {
-        Alert.alert('Not deleted');
-      }
-    });
-  }, [plans]);
+    deletePlanItemById(id)
+      .then((deleted) => {
+        if (deleted) {
+          // refreshing.current = true;
+          setPlans((plans) => (
+            plans.filter((item) => item.id !== id)
+          ));
+        } else {
+          Alert.alert('Not deleted');
+        }
+      });
+  };
+
+  const confirmDeletePlan = (planId) => {
+    confirmDelete(
+      'Are you sure?',
+      'Data and notifications for your plan will be removed',
+      () => deletePlan(planId),
+      null,
+    );
+  };
 
   return (
     <Animated.View
@@ -52,27 +66,13 @@ function PlanView({providedToBeId, onAddNewPressed, tintColor}) {
       <FlatList
         data={plans}
         keyExtractor={(item) => item.id}
-        renderItem={({item}) => (
-          <Animated.View
-            style={{flex: 1}} 
-            entering={animations.plans.planItemForFlatList.entering}
-            exiting={animations.plans.planItemForFlatList.exiting}
-          >
-            <TouchableOpacity
-              key={item.id}
-              style={styles.planLine}
-              onPress={() => deletePlan(item.id)}
-            >
-              <Text style={{color:'rgba(75,75,75,1)'}}>{item.title}</Text>
-            </TouchableOpacity>
-          </Animated.View>
-        )}
+        renderItem={({ item }) => <PlanItem item={item} />}
       />
       <Animated.View
         layout={animations.plans.planView.layout}
       >
         <TouchableOpacity style={styles.addButton} onPress={() => onAddNewPressed()}>
-          <Text>new</Text>
+          <Entypo name="add-to-list" size={18} color={colors.plans.textOrIconOnWhite} />
         </TouchableOpacity>
       </Animated.View>
     </Animated.View>
