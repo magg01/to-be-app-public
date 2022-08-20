@@ -14,6 +14,7 @@ import ColorPicker from 'react-native-wheel-color-picker';
 import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
 import CONSTANT_STRINGS from '../strings/constantStrings';
+import colors from '../utils/colors';
 
 const { height, width } = Dimensions.get('window');
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
@@ -29,7 +30,7 @@ function AddNewScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState(viewEnum.titleInput);
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
-  const [tintColor, setTintColor] = useState("#ffffff");
+  const [tintColor, setTintColor] = useState(colors.toBes.defaultTintColor);
   const headerHeight = useHeaderHeight();
 
   const [imageBackgroundUri, setImageBackgroundUri] = useState(defaultBackgroundImage);
