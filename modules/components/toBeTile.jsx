@@ -3,6 +3,7 @@ import {StyleSheet, View, ImageBackground, TouchableHighlight, Text, Alert, Acti
 import { Ionicons } from '@expo/vector-icons';
 import { getToBeItemById, deleteToBeItemById } from '../database/database';
 import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
+import { confirmDelete } from '../utils/deleteConfirmation';
 
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
 
@@ -32,39 +33,28 @@ function ToBeTile({ toBeId, onPress, onDelete }) {
     }
   }, [toBeItem]);
 
-  const confirmDelete = () => {
-    Alert.alert(
+  const onDeleteToBeTile = () => {
+    deleteToBeItemById(toBeId)
+      .then((deleted) => {
+        if (deleted) {
+          // TODO: implement check if this is the only use of the image
+          // before deleting (another tobe might be sharing this image filepath)
+          deleteLocallyStoredImage(toBeItem.imageBackgroundUri);
+          onDelete();
+        }
+      })
+      .catch((err) => {
+        console.error(`confirmDelete encountered an error -> ${err}`);
+        Alert.alert("There was a problem deleting your to be. Please try again.");
+      });
+  };
+
+  const confirmDeleteToBeTile = () => {
+    confirmDelete(
       'Are you sure?',
       `All data associated with your to be item "${toBeItem.title}" will be lost.`,
-      [
-        {
-          text: 'Cancel',
-          onPress: () => setDeleteMode(!deleteMode),
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          onPress: () => {
-            deleteToBeItemById(toBeId)
-              .then((deleted) => {
-                if (deleted) {
-                  // TODO: implement check if this is the only use of the image
-                  // before deleting (another tobe might be sharing this image filepath)
-                  deleteLocallyStoredImage(toBeItem.imageBackgroundUri);
-                  onDelete();
-                }
-              })
-              .catch((err) => {
-                console.error(`confirmDelete encountered an error -> ${err}`);
-                Alert.alert("There was a problem deleting your to be. Please try again.");
-              });
-          },
-          style: 'destructive',
-        },
-      ],
-      {
-        cancelable: false,
-      },
+      onDeleteToBeTile,
+      () => setDeleteMode(false),
     );
   };
 
@@ -103,7 +93,7 @@ function ToBeTile({ toBeId, onPress, onDelete }) {
         {deleteMode
         && (
           <View style={styles.deleteView}>
-            <Ionicons name="trash-outline" size={42} color={tintColor} onPress={confirmDelete} />
+            <Ionicons name="trash-outline" size={42} color={tintColor} onPress={confirmDeleteToBeTile} />
           </View>
         )}
       </ImageBackground>
