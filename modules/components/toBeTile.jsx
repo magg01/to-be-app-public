@@ -3,7 +3,7 @@ import {StyleSheet, View, ImageBackground, TouchableHighlight, Text, Alert, Acti
 import { Ionicons } from '@expo/vector-icons';
 import { getToBeItemById, deleteToBeItemById } from '../database/database';
 import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
-import { confirmDelete } from '../utils/deleteConfirmation';
+import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
 
@@ -50,7 +50,7 @@ function ToBeTile({ toBeId, onPress, onDelete }) {
   };
 
   const confirmDeleteToBeTile = () => {
-    confirmDelete(
+    confirmDeleteAlert(
       'Are you sure?',
       `All data associated with your to be item "${toBeItem.title}" will be lost.`,
       onDeleteToBeTile,
