@@ -8,7 +8,7 @@
 
 import { Alert } from 'react-native';
 
-const confirmDelete = (title, message, onConfirmed, onCancelled) => {
+const confirmDeleteAlert = (title, message, onConfirmed, onCancelled) => {
   Alert.alert(
     title,
     message,
@@ -31,4 +31,4 @@ const confirmDelete = (title, message, onConfirmed, onCancelled) => {
   );
 };
 
-export { confirmDelete };
+export { confirmDeleteAlert };

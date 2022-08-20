@@ -1,20 +1,30 @@
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react';
-import { StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, Alert} from 'react-native';
 import Animated from 'react-native-reanimated';
+import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
 
-function PlanItem({ item }) {
+function PlanItem({ item, onDelete }) {
+  const confirmDeletePlan = (planId) => {
+    confirmDeleteAlert(
+      'Are you sure?',
+      'Data and notifications for your plan will be removed',
+      () => onDelete(planId),
+      null,
+    );
+  };
+
   return (
     <Animated.View
-      style={styles.container}
+      style={styles.planLineContainer}
       entering={animations.plans.planItemForFlatList.entering}
       exiting={animations.plans.planItemForFlatList.exiting}
     >
       <TouchableOpacity
-        key={item.id}
         style={styles.planLine}
+        key={item.id}
         onPress={() => Alert.alert("open up here")}
         onLongPress={() => confirmDeletePlan(item.id)}
       >
@@ -25,17 +35,22 @@ function PlanItem({ item }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  planLineContainer: {
     flex: 1,
-  },
-  planLine: {
+    flexDirection: 'row',
     height: 40,
+    width: "100%",
     borderRadius: 4,
     marginBottom: 8,
     padding: 4,
-    backgroundColor: 'white',
+    backgroundColor: colors.general.defaultWhite,
     opacity: 1,
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  planLine: {
+    flex: 1,
+    flexGrow: 1,
   },
 });
 

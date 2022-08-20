@@ -8,50 +8,34 @@ import {
 import { Entypo } from '@expo/vector-icons';
 import { deletePlanItemById, getAllPlansByToBeId } from '../database/database';
 import animations from '../utils/animations';
-import { confirmDelete } from '../utils/deleteConfirmation';
 import PlanItem from './planItem';
 import colors from '../utils/colors';
 
 function PlanView({providedToBeId, onAddNewPressed, tintColor}) {
   const toBeId = useRef(providedToBeId);
-  const refreshing = useRef(false);
   const [plans, setPlans] = useState(undefined);
 
   useEffect(() => {
-    if (plans !== undefined) {
-      refreshing.current = false;
-    }
-  }, [plans]);
-
-  useEffect(() => {
-    getAllPlansByToBeId(toBeId.current).then((result) => {
-      setPlans(result);
-    });
+    getAllPlansByToBeId(toBeId.current)
+      .then((result) => setPlans(result));
   }, [toBeId]);
 
-  const deletePlan = (id) => {
+  const onDeletePlan = (planId) => {
     // still need to delete all scheduled notifications on calEvents before deleting plan.
-    deletePlanItemById(id)
+    deletePlanItemById(planId)
       .then((deleted) => {
         if (deleted) {
-          // refreshing.current = true;
-          setPlans((plans) => (
-            plans.filter((item) => item.id !== id)
-          ));
+          getAllPlansByToBeId(toBeId.current)
+            .then((result) => setPlans(result));
         } else {
           Alert.alert('Not deleted');
         }
       });
   };
 
-  const confirmDeletePlan = (planId) => {
-    confirmDelete(
-      'Are you sure?',
-      'Data and notifications for your plan will be removed',
-      () => deletePlan(planId),
-      null,
-    );
-  };
+  const renderPlanItem = ({ item }) => (
+    <PlanItem item={item} onDelete={onDeletePlan} />
+  );
 
   return (
     <Animated.View
@@ -66,7 +50,7 @@ function PlanView({providedToBeId, onAddNewPressed, tintColor}) {
       <FlatList
         data={plans}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <PlanItem item={item} />}
+        renderItem={renderPlanItem}
       />
       <Animated.View
         layout={animations.plans.planView.layout}
