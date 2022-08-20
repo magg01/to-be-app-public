@@ -15,12 +15,12 @@ const confirmDelete = (title, message, onConfirmed, onCancelled) => {
     [
       {
         text: 'Cancel',
-        onPress: () => onCancelled,
+        onPress: onCancelled,
         style: 'cancel',
       },
       {
         text: 'Delete',
-        onPress: () => onConfirmed,
+        onPress: onConfirmed,
         style: 'destructive',
       },
     ],
