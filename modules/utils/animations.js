@@ -4,10 +4,10 @@ const animations = {
   viewToBeScreen: {
     mainTitleText: {
       entering: FadeIn.duration(1000),
-      layout: Layout.duration(800),
+      layout: Layout.duration(500),
     },
     detailsButton: {
-      entering: FadeIn.duration(1000).delay(500),
+      entering: FadeIn.duration(1000).delay(1000),
       exiting: FadeOut.duration(800),
     },
   },
@@ -15,12 +15,12 @@ const animations = {
     planView: {
       entering: FadeIn.duration(800),
       exiting: FadeOut.duration(1000),
-      layout: Layout.duration(1000),
+      layout: Layout.duration(500),
     },
     planItemForFlatList: {
       entering: FadeIn.duration(1000),
       exiting: FadeOut.duration(1000),
-      layout: Layout.delay(2000),
+      layout: Layout.duration(1000),
     },
   },
   addPlan: {
