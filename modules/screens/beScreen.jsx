@@ -3,8 +3,8 @@ import { StyleSheet, FlatList, TouchableOpacity, ImageBackground, Text, View, In
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
-import { getAllToBeItems } from '../database/database';
 import { Entypo } from '@expo/vector-icons';
+import { getAllToBeItems } from '../database/database';
 import OptimisedToBeTile from '../components/optimisedToBeTile';
 
 const defaultImageBackground = require('../../assets/beScreenBackground7.jpg');
