@@ -452,16 +452,37 @@ const getRepeatersByToBeIdAndPeriodicity = (toBeId, periodicity) => new Promise(
   db.readTransaction(
     (tx) => {
       tx.executeSql(
-        'select * from repeaters where periodicity = ? and planId in (select id from plans where tobeitem = ?);',
+        'select * from repeaters where periodicity = ? and plan in (select id from plans where tobeitem = ?);',
         [periodicity, toBeId],
         (_, { rows: { _array } }) => {
           console.log(`getRepeatersByToBeIdAndPeriodicity: _array is ${JSON.stringify(_array, null, 1)}`);
-          result = _array[0];
+          result = _array;
         },
       );
     },
     (e) => {
       console.log(`getRepeatersByToBeIdAndPeriodicity encountered an error -> ${e}`);
+      reject(e);
+    },
+    () => resolve(result),
+  );
+});
+
+const getAllRepeatersByToBeId = (toBeId) => new Promise((resolve, reject) => {
+  let result;
+  db.readTransaction(
+    (tx) => {
+      tx.executeSql(
+        'select * from repeaters where plan in (select id from plans where tobeitem = ?);',
+        [toBeId],
+        (_, { rows: { _array } }) => {
+          console.log(`getAllRepeatersByToBeId: _array is ${JSON.stringify(_array, null, 1)}`);
+          result = _array;
+        },
+      );
+    },
+    (e) => {
+      console.log(`getAllRepeatersByToBeId encountered an error -> ${e}`);
       reject(e);
     },
     () => resolve(result),
@@ -487,4 +508,5 @@ export {
   getCalEventWithPlanDetailsByCalEventId,
   addRepeater,
   getRepeatersByToBeIdAndPeriodicity,
+  getAllRepeatersByToBeId,
 };
