@@ -25,6 +25,9 @@ if (DEBUG) {
       tx.executeSql(
         'drop table if exists tobeitems',
       );
+      tx.executeSql(
+        'drop table if exists repeaters',
+      );
     },
   );
 }
@@ -36,6 +39,9 @@ db.transaction(
     );
     tx.executeSql(
       'create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);',
+    );
+    tx.executeSql(
+      'create table if not exists repeaters (id integer primary key not null, lastdonedatetime string, periodicity string, enddate string, notificationId string, shouldshowincalendar integer, calstarttime string, calendtime string, calday integer, caldate integer, plan integer not null, FOREIGN KEY(plan) REFERENCES plans(id) on delete cascade);',
     );
     tx.executeSql(
       'create table if not exists calevents (id integer primary key not null, eventdate string, eventstarttime string, eventendtime string, eventnotification string, planitem integer not null, FOREIGN KEY(planitem) REFERENCES plans(id) on delete cascade);',
@@ -422,6 +428,46 @@ const getAllPlansByToBeId = (id) => new Promise((resolve, reject) => {
   );
 });
 
+const addRepeater = (repeater) => new Promise((resolve, reject) => {
+  db.transaction(
+    (tx) => {
+      tx.executeSql(
+        'insert into repeaters (lastdonedatetime, periodicity, enddate, notificationId, shouldshowincalendar, calstarttime, calendtime, calday, caldate, plan) values (null, ?, ?, null, 0, null, null, null, null, ?)',
+        [repeater.periodicity, repeater.endDate, repeater.planId],
+      );
+    },
+    (e) => {
+      console.log(`addRepeater encountered an error -> ${e}`);
+      reject(false);
+    },
+    () => {
+      console.log('addRepeater: item with successfully added to repeaters table');
+      resolve(true);
+    },
+  );
+});
+
+const getRepeatersByToBeIdAndPeriodicity = (toBeId, periodicity) => new Promise((resolve, reject) => {
+  let result;
+  db.readTransaction(
+    (tx) => {
+      tx.executeSql(
+        'select * from repeaters where periodicity = ? and planId in (select id from plans where tobeitem = ?);',
+        [periodicity, toBeId],
+        (_, { rows: { _array } }) => {
+          console.log(`getRepeatersByToBeIdAndPeriodicity: _array is ${JSON.stringify(_array, null, 1)}`);
+          result = _array[0];
+        },
+      );
+    },
+    (e) => {
+      console.log(`getRepeatersByToBeIdAndPeriodicity encountered an error -> ${e}`);
+      reject(e);
+    },
+    () => resolve(result),
+  );
+});
+
 export {
   deleteToBeItemById,
   addToBeItem,
@@ -439,4 +485,6 @@ export {
   addNotificationToCalEvent,
   removeNotificationFromCalEvent,
   getCalEventWithPlanDetailsByCalEventId,
+  addRepeater,
+  getRepeatersByToBeIdAndPeriodicity,
 };
