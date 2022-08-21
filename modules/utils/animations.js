@@ -14,13 +14,13 @@ const animations = {
   plans: {
     planView: {
       entering: FadeIn.duration(800),
-      exiting: FadeOut.duration(1000),
+      exiting: FadeOut.duration(250),
       layout: Layout.duration(500),
     },
     planItemForFlatList: {
       entering: FadeIn.duration(1000),
-      exiting: FadeOut.duration(1000),
-      layout: Layout.duration(1000),
+      exiting: FadeOut.duration(250),
+      layout: Layout.duration(500),
     },
   },
   addPlan: {

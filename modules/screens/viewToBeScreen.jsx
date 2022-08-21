@@ -25,6 +25,7 @@ import * as db from '../database/database';
 import PlanView from '../components/plans';
 import AddPlan from '../components/addPlan';
 import animations from '../utils/animations';
+import DailiesView from '../components/dailies';
 
 const viewEnum = {
   overview: 0,
@@ -136,8 +137,12 @@ function ViewToBeScreen({route, navigation}) {
           >
             {toBeItem.title}
           </Animated.Text>
-          {viewMode === viewEnum.details ?
-            <PlanView providedToBeId={toBeId} onAddNewPressed={() => setViewMode(viewEnum.addPlan)} tintColor={tintColor}/>
+          {viewMode === viewEnum.details ? (
+            <>
+              <PlanView providedToBeId={toBeId} onAddNewPressed={() => setViewMode(viewEnum.addPlan)} tintColor={tintColor}/>
+              <DailiesView providedToBeId={toBeId} tintColor={tintColor} />
+            </>
+          )
             :
             viewMode === viewEnum.addPlan ?
               <AddPlan toBeId={toBeId} onAdd={onNewPlanAdded} toBeItemTitle={toBeItem.title} tintColor={tintColor}/>

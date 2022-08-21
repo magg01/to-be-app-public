@@ -1,8 +1,8 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, Text, Alert, TextInput, View} from 'react-native';
-import Animated, { Layout } from 'react-native-reanimated';
-import { MaterialIcons } from '@expo/vector-icons';
+import Animated from 'react-native-reanimated';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
@@ -12,6 +12,9 @@ const planLineContainerHeightExpanded = planLineContainerHeightCollapsed * 6;
 
 function PlanItem({ item, onDelete }) {
   const [showDetailView, setShowDetailView] = useState(false);
+  const [hasDaily, setHasDaily] = useState(false);
+  const [hasWeekly, setHasWeekly] = useState(false);
+  const [hasMonthly, setHasMonthly] = useState(false);
   const [descriptionText, setDescriptionText] = useState('');
 
   const confirmDeletePlan = (planId) => {
@@ -31,6 +34,7 @@ function PlanItem({ item, onDelete }) {
       ]}
       entering={animations.plans.planItemForFlatList.entering}
       exiting={animations.plans.planItemForFlatList.exiting}
+      layout={animations.plans.planItemForFlatList.layout}
     >
       <View
         style={showDetailView ? styles.planLineHeaderContainerExpanded : styles.planLineHeaderContainerCollapsed}
@@ -55,15 +59,23 @@ function PlanItem({ item, onDelete }) {
           <Animated.View
             style={styles.planLineDetailContainer}
             entering={animations.plans.planItemForFlatList.entering}
+            exiting={animations.plans.planItemForFlatList.exiting}
           >
             <TextInput
-              style={{flex: 1, borderWidth: 1, borderColor: 'black', padding: 2}}
+              style={{flex: 5, borderWidth: 1, borderColor: 'black', padding: 2}}
               placeholder={"Add more details here"}
               value={descriptionText}
               onChangeText={setDescriptionText}
               multiline
               textAlignVertical="top"
             />
+            <View
+              style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}
+            >
+              <MaterialCommunityIcons name="calendar-month" size={24} color={hasDaily ? colors.plans.textOrIconOnWhite : "lightgrey"} onPress={() => setHasDaily(!hasDaily)} />
+              <MaterialCommunityIcons name="calendar-week" size={24} color={hasWeekly ? colors.plans.textOrIconOnWhite : "lightgrey"} onPress={() => setHasWeekly(!hasWeekly)} />
+              <MaterialCommunityIcons name="calendar-today" size={24} color={hasMonthly ? colors.plans.textOrIconOnWhite : "lightgrey"} onPress={() => setHasMonthly(!hasMonthly)} />
+            </View>
           </Animated.View>
         )}
     </Animated.View>

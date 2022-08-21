@@ -1,39 +1,26 @@
 import React, {
-  useEffect, useRef, useState,
+  useRef, useState,
 } from 'react';
 import Animated from 'react-native-reanimated';
 import {
-  StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView,
+  StyleSheet, View, Text, ScrollView,
 } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { deletePlanItemById, getAllPlansByToBeId } from '../database/database';
+import { deletePlanItemById, getAllDailiesByToBeId } from '../database/database';
 import { MaterialIcons } from '@expo/vector-icons';
 import animations from '../utils/animations';
 import PlanItem from './planItem';
 import colors from '../utils/colors';
 
-function PlanView({providedToBeId, onAddNewPressed, tintColor}) {
+function DailiesView({providedToBeId, tintColor}) {
   const [expandedView, setExpandedView] = useState(true);
   const toBeId = useRef(providedToBeId);
-  const [plans, setPlans] = useState(undefined);
+  const [dailies, setDailies] = useState(undefined);
 
-  useEffect(() => {
-    getAllPlansByToBeId(toBeId.current)
-      .then((result) => setPlans(result));
-  }, [toBeId]);
-
-  const onDeletePlan = (planId) => {
-    // still need to delete all scheduled notifications on calEvents before deleting plan.
-    deletePlanItemById(planId)
-      .then((deleted) => {
-        if (deleted) {
-          getAllPlansByToBeId(toBeId.current)
-            .then((result) => setPlans(result));
-        } else {
-          Alert.alert('Not deleted');
-        }
-      });
-  };
+  // useEffect(() => {
+  //   getAllDailiesByToBeId(toBeId.current)
+  //     .then((result) => setDailies(result));
+  // }, [toBeId]);
 
   const renderPlanItem = ({ item }) => (
     <PlanItem item={item} onDelete={onDeletePlan} />
@@ -47,7 +34,7 @@ function PlanView({providedToBeId, onAddNewPressed, tintColor}) {
       layout={animations.plans.planView.layout}
     >
       <View style={{borderBottomWidth: 1.5, borderBottomColor: tintColor, marginBottom: 8, flexDirection: 'row', justifyContent: 'flex-start'}}>
-        <Text style={{color: tintColor, fontSize: 20, flexGrow: 1}}>Plans</Text>
+        <Text style={{color: tintColor, fontSize: 20, flexGrow: 1}}>Dailies</Text>
         <MaterialIcons
           name={expandedView ? "expand-less" : "expand-more"}
           size={22}
@@ -57,20 +44,9 @@ function PlanView({providedToBeId, onAddNewPressed, tintColor}) {
       </View>
       { expandedView
       && (
-        <>
-          <ScrollView>
-            {plans && plans.map((item) => <PlanItem key={item.id} item={item} onDelete={onDeletePlan} />)}
-          </ScrollView>
-          <Animated.View
-            layout={animations.plans.planView.layout}
-            entering={animations.plans.planView.entering}
-            exiting={animations.plans.planView.exiting}
-          >
-            <TouchableOpacity style={styles.addButton} onPress={() => onAddNewPressed()}>
-              <Entypo name="add-to-list" size={18} color={colors.plans.textOrIconOnWhite} />
-            </TouchableOpacity>
-          </Animated.View>
-        </>
+        <ScrollView>
+          {dailies && dailies.map((item) => <PlanItem key={item.id} item={item} />)}
+        </ScrollView>
       )}
     </Animated.View>
   );
@@ -107,4 +83,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default PlanView;
+export default DailiesView;
