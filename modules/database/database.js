@@ -38,7 +38,7 @@ db.transaction(
       'create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text, tintColor text);',
     );
     tx.executeSql(
-      'create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, repeater integer, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade, FOREIGN KEY(repeater) references repeater(id));',
+      'create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, repeater integer, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);',
     );
     tx.executeSql(
       'create table if not exists repeaters (id integer primary key not null, lastdonedatetime string, periodicity string, enddate string, notificationId string, shouldshowincalendar integer, calstarttime string, calendtime string, calday integer, caldate integer, plan integer not null, FOREIGN KEY(plan) REFERENCES plans(id) on delete cascade);',
@@ -489,6 +489,48 @@ const getAllRepeatersByToBeId = (toBeId) => new Promise((resolve, reject) => {
   );
 });
 
+const deleteRepeater = (planId) => new Promise((resolve, reject) => {
+  db.transaction(
+    (tx) => {
+      tx.executeSql('delete from repeaters where plan = ?', [planId]);
+    },
+    (e) => {
+      console.log(`deleteRepeater encountered an error -> ${e}`);
+      reject(false);
+    },
+    () => {
+      console.log(`deleteRepeater: item with plan id:${planId} successfully deleted from plans table`);
+      resolve(true);
+    },
+  );
+});
+
+const getPlansWithRepeaterPeriodicityByToBeId = (toBeId) => new Promise((resolve, reject) => {
+  let result;
+  db.transaction(
+    (tx) => {
+      tx.executeSql(
+        'select plans.*, repeaters.periodicity from plans left join repeaters on repeaters.plan=plans.id and plans.tobeitem = ?',
+        [toBeId],
+        (_, { rows: { _array } }) => {
+          console.log(`getPlansWithRepeaterPeriodicityByToBeId: _array is ${JSON.stringify(_array, null, 1)}`);
+          result = _array;
+        },
+      );
+    },
+    // transaction failure callback
+    (e) => {
+      console.log(`getPlansWithRepeaterPeriodicityByToBeId encountered an error -> ${e}`);
+      reject(false);
+    },
+    // transaction success callback
+    () => {
+      console.log(`getPlansWithRepeaterPeriodicityByToBeId: plans and repeaters for tobeitem id:${toBeId} successfully retreived.`);
+      resolve(result);
+    },
+  );
+});
+
 export {
   deleteToBeItemById,
   addToBeItem,
@@ -509,4 +551,6 @@ export {
   addRepeater,
   getRepeatersByToBeIdAndPeriodicity,
   getAllRepeatersByToBeId,
+  deleteRepeater,
+  getPlansWithRepeaterPeriodicityByToBeId as getPlansWithRepeatersByToBeId,
 };
