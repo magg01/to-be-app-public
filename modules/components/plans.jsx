@@ -6,38 +6,37 @@ import {
   StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView,
 } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
-import { deletePlanItemById, getAllPlansByToBeId } from '../database/database';
+import { deletePlanItemById, getAllPlansByToBeId, getPlansWithRepeaterPeriodicityByToBeId } from '../database/database';
 import { MaterialIcons } from '@expo/vector-icons';
 import animations from '../utils/animations';
 import PlanItem from './planItem';
 import colors from '../utils/colors';
 
-function PlanView({providedToBeId, onAddNewPressed, tintColor}) {
+function PlanView({providedToBeId, onAddNewPressed, tintColor, onRepeatersModified}) {
   const [expandedView, setExpandedView] = useState(true);
   const toBeId = useRef(providedToBeId);
-  const [plans, setPlans] = useState(undefined);
+  const [plansWithRepeaters, setPlansWithRepeaters] = useState(undefined);
 
   useEffect(() => {
-    getAllPlansByToBeId(toBeId.current)
-      .then((result) => setPlans(result));
-  }, [toBeId]);
+    getPlansWithRepeaterPeriodicityByToBeId(toBeId.current)
+      .then((result) => {
+        setPlansWithRepeaters(result);
+      });
+  }, [toBeId, expandedView]);
 
   const onDeletePlan = (planId) => {
     // still need to delete all scheduled notifications on calEvents before deleting plan.
     deletePlanItemById(planId)
       .then((deleted) => {
         if (deleted) {
-          getAllPlansByToBeId(toBeId.current)
-            .then((result) => setPlans(result));
+          onRepeatersModified('all');
+          getPlansWithRepeaterPeriodicityByToBeId(toBeId.current)
+            .then((result) => setPlansWithRepeaters(result));
         } else {
           Alert.alert('Not deleted');
         }
       });
   };
-
-  const renderPlanItem = ({ item }) => (
-    <PlanItem item={item} onDelete={onDeletePlan} />
-  );
 
   return (
     <Animated.View
@@ -59,7 +58,7 @@ function PlanView({providedToBeId, onAddNewPressed, tintColor}) {
       && (
         <>
           <ScrollView>
-            {plans && plans.map((item) => <PlanItem key={item.id} item={item} onDelete={onDeletePlan} />)}
+            {plansWithRepeaters && plansWithRepeaters.map((item) => <PlanItem key={item.id} item={item} onDelete={onDeletePlan} onRepeaterModified={(repeaterType) => onRepeatersModified(repeaterType)} />)}
           </ScrollView>
           <Animated.View
             layout={animations.plans.planView.layout}

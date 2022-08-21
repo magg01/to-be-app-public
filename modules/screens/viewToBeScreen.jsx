@@ -25,7 +25,7 @@ import * as db from '../database/database';
 import PlanView from '../components/plans';
 import AddPlan from '../components/addPlan';
 import animations from '../utils/animations';
-import DailiesView from '../components/dailies';
+import PlanRepeaterView from '../components/planRepeaterView';
 
 const viewEnum = {
   overview: 0,
@@ -38,6 +38,9 @@ function ViewToBeScreen({route, navigation}) {
   const [toBeItem, setToBeItem] = useState(undefined);
   const [viewMode, setViewMode] = useState(viewEnum.overview);
   const [tintColor, setTintColor] = useState('#ffffff');
+  const [dailies, setDailies] = useState(null);
+  const [weeklies, setWeeklies] = useState(null);
+  const [monthlies, setMonthlies] = useState(null);
   const headerHeight = useHeaderHeight();
 
   useEffect(() => {
@@ -61,6 +64,15 @@ function ViewToBeScreen({route, navigation}) {
         setToBeItem(result);
       })
     }
+  }, [toBeId]);
+
+  useEffect(() => {
+    db.getAllRepeatersByToBeId(toBeId)
+      .then((result) => {
+        setDailies(result.filter((item) => item.periodicity === 'daily'));
+        setWeeklies(result.filter((item) => item.periodicity === 'weekly'));
+        setMonthlies(result.filter((item) => item.periodicity === 'monthly'));
+      });
   }, [toBeId]);
 
   useFocusEffect(
@@ -119,6 +131,28 @@ function ViewToBeScreen({route, navigation}) {
     setViewMode(viewEnum.details);
   };
 
+  const refreshRepeaters = (repeaterType) => {
+    if (repeaterType === 'daily') {
+      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'daily')
+        .then((result) => setDailies(result));
+    } else if (repeaterType === 'weekly') {
+      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'weekly')
+        .then((result) => setWeeklies(result));
+    } else if (repeaterType === 'monthly') {
+      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'monthly')
+        .then((result) => setMonthlies(result));
+    } else if (repeaterType === 'all') {
+      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'daily')
+        .then((result) => setDailies(result));
+      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'weekly')
+        .then((result) => setWeeklies(result));
+      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'monthly')
+        .then((result) => setMonthlies(result));
+    } else {
+      console.warn('refreshRepeaters was supplied an invalid repeaterType argument');
+    }
+  };
+
   if (toBeItem === undefined) {
     return (
       <SafeAreaView style={[styles.container(headerHeight), {justifyContent:'center'}]}>
@@ -139,8 +173,16 @@ function ViewToBeScreen({route, navigation}) {
           </Animated.Text>
           {viewMode === viewEnum.details ? (
             <>
-              <PlanView providedToBeId={toBeId} onAddNewPressed={() => setViewMode(viewEnum.addPlan)} tintColor={tintColor}/>
-              <DailiesView providedToBeId={toBeId} tintColor={tintColor} />
+              <PlanView providedToBeId={toBeId} onAddNewPressed={() => setViewMode(viewEnum.addPlan)} tintColor={tintColor} onRepeatersModified={(repeaterType) => refreshRepeaters(repeaterType)}/>
+              { (dailies && dailies.length !== 0)
+                && <PlanRepeaterView planRepeaters={dailies} tintColor={tintColor} repeaterType="daily" headerText="Dailies" />
+              }
+              { (weeklies && weeklies.length !== 0)
+                && <PlanRepeaterView planRepeaters={weeklies} tintColor={tintColor} repeaterType="weekly" headerText="Weeklies" />
+              }
+              { (monthlies && monthlies.length !== 0)
+                && <PlanRepeaterView planRepeaters={monthlies} tintColor={tintColor} repeaterType="monthly" headerText="Monthlies" />
+              }
             </>
           )
             :

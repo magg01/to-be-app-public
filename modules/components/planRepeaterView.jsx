@@ -7,20 +7,12 @@ import {
   ScrollView,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { getAllPlanRepeatersByTypeAndToBeId } from '../database/database';
 import animations from '../utils/animations';
 import PlanRepeaterItem from './planRepeaterItem';
 import colors from '../utils/colors';
 
-function PlanRepeaterView({providedToBeId, tintColor, repeaterType, headerText}) {
+function PlanRepeaterView({planRepeaters, tintColor, repeaterType, headerText}) {
   const [expandedView, setExpandedView] = useState(true);
-  const toBeId = useRef(providedToBeId);
-  const [planRepeaters, setPlanRepeaters] = useState(undefined);
-
-  useEffect(() => {
-    getAllPlanRepeatersByTypeAndToBeId(toBeId.current, repeaterType)
-      .then((result) => setPlanRepeaters(result));
-  }, [repeaterType, toBeId]);
 
   return (
     <Animated.View
@@ -41,8 +33,7 @@ function PlanRepeaterView({providedToBeId, tintColor, repeaterType, headerText})
       {expandedView
       && (
         <ScrollView>
-          {planRepeaters
-            && planRepeaters.map((item) => <PlanRepeaterItem key={item.id} item={item} />)}
+          {planRepeaters && planRepeaters.map((item) => <PlanRepeaterItem key={item.id} item={item} />)}
         </ScrollView>
       )}
     </Animated.View>

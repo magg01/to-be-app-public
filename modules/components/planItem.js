@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity, Text, Alert, TextInput, View} from 'react-native';
 import Animated from 'react-native-reanimated';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { addRepeater, deleteRepeater } from '../database/database';
 import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
@@ -10,11 +11,11 @@ import colors from '../utils/colors';
 const planLineContainerHeightCollapsed = 40;
 const planLineContainerHeightExpanded = planLineContainerHeightCollapsed * 6;
 
-function PlanItem({ item, onDelete }) {
+function PlanItem({ item, onDelete, onRepeaterModified }) {
   const [showDetailView, setShowDetailView] = useState(false);
-  const [hasDaily, setHasDaily] = useState(false);
-  const [hasWeekly, setHasWeekly] = useState(false);
-  const [hasMonthly, setHasMonthly] = useState(false);
+  const [hasDaily, setHasDaily] = useState(item.periodicity === 'daily');
+  const [hasWeekly, setHasWeekly] = useState(item.periodicity === 'weekly');
+  const [hasMonthly, setHasMonthly] = useState(item.periodicity === 'monthly');
   const [descriptionText, setDescriptionText] = useState('');
 
   const confirmDeletePlan = (planId) => {
@@ -24,6 +25,36 @@ function PlanItem({ item, onDelete }) {
       () => onDelete(planId),
       null,
     );
+  };
+
+  const onDailyPressed = () => {
+    if (hasDaily) {
+      deleteRepeater(item.id);
+    } else {
+      addRepeater({ periodicity: 'daily', endDate: null, planId: item.id });
+    }
+    setHasDaily(!hasDaily);
+    onRepeaterModified('daily');
+  };
+
+  const onWeeklyPressed = () => {
+    if (hasWeekly) {
+      deleteRepeater(item.id);
+    } else {
+      addRepeater({ periodicity: 'weekly', endDate: null, planId: item.id });
+    }
+    setHasWeekly(!hasWeekly);
+    onRepeaterModified('weekly');
+  };
+
+  const onMonthlyPressed = () => {
+    if (hasMonthly) {
+      deleteRepeater(item.id);
+    } else {
+      addRepeater({ periodicity: 'monthly', endDate: null, planId: item.id });
+    }
+    setHasMonthly(!hasMonthly);
+    onRepeaterModified('monthly');
   };
 
   return (
@@ -72,9 +103,56 @@ function PlanItem({ item, onDelete }) {
             <View
               style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}
             >
-              <MaterialCommunityIcons name="calendar-month" size={24} color={hasDaily ? colors.plans.textOrIconOnWhite : "lightgrey"} onPress={() => setHasDaily(!hasDaily)} />
-              <MaterialCommunityIcons name="calendar-week" size={24} color={hasWeekly ? colors.plans.textOrIconOnWhite : "lightgrey"} onPress={() => setHasWeekly(!hasWeekly)} />
-              <MaterialCommunityIcons name="calendar-today" size={24} color={hasMonthly ? colors.plans.textOrIconOnWhite : "lightgrey"} onPress={() => setHasMonthly(!hasMonthly)} />
+              {(!hasDaily && !hasWeekly && !hasMonthly)
+                && (
+                  <>
+                    <MaterialCommunityIcons
+                      name="calendar-month"
+                      size={24}
+                      color={hasDaily ? colors.plans.textOrIconOnWhite : 'lightgrey'}
+                      onPress={onDailyPressed}
+                    />
+                    <MaterialCommunityIcons
+                      name="calendar-week"
+                      size={24}
+                      color={hasWeekly ? colors.plans.textOrIconOnWhite : 'lightgrey'}
+                      onPress={onWeeklyPressed}
+                    />
+                    <MaterialCommunityIcons
+                      name="calendar-today"
+                      size={24}
+                      color={hasMonthly ? colors.plans.textOrIconOnWhite : 'lightgrey'}
+                      onPress={onMonthlyPressed}
+                    />
+                  </>
+                )}
+              {hasDaily
+                && (
+                  <MaterialCommunityIcons
+                    name="calendar-month"
+                    size={24}
+                    color={hasDaily ? colors.plans.textOrIconOnWhite : 'lightgrey'}
+                    onPress={onDailyPressed}
+                  />
+                )}
+              {hasWeekly
+                && (
+                  <MaterialCommunityIcons
+                    name="calendar-week"
+                    size={24}
+                    color={hasWeekly ? colors.plans.textOrIconOnWhite : 'lightgrey'}
+                    onPress={onWeeklyPressed}
+                  />
+                )}
+              {hasMonthly
+                && (
+                  <MaterialCommunityIcons
+                    name="calendar-today"
+                    size={24}
+                    color={hasMonthly ? colors.plans.textOrIconOnWhite : 'lightgrey'}
+                    onPress={onMonthlyPressed}
+                  />
+                )}
             </View>
           </Animated.View>
         )}
