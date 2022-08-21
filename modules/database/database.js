@@ -38,7 +38,7 @@ db.transaction(
       'create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text, tintColor text);',
     );
     tx.executeSql(
-      'create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);',
+      'create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, repeater integer, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade, FOREIGN KEY(repeater) references repeater(id));',
     );
     tx.executeSql(
       'create table if not exists repeaters (id integer primary key not null, lastdonedatetime string, periodicity string, enddate string, notificationId string, shouldshowincalendar integer, calstarttime string, calendtime string, calday integer, caldate integer, plan integer not null, FOREIGN KEY(plan) REFERENCES plans(id) on delete cascade);',
