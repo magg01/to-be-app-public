@@ -552,5 +552,5 @@ export {
   getRepeatersByToBeIdAndPeriodicity,
   getAllRepeatersByToBeId,
   deleteRepeater,
-  getPlansWithRepeaterPeriodicityByToBeId as getPlansWithRepeatersByToBeId,
+  getPlansWithRepeaterPeriodicityByToBeId,
 };
