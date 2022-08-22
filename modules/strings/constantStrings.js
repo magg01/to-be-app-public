@@ -9,7 +9,7 @@ const CONSTANT_STRINGS = {
   },
   PLANS: {
     REPEATERS: {
-      HEADER_TEXT_DAILIES: "Dailes",
+      HEADER_TEXT_DAILIES: "Dailies",
       HEADER_TEXT_WEEKLIES: "Weeklies",
       HEADER_TEXT_MONTHLIES: "Monthlies",
     },
