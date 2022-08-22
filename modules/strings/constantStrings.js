@@ -7,6 +7,13 @@ const CONSTANT_STRINGS = {
   ADD_NEW_SCREEN: {
     IMAGE_PICKER_INSTRUCTION: "Find a background image",
   },
+  PLANS: {
+    REPEATERS: {
+      HEADER_TEXT_DAILIES: "Dailes",
+      HEADER_TEXT_WEEKLIES: "Weeklies",
+      HEADER_TEXT_MONTHLIES: "Monthlies",
+    },
+  },
 };
 
 export default CONSTANT_STRINGS;

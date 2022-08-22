@@ -28,6 +28,7 @@ import AddPlan from '../components/addPlan';
 import animations from '../utils/animations';
 import PlanRepeaterView from '../components/planRepeaterView';
 import colors from '../utils/colors';
+import CONSTANT_STRINGS from '../strings/constantStrings';
 
 const viewEnum = {
   overview: 0,
@@ -174,11 +175,32 @@ function ViewToBeScreen({route, navigation}) {
                 onPlansModified={onPlansModified}
               />
               {(dailies && dailies.length !== 0)
-                && <PlanRepeaterView planRepeaters={dailies} tintColor={tintColor} headerText="Dailies" onRepeaterModified={onPlansModified} />}
+                && (
+                  <PlanRepeaterView
+                    planRepeaters={dailies}
+                    tintColor={tintColor}
+                    headerText={CONSTANT_STRINGS.PLANS.REPEATERS.HEADER_TEXT_DAILIES}
+                    onRepeaterModified={onPlansModified}
+                  />
+                )}
               {(weeklies && weeklies.length !== 0)
-                && <PlanRepeaterView planRepeaters={weeklies} tintColor={tintColor} headerText="Weeklies" onRepeaterModified={onPlansModified} />}
+                && (
+                  <PlanRepeaterView
+                    planRepeaters={weeklies}
+                    tintColor={tintColor}
+                    headerText={CONSTANT_STRINGS.PLANS.REPEATERS.HEADER_TEXT_WEEKLIES}
+                    onRepeaterModified={onPlansModified}
+                  />
+                )}
               {(monthlies && monthlies.length !== 0)
-                && <PlanRepeaterView planRepeaters={monthlies} tintColor={tintColor} headerText="Monthlies" onRepeaterModified={onPlansModified} />}
+                && (
+                  <PlanRepeaterView
+                    planRepeaters={monthlies}
+                    tintColor={tintColor}
+                    headerText={CONSTANT_STRINGS.PLANS.REPEATERS.HEADER_TEXT_MONTHLIES}
+                    onRepeaterModified={onPlansModified}
+                  />
+                )}
             </ScrollView>
           )}
           {viewMode === viewEnum.addPlan
