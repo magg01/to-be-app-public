@@ -18,14 +18,19 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
   const [hasWeekly, setHasWeekly] = useState(false);
   const [hasMonthly, setHasMonthly] = useState(false);
   const [descriptionText, setDescriptionText] = useState('');
+  const [hasEndDate, setHasEndDate] = useState(false);
 
   useEffect(() => {
-    if (item.repeater_periodicity === 'monthly') {
-      setHasMonthly(true);
+    setHasEndDate(item.repeater_enddate !== null);
+  }, [item]);
+
+  useEffect(() => {
+    if (item.repeater_periodicity === 'daily') {
+      setHasDaily(true);
     } else if (item.repeater_periodicity === 'weekly') {
       setHasWeekly(true);
-    } else if (item.repeater_periodicity === 'daily') {
-      setHasDaily(true);
+    } else if (item.repeater_periodicity === 'monthly') {
+      setHasMonthly(true);
     }
   }, [item]);
 
@@ -137,7 +142,11 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
                       style={styles.repeaterIcon}
                       name="calendar-month"
                       size={iconSize}
-                      color={hasDaily ? colors.plans.textOrIconOnWhite : 'lightgrey'}
+                      color={
+                        hasDaily
+                          ? colors.plans.textOrIconOnWhite
+                          : colors.general.unactivatedIcon
+                        }
                       onPress={onDailyPressed}
                     />
                   </Animated.View>
@@ -153,7 +162,11 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
                       style={styles.repeaterIcon}
                       name="calendar-week"
                       size={iconSize}
-                      color={hasWeekly ? colors.plans.textOrIconOnWhite : 'lightgrey'}
+                      color={
+                        hasWeekly
+                          ? colors.plans.textOrIconOnWhite
+                          : colors.general.unactivatedIcon
+                        }
                       onPress={onWeeklyPressed}
                     />
                   </Animated.View>
@@ -169,8 +182,32 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
                       style={styles.repeaterIcon}
                       name="calendar-today"
                       size={iconSize}
-                      color={hasMonthly ? colors.plans.textOrIconOnWhite : 'lightgrey'}
+                      color={
+                        hasMonthly
+                          ? colors.plans.textOrIconOnWhite
+                          : colors.general.unactivatedIcon
+                        }
                       onPress={onMonthlyPressed}
+                    />
+                  </Animated.View>
+                )}
+              {(hasDaily || hasWeekly || hasMonthly)
+                && (
+                  <Animated.View
+                    entering={animations.plans.planItemForFlatList.entering}
+                    exiting={animations.plans.planItemForFlatList.exiting}
+                    layout={animations.plans.planItemForFlatList.layout}
+                  >
+                    <MaterialCommunityIcons
+                      style={styles.repeaterIcon}
+                      name="calendar-end"
+                      size={iconSize}
+                      color={
+                        hasEndDate
+                          ? colors.plans.textOrIconOnWhite
+                          : colors.plans.disabledIcon
+                        }
+                      onPress={() => Alert.alert('TODO: add end date here')}
                     />
                   </Animated.View>
                 )}

@@ -174,11 +174,11 @@ function ViewToBeScreen({route, navigation}) {
                 onPlansModified={onPlansModified}
               />
               {(dailies && dailies.length !== 0)
-                && <PlanRepeaterView planRepeaters={dailies} tintColor={tintColor} repeaterType="daily" headerText="Dailies" />}
+                && <PlanRepeaterView planRepeaters={dailies} tintColor={tintColor} headerText="Dailies" onRepeaterModified={onPlansModified} />}
               {(weeklies && weeklies.length !== 0)
-                && <PlanRepeaterView planRepeaters={weeklies} tintColor={tintColor} repeaterType="weekly" headerText="Weeklies" />}
+                && <PlanRepeaterView planRepeaters={weeklies} tintColor={tintColor} headerText="Weeklies" onRepeaterModified={onPlansModified} />}
               {(monthlies && monthlies.length !== 0)
-                && <PlanRepeaterView planRepeaters={monthlies} tintColor={tintColor} repeaterType="monthly" headerText="Monthlies" />}
+                && <PlanRepeaterView planRepeaters={monthlies} tintColor={tintColor} headerText="Monthlies" onRepeaterModified={onPlansModified} />}
             </ScrollView>
           )}
           {viewMode === viewEnum.addPlan

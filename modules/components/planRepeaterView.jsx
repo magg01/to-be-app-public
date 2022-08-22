@@ -11,7 +11,7 @@ import animations from '../utils/animations';
 import PlanRepeaterItem from './planRepeaterItem';
 import colors from '../utils/colors';
 
-function PlanRepeaterView({planRepeaters, tintColor, repeaterType, headerText}) {
+function PlanRepeaterView({planRepeaters, tintColor, headerText, onRepeaterModified}) {
   const [expandedView, setExpandedView] = useState(true);
 
   return (
@@ -35,7 +35,14 @@ function PlanRepeaterView({planRepeaters, tintColor, repeaterType, headerText}) 
         <ScrollView
           nestedScrollEnabled
         >
-          {planRepeaters && planRepeaters.map((item) => <PlanRepeaterItem key={item.repeater_id} item={item} />)}
+          {planRepeaters
+            && planRepeaters.map((item) => (
+              <PlanRepeaterItem
+                key={item.repeater_id}
+                item={item}
+                onRepeaterModified={onRepeaterModified}
+              />
+            ))}
         </ScrollView>
       )}
     </Animated.View>

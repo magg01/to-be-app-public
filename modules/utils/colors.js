@@ -9,6 +9,7 @@ const colors = {
   },
   general: {
     defaultWhite: '#ffffff',
+    unactivatedIcon: 'lightgrey',
   },
 };
 

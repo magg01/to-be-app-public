@@ -558,6 +558,30 @@ const getAllPlansWithRepeatersByToBeId = (toBeId) => new Promise((resolve, rejec
   );
 });
 
+const updateLastDoneDateTimeOnRepeaterByRepeaterId = (repeaterId, dateTime) => new Promise((resolve, reject) => {
+  db.transaction(
+    (tx) => {
+      tx.executeSql(
+        'update repeaters set lastDoneDateTime = ? where id = ?',
+        [dateTime, repeaterId],
+        (_, { rows: { _array } }) => {
+          console.log(`updateLastDoneDateTimeOnRepeaterByRepeaterId: _array is ${JSON.stringify(_array, null, 1)}`);
+        },
+      );
+    },
+    // transaction failure callback
+    (e) => {
+      console.log(`updateLastDoneDateTimeOnRepeaterByRepeaterId encountered an error -> ${e}`);
+      reject(false);
+    },
+    // transaction success callback
+    () => {
+      console.log(`updateLastDoneDateTimeOnRepeaterByRepeaterId: lastDoneDateTime for repeater id:${repeaterId} successfully updated.`);
+      resolve(true);
+    },
+  );
+});
+
 export {
   deleteToBeItemById,
   addToBeItem,
@@ -581,4 +605,5 @@ export {
   deleteRepeaterByPlanId,
   getPlansWithRepeaterPeriodicityByToBeId,
   getAllPlansWithRepeatersByToBeId,
+  updateLastDoneDateTimeOnRepeaterByRepeaterId,
 };

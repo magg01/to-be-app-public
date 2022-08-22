@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, ImageBackground, Text, View, InteractionManager } from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, ImageBackground, Text, View, InteractionManager, Button } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
 import { Entypo } from '@expo/vector-icons';
+import { getPreviousPeriodReset } from '../utils/datetime';
 import { getAllToBeItems } from '../database/database';
 import OptimisedToBeTile from '../components/optimisedToBeTile';
 
@@ -70,6 +71,9 @@ function BeScreen({ navigation }) {
         <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
           <Entypo name="add-to-list" size={24} color="black" />
         </TouchableOpacity>
+        <Button title="test pre midnight" onPress={() => console.log(getPreviousPeriodReset('daily'))} />
+        <Button title="test pre week" onPress={() => console.log(getPreviousPeriodReset('weekly'))} />
+        <Button title="test pre month" onPress={() => console.log(getPreviousPeriodReset('monthly'))} />
         <StatusBar style={"light"}/>
       </SafeAreaView>
     </ImageBackground>
