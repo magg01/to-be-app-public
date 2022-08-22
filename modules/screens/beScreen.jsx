@@ -71,9 +71,6 @@ function BeScreen({ navigation }) {
         <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
           <Entypo name="add-to-list" size={24} color="black" />
         </TouchableOpacity>
-        <Button title="test pre midnight" onPress={() => console.log(getPreviousPeriodReset('daily'))} />
-        <Button title="test pre week" onPress={() => console.log(getPreviousPeriodReset('weekly'))} />
-        <Button title="test pre month" onPress={() => console.log(getPreviousPeriodReset('monthly'))} />
         <StatusBar style={"light"}/>
       </SafeAreaView>
     </ImageBackground>
