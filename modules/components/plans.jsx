@@ -5,9 +5,8 @@ import Animated from 'react-native-reanimated';
 import {
   StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView,
 } from 'react-native';
-import { Entypo } from '@expo/vector-icons';
-import { deletePlanItemById, getAllPlansByToBeId, getPlansWithRepeaterPeriodicityByToBeId } from '../database/database';
-import { MaterialIcons } from '@expo/vector-icons';
+import { Entypo, MaterialIcons } from '@expo/vector-icons';
+import { deletePlanItemById, getPlansWithRepeaterPeriodicityByToBeId } from '../database/database';
 import animations from '../utils/animations';
 import PlanItem from './planItem';
 import colors from '../utils/colors';
@@ -40,15 +39,15 @@ function PlanView({providedToBeId, onAddNewPressed, tintColor, onRepeatersModifi
 
   return (
     <Animated.View
-      style={[styles.container, {borderColor: tintColor}]}
+      style={styles.container(tintColor)}
       entering={animations.plans.planView.entering}
       exiting={animations.plans.planView.exiting}
       layout={animations.plans.planView.layout}
     >
-      <View style={{borderBottomWidth: 1.5, borderBottomColor: tintColor, marginBottom: 8, flexDirection: 'row', justifyContent: 'flex-start'}}>
-        <Text style={{color: tintColor, fontSize: 20, flexGrow: 1}}>Plans</Text>
+      <View style={styles.headerContainer(tintColor)}>
+        <Text style={styles.headerText(tintColor)}>Plans</Text>
         <MaterialIcons
-          name={expandedView ? "expand-less" : "expand-more"}
+          name={expandedView ? 'expand-less' : 'expand-more'}
           size={22}
           color={tintColor}
           onPress={() => setExpandedView(!expandedView)}
@@ -58,7 +57,15 @@ function PlanView({providedToBeId, onAddNewPressed, tintColor, onRepeatersModifi
       && (
         <>
           <ScrollView>
-            {plansWithRepeaters && plansWithRepeaters.map((item) => <PlanItem key={item.id} item={item} onDelete={onDeletePlan} onRepeaterModified={(repeaterType) => onRepeatersModified(repeaterType)} />)}
+            {plansWithRepeaters
+              && plansWithRepeaters.map((item) => (
+                <PlanItem
+                  key={item.id}
+                  item={item}
+                  onDelete={onDeletePlan}
+                  onRepeaterModified={(repeaterType) => onRepeatersModified(repeaterType)}
+                />
+              ))}
           </ScrollView>
           <Animated.View
             layout={animations.plans.planView.layout}
@@ -76,24 +83,28 @@ function PlanView({providedToBeId, onAddNewPressed, tintColor, onRepeatersModifi
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    maxHeight: "75%",
-    borderWidth: 1.5, 
+  container: (tintColor) => ({
+    width: '100%',
+    maxHeight: '75%',
+    borderWidth: 1.5,
     borderRadius: 6,
-    padding: "3%",
-    backgroundColor: 'rgba(200,200,200,0.2)',
+    padding: '3%',
+    backgroundColor: colors.plans.planViewBackground,
     marginBottom: 12,
-  },
-  planLine: {
-    height: 40,
-    borderRadius: 4,
+    borderColor: tintColor,
+  }),
+  headerContainer: (tintColor) => ({
+    borderBottomWidth: 1.5,
+    borderBottomColor: tintColor,
     marginBottom: 8,
-    padding: 4,
-    backgroundColor: 'white',
-    opacity: 1,
-    justifyContent: 'center',
-  },
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  }),
+  headerText: (tintColor) => ({
+    color: tintColor,
+    fontSize: 20,
+    flexGrow: 1,
+  }),
   addButton: {
     marginTop: 8,
     alignSelf: 'flex-end',
@@ -102,8 +113,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'white',
-  }
+    backgroundColor: colors.general.defaultWhite,
+  },
 });
 
 export default PlanView;

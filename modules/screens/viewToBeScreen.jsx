@@ -26,6 +26,7 @@ import PlanView from '../components/plans';
 import AddPlan from '../components/addPlan';
 import animations from '../utils/animations';
 import PlanRepeaterView from '../components/planRepeaterView';
+import colors from '../utils/colors';
 
 const viewEnum = {
   overview: 0,
@@ -261,15 +262,15 @@ const styles = StyleSheet.create({
     fontSize: 36,
     marginBottom: 12,
   },
-  bottomButton:{
+  bottomButton: {
     margin: 10,
     opacity: 0.85,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: colors.general.defaultWhite,
     borderRadius: 14,
     width: 120,
-    height: 40
+    height: 40,
   },
 });
 
