@@ -32,8 +32,10 @@ function PlanRepeaterView({planRepeaters, tintColor, repeaterType, headerText}) 
       </View>
       {expandedView
       && (
-        <ScrollView>
-          {planRepeaters && planRepeaters.map((item) => <PlanRepeaterItem key={item.id} item={item} />)}
+        <ScrollView
+          nestedScrollEnabled
+        >
+          {planRepeaters && planRepeaters.map((item) => <PlanRepeaterItem key={item.repeater_id} item={item} />)}
         </ScrollView>
       )}
     </Animated.View>

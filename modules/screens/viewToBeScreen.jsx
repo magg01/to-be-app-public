@@ -14,6 +14,7 @@ import {
   ActivityIndicator,
   Platform,
   Alert,
+  ScrollView,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -35,14 +36,31 @@ const viewEnum = {
 };
 
 function ViewToBeScreen({route, navigation}) {
-  const [toBeId, setToBeId] = useState(route.params.toBeId);
+  const [toBeId, setToBeId] = useState(undefined);
   const [toBeItem, setToBeItem] = useState(undefined);
   const [viewMode, setViewMode] = useState(viewEnum.overview);
   const [tintColor, setTintColor] = useState('#ffffff');
+  const [plansWithRepeaters, setPlansWithRepeaters] = useState(null);
   const [dailies, setDailies] = useState(null);
   const [weeklies, setWeeklies] = useState(null);
   const [monthlies, setMonthlies] = useState(null);
   const headerHeight = useHeaderHeight();
+
+  useEffect(() => {
+    setToBeId(route.params.toBeId);
+  }, [route.params.toBeId]);
+
+  const refreshPlansAndRepeaters = useCallback(() => {
+    if (toBeId !== undefined) {
+      db.getAllPlansWithRepeatersByToBeId(toBeId)
+        .then((result) => {
+          setPlansWithRepeaters(result);
+          setDailies(result.filter((item) => item.repeater_periodicity === 'daily'));
+          setWeeklies(result.filter((item) => item.repeater_periodicity === 'weekly'));
+          setMonthlies(result.filter((item) => item.repeater_periodicity === 'monthly'));
+        });
+    }
+  }, [toBeId]);
 
   useEffect(() => {
     if (toBeItem !== undefined) {
@@ -51,28 +69,16 @@ function ViewToBeScreen({route, navigation}) {
   }, [toBeItem, tintColor]);
 
   useEffect(() => {
-    if (__DEV__) {
-      const devDelayTimer = setTimeout(() => {
-        db.getToBeItemById(toBeId)
-          .then((result) => {
-            setToBeItem(result);
-          });
-      }, 1000);
-      return (() => clearTimeout(devDelayTimer));
-    }
-    db.getToBeItemById(toBeId)
-      .then((result) => {
-        setToBeItem(result);
-      });
-  }, [toBeId]);
+    refreshPlansAndRepeaters();
+  }, [refreshPlansAndRepeaters, toBeId]);
 
   useEffect(() => {
-    db.getAllRepeatersByToBeId(toBeId)
-      .then((result) => {
-        setDailies(result.filter((item) => item.periodicity === 'daily'));
-        setWeeklies(result.filter((item) => item.periodicity === 'weekly'));
-        setMonthlies(result.filter((item) => item.periodicity === 'monthly'));
-      });
+    if (toBeId !== undefined) {
+      db.getToBeItemById(toBeId)
+        .then((result) => {
+          setToBeItem(result);
+        });
+    }
   }, [toBeId]);
 
   useFocusEffect(
@@ -129,28 +135,11 @@ function ViewToBeScreen({route, navigation}) {
 
   const onNewPlanAdded = () => {
     setViewMode(viewEnum.details);
+    refreshPlansAndRepeaters();
   };
 
-  const refreshRepeaters = (repeaterType) => {
-    if (repeaterType === 'daily') {
-      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'daily')
-        .then((result) => setDailies(result));
-    } else if (repeaterType === 'weekly') {
-      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'weekly')
-        .then((result) => setWeeklies(result));
-    } else if (repeaterType === 'monthly') {
-      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'monthly')
-        .then((result) => setMonthlies(result));
-    } else if (repeaterType === 'all') {
-      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'daily')
-        .then((result) => setDailies(result));
-      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'weekly')
-        .then((result) => setWeeklies(result));
-      db.getRepeatersByToBeIdAndPeriodicity(toBeId, 'monthly')
-        .then((result) => setMonthlies(result));
-    } else {
-      console.warn('refreshRepeaters was supplied an invalid repeaterType argument');
-    }
+  const onPlansModified = () => {
+    refreshPlansAndRepeaters();
   };
 
   if (toBeItem === undefined) {
@@ -171,60 +160,64 @@ function ViewToBeScreen({route, navigation}) {
           >
             {toBeItem.title}
           </Animated.Text>
-          {viewMode === viewEnum.details ? (
-            <>
-              <PlanView providedToBeId={toBeId} onAddNewPressed={() => setViewMode(viewEnum.addPlan)} tintColor={tintColor} onRepeatersModified={(repeaterType) => refreshRepeaters(repeaterType)}/>
-              { (dailies && dailies.length !== 0)
-                && <PlanRepeaterView planRepeaters={dailies} tintColor={tintColor} repeaterType="daily" headerText="Dailies" />
-              }
-              { (weeklies && weeklies.length !== 0)
-                && <PlanRepeaterView planRepeaters={weeklies} tintColor={tintColor} repeaterType="weekly" headerText="Weeklies" />
-              }
-              { (monthlies && monthlies.length !== 0)
-                && <PlanRepeaterView planRepeaters={monthlies} tintColor={tintColor} repeaterType="monthly" headerText="Monthlies" />
-              }
-            </>
-          )
-            :
-            viewMode === viewEnum.addPlan ?
-              <AddPlan toBeId={toBeId} onAdd={onNewPlanAdded} toBeItemTitle={toBeItem.title} tintColor={tintColor}/>
-              :
-              null 
-          }
+          {viewMode === viewEnum.details
+          && (
+            <ScrollView
+              nestedScrollEnabled
+              style={{width: "100%"}}
+            >
+              <PlanView
+                providedToBeId={toBeId}
+                providedPlansWithRepeaters={plansWithRepeaters}
+                onAddNewPressed={() => setViewMode(viewEnum.addPlan)}
+                tintColor={tintColor}
+                onPlansModified={onPlansModified}
+              />
+              {(dailies && dailies.length !== 0)
+                && <PlanRepeaterView planRepeaters={dailies} tintColor={tintColor} repeaterType="daily" headerText="Dailies" />}
+              {(weeklies && weeklies.length !== 0)
+                && <PlanRepeaterView planRepeaters={weeklies} tintColor={tintColor} repeaterType="weekly" headerText="Weeklies" />}
+              {(monthlies && monthlies.length !== 0)
+                && <PlanRepeaterView planRepeaters={monthlies} tintColor={tintColor} repeaterType="monthly" headerText="Monthlies" />}
+            </ScrollView>
+          )}
+          {viewMode === viewEnum.addPlan
+          && (
+            <AddPlan
+              toBeId={toBeId}
+              onAdd={onNewPlanAdded}
+              toBeItemTitle={toBeItem.title}
+              tintColor={tintColor}
+            />
+          )}
         </View>
-        <Animated.View
-          style={styles.bottomButtonContainer}
-          entering={animations.viewToBeScreen.detailsButton.entering}
-          exiting={animations.viewToBeScreen.detailsButton.exiting}
-        >
-          <TouchableOpacity
-            style={styles.bottomButton}
-            onPress={() => setViewMode(viewEnum.details)}
+        {viewMode === viewEnum.overview
+          && (
+          <Animated.View
+            style={styles.bottomButtonContainer}
+            entering={animations.viewToBeScreen.detailsButton.entering}
+            exiting={animations.viewToBeScreen.detailsButton.exiting}
           >
-            <Text style={styles.bottomButtonText}>Details</Text>
-          </TouchableOpacity>
-        </Animated.View>
+            <TouchableOpacity
+              style={styles.bottomButton}
+              onPress={() => setViewMode(viewEnum.details)}
+            >
+              <Text style={styles.bottomButtonText}>Details</Text>
+            </TouchableOpacity>
+          </Animated.View>
+          )}
       </SafeAreaView>
       <StatusBar style="light" />
     </ImageBackground>
   );
 
-  //   return(
-  //     <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
-  //       <SafeAreaView style={styles.container}>
-  //         <Text style={{color: 'white', fontSize: 36, alignSelf: 'center'}}>{toBeItem.title}</Text>
-  //         <Button title={"next"} onPress={() => {
+  // TODO: reimplement as swipe action
+  //        <Button title={"next"} onPress={() => {
   //           db.getNextToBeItemIdById(toBeId).then((result) => setToBeId(result))
   //         }}/>
   //         <Button title={"previous"} onPress={() => {
   //           db.getPreviousToBeItemIdById(toBeId).then((result) => setToBeId(result))
   //         }}/>
-  //         <Button title={"details"} onPress={() => {setViewMode(viewEnum.details)}} />
-  //       </SafeAreaView>
-  //       <StatusBar style={'light'} />
-  //     </ImageBackground>
-  //   )
-  // }
 }
 
 const styles = StyleSheet.create({

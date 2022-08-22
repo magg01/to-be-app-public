@@ -3,34 +3,35 @@ import React, {
 } from 'react';
 import Animated from 'react-native-reanimated';
 import {
-  StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView,
+  StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView, Dimensions,
 } from 'react-native';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
-import { deletePlanItemById, getPlansWithRepeaterPeriodicityByToBeId } from '../database/database';
+import { deletePlanItemById } from '../database/database';
 import animations from '../utils/animations';
 import PlanItem from './planItem';
 import colors from '../utils/colors';
 
-function PlanView({providedToBeId, onAddNewPressed, tintColor, onRepeatersModified}) {
+const screenHeight = Dimensions.get('window').height;
+
+function PlanView({providedToBeId, providedPlansWithRepeaters, onAddNewPressed, tintColor, onPlansModified}) {
   const [expandedView, setExpandedView] = useState(true);
-  const toBeId = useRef(providedToBeId);
+  const [toBeId, setToBeId] = useState(undefined);
   const [plansWithRepeaters, setPlansWithRepeaters] = useState(undefined);
 
   useEffect(() => {
-    getPlansWithRepeaterPeriodicityByToBeId(toBeId.current)
-      .then((result) => {
-        setPlansWithRepeaters(result);
-      });
-  }, [toBeId, expandedView]);
+    setToBeId(providedToBeId);
+  }, [providedToBeId]);
+
+  useEffect(() => {
+    setPlansWithRepeaters(providedPlansWithRepeaters);
+  }, [providedPlansWithRepeaters]);
 
   const onDeletePlan = (planId) => {
     // still need to delete all scheduled notifications on calEvents before deleting plan.
     deletePlanItemById(planId)
       .then((deleted) => {
         if (deleted) {
-          onRepeatersModified('all');
-          getPlansWithRepeaterPeriodicityByToBeId(toBeId.current)
-            .then((result) => setPlansWithRepeaters(result));
+          onPlansModified();
         } else {
           Alert.alert('Not deleted');
         }
@@ -56,14 +57,16 @@ function PlanView({providedToBeId, onAddNewPressed, tintColor, onRepeatersModifi
       { expandedView
       && (
         <>
-          <ScrollView>
+          <ScrollView
+            nestedScrollEnabled
+          >
             {plansWithRepeaters
               && plansWithRepeaters.map((item) => (
                 <PlanItem
-                  key={item.id}
+                  key={item.plan_id}
                   item={item}
-                  onDelete={onDeletePlan}
-                  onRepeaterModified={(repeaterType) => onRepeatersModified(repeaterType)}
+                  onDelete={() => onDeletePlan(item.plan_id)}
+                  onRepeaterModified={onPlansModified}
                 />
               ))}
           </ScrollView>
@@ -85,7 +88,7 @@ function PlanView({providedToBeId, onAddNewPressed, tintColor, onRepeatersModifi
 const styles = StyleSheet.create({
   container: (tintColor) => ({
     width: '100%',
-    maxHeight: '75%',
+    maxHeight: screenHeight * 0.65,
     borderWidth: 1.5,
     borderRadius: 6,
     padding: '3%',

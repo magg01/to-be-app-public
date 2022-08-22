@@ -1,22 +1,33 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, TouchableOpacity, Text, Alert, TextInput, View} from 'react-native';
 import Animated from 'react-native-reanimated';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { addRepeater, deleteRepeater } from '../database/database';
+import { addRepeater, deleteRepeaterByPlanId } from '../database/database';
 import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
 
 const planLineContainerHeightCollapsed = 40;
 const planLineContainerHeightExpanded = planLineContainerHeightCollapsed * 6;
+const iconSize = 28;
 
 function PlanItem({ item, onDelete, onRepeaterModified }) {
   const [showDetailView, setShowDetailView] = useState(false);
-  const [hasDaily, setHasDaily] = useState(item.periodicity === 'daily');
-  const [hasWeekly, setHasWeekly] = useState(item.periodicity === 'weekly');
-  const [hasMonthly, setHasMonthly] = useState(item.periodicity === 'monthly');
+  const [hasDaily, setHasDaily] = useState(false);
+  const [hasWeekly, setHasWeekly] = useState(false);
+  const [hasMonthly, setHasMonthly] = useState(false);
   const [descriptionText, setDescriptionText] = useState('');
+
+  useEffect(() => {
+    if (item.repeater_periodicity === 'monthly') {
+      setHasMonthly(true);
+    } else if (item.repeater_periodicity === 'weekly') {
+      setHasWeekly(true);
+    } else if (item.repeater_periodicity === 'daily') {
+      setHasDaily(true);
+    }
+  }, [item]);
 
   const confirmDeletePlan = (planId) => {
     confirmDeleteAlert(
@@ -29,32 +40,44 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
 
   const onDailyPressed = () => {
     if (hasDaily) {
-      deleteRepeater(item.id);
+      deleteRepeaterByPlanId(item.plan_id)
+        .then(() => {
+          setHasDaily(false);
+          onRepeaterModified();
+        });
     } else {
-      addRepeater({ periodicity: 'daily', endDate: null, planId: item.id });
+      addRepeater({ periodicity: 'daily', endDate: null, planId: item.plan_id });
+      setHasDaily(true);
+      onRepeaterModified();
     }
-    setHasDaily(!hasDaily);
-    onRepeaterModified('daily');
   };
 
   const onWeeklyPressed = () => {
     if (hasWeekly) {
-      deleteRepeater(item.id);
+      deleteRepeaterByPlanId(item.plan_id)
+        .then(() => {
+          setHasWeekly(false);
+          onRepeaterModified();
+        });
     } else {
-      addRepeater({ periodicity: 'weekly', endDate: null, planId: item.id });
+      addRepeater({ periodicity: 'weekly', endDate: null, planId: item.plan_id });
+      setHasWeekly(true);
+      onRepeaterModified();
     }
-    setHasWeekly(!hasWeekly);
-    onRepeaterModified('weekly');
   };
 
   const onMonthlyPressed = () => {
     if (hasMonthly) {
-      deleteRepeater(item.id);
+      deleteRepeaterByPlanId(item.plan_id)
+        .then(() => {
+          setHasMonthly(false);
+          onRepeaterModified();
+        });
     } else {
-      addRepeater({ periodicity: 'monthly', endDate: null, planId: item.id });
+      addRepeater({ periodicity: 'monthly', endDate: null, planId: item.plan_id });
+      setHasMonthly(true);
+      onRepeaterModified();
     }
-    setHasMonthly(!hasMonthly);
-    onRepeaterModified('monthly');
   };
 
   return (
@@ -68,18 +91,18 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
       layout={animations.plans.planItemForFlatList.layout}
     >
       <View
-        style={showDetailView ? styles.planLineHeaderContainerExpanded : styles.planLineHeaderContainerCollapsed}
+        style={styles.planLineHeaderContainer}
       >
         <TouchableOpacity
           style={styles.planLineHeader}
-          key={item.id}
-          onPress={() => Alert.alert(item.title)}
-          onLongPress={() => confirmDeletePlan(item.id)}
+          key={item.plan_id}
+          onPress={() => setShowDetailView(!showDetailView)}
+          onLongPress={() => confirmDeletePlan(item.plan_id)}
         >
-          <Text style={{ color: colors.plans.textOrIconOnWhite }}>{item.title}</Text>
+          <Text style={styles.planLineTitleText}>{item.plan_title}</Text>
         </TouchableOpacity>
         <MaterialIcons
-          name={showDetailView ? "expand-less" : "expand-more"}
+          name={showDetailView ? 'expand-less' : 'expand-more'}
           size={22}
           color={colors.plans.textOrIconOnWhite}
           onPress={() => setShowDetailView(!showDetailView)}
@@ -93,7 +116,7 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
             exiting={animations.plans.planItemForFlatList.exiting}
           >
             <TextInput
-              style={{flex: 5, borderWidth: 1, borderColor: 'black', padding: 2}}
+              style={styles.descriptionTextInput}
               placeholder={"Add more details here"}
               value={descriptionText}
               onChangeText={setDescriptionText}
@@ -101,57 +124,55 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
               textAlignVertical="top"
             />
             <View
-              style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center'}}
+              style={styles.detailIconsContainer}
             >
-              {(!hasDaily && !hasWeekly && !hasMonthly)
+              {(!hasWeekly && !hasMonthly)
                 && (
-                  <>
+                  <Animated.View
+                    entering={animations.plans.planItemForFlatList.entering}
+                    exiting={animations.plans.planItemForFlatList.exiting}
+                    layout={animations.plans.planItemForFlatList.layout}
+                  >
                     <MaterialCommunityIcons
+                      style={styles.repeaterIcon}
                       name="calendar-month"
-                      size={24}
+                      size={iconSize}
                       color={hasDaily ? colors.plans.textOrIconOnWhite : 'lightgrey'}
                       onPress={onDailyPressed}
                     />
+                  </Animated.View>
+                )}
+              {(!hasDaily && !hasMonthly)
+                && (
+                  <Animated.View
+                    entering={animations.plans.planItemForFlatList.entering}
+                    exiting={animations.plans.planItemForFlatList.exiting}
+                    layout={animations.plans.planItemForFlatList.layout}
+                  >
                     <MaterialCommunityIcons
+                      style={styles.repeaterIcon}
                       name="calendar-week"
-                      size={24}
+                      size={iconSize}
                       color={hasWeekly ? colors.plans.textOrIconOnWhite : 'lightgrey'}
                       onPress={onWeeklyPressed}
                     />
+                  </Animated.View>
+                )}
+              {(!hasDaily && !hasWeekly)
+                && (
+                  <Animated.View
+                    entering={animations.plans.planItemForFlatList.entering}
+                    exiting={animations.plans.planItemForFlatList.exiting}
+                    layout={animations.plans.planItemForFlatList.layout}
+                  >
                     <MaterialCommunityIcons
+                      style={styles.repeaterIcon}
                       name="calendar-today"
-                      size={24}
+                      size={iconSize}
                       color={hasMonthly ? colors.plans.textOrIconOnWhite : 'lightgrey'}
                       onPress={onMonthlyPressed}
                     />
-                  </>
-                )}
-              {hasDaily
-                && (
-                  <MaterialCommunityIcons
-                    name="calendar-month"
-                    size={24}
-                    color={hasDaily ? colors.plans.textOrIconOnWhite : 'lightgrey'}
-                    onPress={onDailyPressed}
-                  />
-                )}
-              {hasWeekly
-                && (
-                  <MaterialCommunityIcons
-                    name="calendar-week"
-                    size={24}
-                    color={hasWeekly ? colors.plans.textOrIconOnWhite : 'lightgrey'}
-                    onPress={onWeeklyPressed}
-                  />
-                )}
-              {hasMonthly
-                && (
-                  <MaterialCommunityIcons
-                    name="calendar-today"
-                    size={24}
-                    color={hasMonthly ? colors.plans.textOrIconOnWhite : 'lightgrey'}
-                    onPress={onMonthlyPressed}
-                  />
+                  </Animated.View>
                 )}
             </View>
           </Animated.View>
@@ -162,29 +183,18 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
 
 const styles = StyleSheet.create({
   planLineContainer: {
-    borderWidth: 1,
-    borderColor: 'red',
     flex: 1,
     width: '100%',
     justifyContent: 'flex-start',
     alignItems: 'stretch',
     borderRadius: 4,
     marginBottom: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
     backgroundColor: colors.general.defaultWhite,
-    opacity: 1,
   },
-  planLineHeaderContainerCollapsed: {
-    flex: 1, 
-    borderWidth: 1,
-    borderColor: 'green',
-    flexDirection: 'row',
-  },
-  planLineHeaderContainerExpanded: {
-    flex: 1, 
-    borderWidth: 1,
-    borderColor: 'green',
+  planLineHeaderContainer: {
+    flex: 1,
     flexDirection: 'row',
   },
   planLineHeader: {
@@ -193,9 +203,28 @@ const styles = StyleSheet.create({
   },
   planLineDetailContainer: {
     flex: 8,
-    borderWidth: 1,
-    borderColor: 'purple',
     alignItems: 'stretch',
+  },
+  descriptionTextInput: {
+    flex: 5,
+    borderRadius: 3,
+    borderWidth: 1,
+    borderColor: colors.plans.textOrIconOnWhite,
+    padding: 4,
+    marginVertical: 6,
+  },
+  repeaterIcon: {
+    marginRight: 4,
+  },
+  detailIconsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  planLineTitleText: {
+    fontSize: 16,
+    color: colors.plans.textOrIconOnWhite,
   },
 });
 

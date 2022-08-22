@@ -38,7 +38,7 @@ db.transaction(
       'create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text, tintColor text);',
     );
     tx.executeSql(
-      'create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, repeater integer, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);',
+      'create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);',
     );
     tx.executeSql(
       'create table if not exists repeaters (id integer primary key not null, lastdonedatetime string, periodicity string, enddate string, notificationId string, shouldshowincalendar integer, calstarttime string, calendtime string, calday integer, caldate integer, plan integer not null, FOREIGN KEY(plan) REFERENCES plans(id) on delete cascade);',
@@ -109,7 +109,7 @@ const getToBeItemById = (id) => new Promise((resolve, reject) => {
         'select * from tobeitems where id=?',
         [id],
         (_, { rows: { _array } }) => {
-          console.log(`getToBeItemById: _array is ${JSON.stringify(_array, null, 1)}`);
+          // console.log(`getToBeItemById: _array is ${JSON.stringify(_array, null, 1)}`);
           result = _array[0];
         },
       );
@@ -255,7 +255,7 @@ const getAllToBeItems = () => new Promise((resolve, reject) => {
         'select * from tobeitems;',
         [],
         (_, { rows: { _array } }) => {
-          console.log(`getAllToBeItems: _array is ${JSON.stringify(_array, null, 1)}`);
+          // console.log(`getAllToBeItems: _array is ${JSON.stringify(_array, null, 1)}`);
           result = _array;
         },
       );
@@ -489,17 +489,17 @@ const getAllRepeatersByToBeId = (toBeId) => new Promise((resolve, reject) => {
   );
 });
 
-const deleteRepeater = (planId) => new Promise((resolve, reject) => {
+const deleteRepeaterByPlanId = (planId) => new Promise((resolve, reject) => {
   db.transaction(
     (tx) => {
       tx.executeSql('delete from repeaters where plan = ?', [planId]);
     },
     (e) => {
-      console.log(`deleteRepeater encountered an error -> ${e}`);
+      console.log(`deleteRepeaterByPlanId encountered an error -> ${e}`);
       reject(false);
     },
     () => {
-      console.log(`deleteRepeater: item with plan id:${planId} successfully deleted from plans table`);
+      console.log(`deleteRepeaterByPlanId: item with plan id:${planId} successfully deleted from repeaters table`);
       resolve(true);
     },
   );
@@ -531,6 +531,33 @@ const getPlansWithRepeaterPeriodicityByToBeId = (toBeId) => new Promise((resolve
   );
 });
 
+const getAllPlansWithRepeatersByToBeId = (toBeId) => new Promise((resolve, reject) => {
+  console.log(`getAllPlansWithRepeatersByToBeId: supplied toBeId was: ${toBeId}`);
+  let result;
+  db.transaction(
+    (tx) => {
+      tx.executeSql(
+        'select plans.id as plan_id, plans.done as plan_done, plans.title as plan_title, plans.tobeitem as plan_tobeitem, repeaters.id as repeater_id, repeaters.lastdonedatetime as repeater_lastdonedatetime, repeaters.periodicity as repeater_periodicity, repeaters.enddate as repeater_enddate, repeaters.shouldshowincalendar as repeater_shouldshowincalendar from plans plans left join repeaters repeaters on plans.id=repeaters.plan where plans.tobeitem = ?',
+        [toBeId],
+        (_, { rows: { _array } }) => {
+          console.log(`getAllPlansWithRepeatersByToBeId: _array is ${JSON.stringify(_array, null, 1)}`);
+          result = _array;
+        },
+      );
+    },
+    // transaction failure callback
+    (e) => {
+      console.log(`getAllPlansWithRepeatersByToBeId encountered an error -> ${e}`);
+      reject(false);
+    },
+    // transaction success callback
+    () => {
+      console.log(`getAllPlansWithRepeatersByToBeId: plans and repeaters for tobeitem id:${toBeId} successfully retreived.`);
+      resolve(result);
+    },
+  );
+});
+
 export {
   deleteToBeItemById,
   addToBeItem,
@@ -551,6 +578,7 @@ export {
   addRepeater,
   getRepeatersByToBeIdAndPeriodicity,
   getAllRepeatersByToBeId,
-  deleteRepeater,
+  deleteRepeaterByPlanId,
   getPlansWithRepeaterPeriodicityByToBeId,
+  getAllPlansWithRepeatersByToBeId,
 };

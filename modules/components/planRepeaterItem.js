@@ -29,17 +29,15 @@ function PlanRepeaterItem({ item }) {
       layout={animations.plans.planItemForFlatList.layout}
     >
       <View
-        style={showDetailView
-          ? styles.planLineHeaderContainerExpanded
-          : styles.planLineHeaderContainerCollapsed}
+        style={styles.planLineHeaderContainer}
       >
         <TouchableOpacity
           style={styles.planLineHeader}
-          key={item.id}
-          onPress={() => Alert.alert(item.title)}
-          onLongPress={() => confirmDeletePlan(item.id)}
+          key={item.repeater_id}
+          onPress={() => setShowDetailView(!showDetailView)}
+          onLongPress={() => Alert.alert('TODO: implement remove from repeater view here')}
         >
-          <Text style={{ color: colors.plans.textOrIconOnWhite }}>{item.title}</Text>
+          <Text style={styles.planLineTitleText}>{item.plan_title}</Text>
         </TouchableOpacity>
         <MaterialIcons
           name={showDetailView ? 'expand-less' : 'expand-more'}
@@ -62,11 +60,12 @@ function PlanRepeaterItem({ item }) {
                 name="calendar-plus"
                 size={24}
                 color={
-                  item.shouldShowInCalendar
+                  item.repeater_shouldshowincalendar
                     ? colors.plans.textOrIconOnWhite
                     : colors.plans.disabledIcon
                 }
-                onPress={() => Alert.alert("add to calendar here")} />
+                onPress={() => Alert.alert('add to calendar here')}
+              />
             </View>
           </Animated.View>
         )}
@@ -82,15 +81,11 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     borderRadius: 4,
     marginBottom: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
     backgroundColor: colors.general.defaultWhite,
   },
-  planLineHeaderContainerCollapsed: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  planLineHeaderContainerExpanded: {
+  planLineHeaderContainer: {
     flex: 1,
     flexDirection: 'row',
   },
@@ -107,6 +102,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
     alignItems: 'center',
+  },
+  planLineTitleText: {
+    fontSize: 16,
+    color: colors.plans.textOrIconOnWhite,
   },
 });
 
