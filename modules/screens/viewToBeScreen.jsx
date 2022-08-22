@@ -126,7 +126,7 @@ function ViewToBeScreen({route, navigation}) {
             entering={animations.viewToBeScreen.mainTitleText.entering}
             exiting={animations.viewToBeScreen.detailsButton.exiting}
           >
-            <Feather style={{marginRight: 10}} name="edit-2" size={24} color={tintColor} onPress={() => Alert.alert("Implement edit mode here")} />
+            <Feather style={{marginRight: 10}} name="edit-2" size={24} color={tintColor} onPress={() => Alert.alert("TODO: Implement edit mode here")} />
           </Animated.View>
         )
       ),
