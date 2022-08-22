@@ -3,6 +3,7 @@ import { StyleSheet, FlatList, TouchableOpacity, ImageBackground, Text, View, In
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
+import { useHeaderHeight } from '@react-navigation/elements';
 import { Entypo } from '@expo/vector-icons';
 import { getPreviousPeriodReset } from '../utils/datetime';
 import { getAllToBeItems } from '../database/database';
@@ -13,6 +14,7 @@ const defaultImageBackground = require('../../assets/beScreenBackground7.jpg');
 function BeScreen({ navigation }) {
   const [allToBes, setAllToBes] = useState([]);
   const [isRetreiving, setIsRetreiving] = useState(false);
+  const headerHeight = useHeaderHeight();
 
   const retreiveData = async () => {
     setAllToBes(await getAllToBeItems());
@@ -56,9 +58,9 @@ function BeScreen({ navigation }) {
 
   return (
     <ImageBackground source={defaultImageBackground} resizeMode='cover' style={styles.backgroundImage}>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.container(headerHeight)}>
         <FlatList
-          style={{width: "100%"}}
+          style={{width: "100%", marginTop: 8}}
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-start' }}
           data={allToBes}
           renderItem={renderOptimisedToBeTile}
@@ -71,7 +73,7 @@ function BeScreen({ navigation }) {
         <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
           <Entypo name="add-to-list" size={24} color="black" />
         </TouchableOpacity>
-        <StatusBar style={"light"}/>
+        <StatusBar style="light"/>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -81,11 +83,12 @@ const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
   },
-  container: {
+  container: (headerHeight) => ({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
+    marginTop: headerHeight / 2,
+  }),
   fab: {
     width: 60,
     height: 60,

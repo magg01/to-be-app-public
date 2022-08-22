@@ -42,10 +42,14 @@ export default function App() {
         screenOptions={{
           headerTintColor: 'white',
           headerTransparent: true,
-          title: ""
+          headerTitleAlign: 'center',
+          title: "",
+          headerTitleStyle: {
+            fontSize: 26,
+          }
         }}
       >
-        <Stack.Screen name="HomeScreen" component={HomeScreen}/>
+        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{title: "Be..."}}/>
         <Stack.Screen name="ViewToBeScreen" component={ViewToBeScreen} />
         <Stack.Screen name="AddNewScreen" component={AddNewScreen} />
       </Stack.Navigator>
