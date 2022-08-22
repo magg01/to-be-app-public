@@ -52,19 +52,18 @@ function ViewToBeScreen({route, navigation}) {
 
   useEffect(() => {
     if (__DEV__) {
-      let dev_delay_timer = setTimeout(() => {
+      const devDelayTimer = setTimeout(() => {
         db.getToBeItemById(toBeId)
           .then((result) => {
             setToBeItem(result);
           });
       }, 1000);
-      return (() => clearTimeout(dev_delay_timer));
-    } else {
-      db.getToBeItemById(toBeId)
+      return (() => clearTimeout(devDelayTimer));
+    }
+    db.getToBeItemById(toBeId)
       .then((result) => {
         setToBeItem(result);
-      })
-    }
+      });
   }, [toBeId]);
 
   useEffect(() => {
@@ -156,17 +155,17 @@ function ViewToBeScreen({route, navigation}) {
 
   if (toBeItem === undefined) {
     return (
-      <SafeAreaView style={[styles.container(headerHeight), {justifyContent:'center'}]}>
-        <ActivityIndicator size={'large'}/>
+      <SafeAreaView style={styles.container(headerHeight, viewMode)}>
+        <ActivityIndicator size="large" />
       </SafeAreaView>
     );
   }
   return (
-    <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.backgroundImage}>
-      <SafeAreaView style={{flex: 1}}>
-        <View style={[styles.container(headerHeight), viewMode === viewEnum.overview ? {justifyContent:'center'} : {justifyContent:'flex-start'}]}>
+    <ImageBackground source={{ uri: toBeItem.imageBackgroundUri }} resizeMode="cover" style={styles.backgroundImage}>
+      <SafeAreaView style={styles.safeAreaContainer}>
+        <View style={styles.container(headerHeight, viewMode)}>
           <Animated.Text
-            style={[styles.mainTitle, {color: tintColor}]}
+            style={styles.mainTitle(tintColor)}
             entering={animations.viewToBeScreen.mainTitleText.entering}
             layout={animations.viewToBeScreen.mainTitleText.layout}
           >
@@ -194,41 +193,22 @@ function ViewToBeScreen({route, navigation}) {
           }
         </View>
         <Animated.View
-          style={{alignItems: 'center'}}
+          style={styles.bottomButtonContainer}
           entering={animations.viewToBeScreen.detailsButton.entering}
           exiting={animations.viewToBeScreen.detailsButton.exiting}
         >
-          <TouchableOpacity style={styles.bottomButton} onPress={() => setViewMode(viewEnum.details)}>
-            <Text style={{fontSize: 16}}>Details</Text>
+          <TouchableOpacity
+            style={styles.bottomButton}
+            onPress={() => setViewMode(viewEnum.details)}
+          >
+            <Text style={styles.bottomButtonText}>Details</Text>
           </TouchableOpacity>
         </Animated.View>
       </SafeAreaView>
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
     </ImageBackground>
   );
-  // } else if (viewMode === viewEnum.details) {
-  //   return (
-  //     <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
-  //       <SafeAreaView style={styles.container}>
-  //         <Text style={{color: 'white', fontSize: 36}}>{toBeItem.title}</Text>
-  //         <PlanView toBeId={toBeId} />
-  //         <TouchableOpacity style={styles.addButton} onPress={() => setViewMode(viewEnum.addPlan)}>
-  //           <Text>new</Text>
-  //         </TouchableOpacity>
-  //       </SafeAreaView>
-  //       <StatusBar style={'light'} />
-  //     </ImageBackground>
-  //   )
-  // } else if (viewMode === viewEnum.addPlan) {
-  //   return (
-  //     <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
-  //       <SafeAreaView style={styles.container}>
-  //         <AddPlan toBeId={toBeId} onAddNewPlan={onNewPlanAdded} />
-  //       </SafeAreaView>
-  //       <StatusBar style={'light'} />
-  //     </ImageBackground>
-  //   )
-  // } else {
+
   //   return(
   //     <ImageBackground source={{uri: toBeItem.imageBackgroundUri}} resizeMode="cover" style={styles.container}>
   //       <SafeAreaView style={styles.container}>
@@ -248,19 +228,37 @@ function ViewToBeScreen({route, navigation}) {
 }
 
 const styles = StyleSheet.create({
+  safeAreaContainer: {
+    flex: 1,
+  },
   backgroundImage: {
     flex: 1,
     justifyContent: 'center',
   },
-  container: (headerHeight) => ({
-    flex: 1,
-    marginTop: headerHeight / 2,
-    paddingHorizontal: "8%",
-    alignItems: 'center',
-  }),
-  mainTitle: {
+  container: (headerHeight, viewMode) => (
+    viewMode === viewEnum.overview
+      ? {
+        flex: 1,
+        marginTop: headerHeight / 2,
+        paddingHorizontal: '8%',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }
+      : {
+        flex: 1,
+        marginTop: headerHeight / 2,
+        paddingHorizontal: '8%',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+      }
+  ),
+  mainTitle: (tintColor) => ({
     fontSize: 36,
     marginBottom: 12,
+    color: tintColor,
+  }),
+  bottomButtonContainer: {
+    alignItems: 'center',
   },
   bottomButton: {
     margin: 10,
@@ -271,6 +269,9 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     width: 120,
     height: 40,
+  },
+  bottomButtonText: {
+    fontSize: 16,
   },
 });
 
