@@ -74,7 +74,6 @@ function BeScreen({ navigation }) {
           <Entypo name="add-to-list" size={24} color="black" />
         </TouchableOpacity>
         <StatusBar style="light"/>
-        <Button title={"null date test"} onPress={() => console.log(new Date(null).toISOString())} />
       </SafeAreaView>
     </ImageBackground>
   );
