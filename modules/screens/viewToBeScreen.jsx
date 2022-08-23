@@ -177,7 +177,8 @@ function ViewToBeScreen({route, navigation}) {
           && (
             <ScrollView
               nestedScrollEnabled
-              style={{width: "100%"}}
+              style={styles.scrollViewOuterContainer}
+              contentContainerStyle={styles.scrollViewContentContainer}
             >
               <PlanView
                 providedToBeId={toBeId}
@@ -284,6 +285,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     color: tintColor,
   }),
+  scrollViewOuterContainer: {
+    width: "100%",
+  },
+  scrollViewContentContainer: {
+    flexGrow: 1,
+  },
   bottomButtonContainer: {
     alignItems: 'center',
   },
