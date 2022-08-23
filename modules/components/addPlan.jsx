@@ -6,6 +6,8 @@ import {
 import * as db from '../database/database';
 import DateTimePicker from './dateTimePicker';
 import animations from '../utils/animations';
+import colors from '../utils/colors';
+import CONSTANT_STRINGS from '../strings/constantStrings';
 
 function AddPlan(props) {
   const toBeId = useRef(props.toBeId);
@@ -24,10 +26,6 @@ function AddPlan(props) {
       });
   };
 
-  const addCalendar = () => {
-    setShowDateTimePicker(true);
-  };
-
   const onDateTimeChange = (eventDate, eventStartTime, eventEndTime) => {
     calEvent.current = {
       date: eventDate.toISOString(),
@@ -43,25 +41,29 @@ function AddPlan(props) {
       entering={animations.addPlan.addPlanView.entering}
       exiting={animations.addPlan.addPlanView.exiting}
     >
-
-      <Text style={{color: props.tintColor, fontSize: 20}}>How can you be more {props.toBeItemTitle.toLowerCase()}?</Text>
-      <TextInput style={[styles.input, {borderBottomColor: props.tintColor, color: props.tintColor}]} onChangeText={(text) => setNewPlanTitle(text)} />
+      <Text style={styles.questionText(props.tintColor)}>
+        {CONSTANT_STRINGS.PLANS.ADD_PLAN.PROMPT_TEXT(props.toBeItemTitle.toLowerCase())}
+      </Text>
+      <TextInput style={styles.input(props.tintColor)} onChangeText={(text) => setNewPlanTitle(text)} />
       <TouchableOpacity style={styles.addButton} onPress={addPlan}>
         <Text>Add</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.addButton} onPress={addCalendar}>
+      <TouchableOpacity style={styles.addButton} onPress={() => setShowDateTimePicker(true)}>
         <Text>Cal</Text>
       </TouchableOpacity>
-      {showDateTimePicker && (
-      <DateTimePicker
-        calEvent={calEvent.current}
-        onDateTimeChange={
-          // eslint-disable-next-line max-len
-          (eventDate, eventStartTime, eventEndTime) => onDateTimeChange(eventDate, eventStartTime, eventEndTime)
-        }
-        onCancel={() => setShowDateTimePicker(false)}
-      />
-      )}
+      {showDateTimePicker
+        && (
+        <DateTimePicker
+          modalTitleText={"Add an event to the calendar for this plan."}
+          calEvent={calEvent.current}
+          onDateTimeChange={
+            // eslint-disable-next-line max-len
+            (eventDate, eventStartTime, eventEndTime) => onDateTimeChange(eventDate, eventStartTime, eventEndTime)
+          }
+          returnToScreenName="ViewToBeScreen"
+          onCancel={() => setShowDateTimePicker(false)}
+        />
+        )}
     </Animated.View>
   );
 }
@@ -74,13 +76,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingTop: 8,
   },
-  input: {
-    width: "50%",
+  input: (tintColor) => ({
+    width: '50%',
     margin: 12,
     borderBottomWidth: 2,
     padding: 6,
     fontSize: 20,
-  },
+    borderBottomColor: tintColor,
+    color: tintColor,
+  }),
   addButton: {
     marginTop: 8,
     alignSelf: 'flex-end',
@@ -89,8 +93,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'white'
-  }
+    backgroundColor: colors.general.defaultWhite,
+  },
+  questionText: (tintColor) => ({
+    color: tintColor,
+    fontSize: 20,
+  }),
 });
 
 export default AddPlan;

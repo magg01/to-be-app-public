@@ -1,17 +1,22 @@
 const CONSTANT_STRINGS = {
   UNSPLASH_IMAGE_SEARCH: {
-    INPUT_PLACEHOLDER: "Search for images",
+    INPUT_PLACEHOLDER: 'Search for images',
     ON_ERROR_RESPONSE_MESSAGE: "We're sorry, there was an error getting images from Unsplash.",
-    ON_NO_RESULTS_MESSAGE: "No matching photos could be found for your search. \n\nPlease try a different search.",
+    ON_NO_RESULTS_MESSAGE: 'No matching photos could be found for your search. \n\nPlease try a different search.',
   },
   ADD_NEW_SCREEN: {
-    IMAGE_PICKER_INSTRUCTION: "Find a background image",
+    IMAGE_PICKER_INSTRUCTION: 'Find a background image',
   },
   PLANS: {
     REPEATERS: {
-      HEADER_TEXT_DAILIES: "Dailies",
-      HEADER_TEXT_WEEKLIES: "Weeklies",
-      HEADER_TEXT_MONTHLIES: "Monthlies",
+      HEADER_TEXT_DAILIES: 'Dailies',
+      HEADER_TEXT_WEEKLIES: 'Weeklies',
+      HEADER_TEXT_MONTHLIES: 'Monthlies',
+    },
+    ADD_PLAN: {
+      PROMPT_TEXT: (toBeItemTitle) => (
+        `How can you be more ${toBeItemTitle}?`
+      ),
     },
   },
 };
