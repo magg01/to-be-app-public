@@ -19,13 +19,11 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
     if (flatListRef.current != null && data.response.results.length > 0) {
       flatListRef.current.scrollToIndex({ animated: false, index: 0 });
     }
-    console.log(`the [data] useEffect fired`);
   }, [data]);
 
   useEffect(() => {
     setSearchInput('');
     setSearchQuery(providedSearchQuery);
-    console.log("the [providedSearchQuery] useEffect fired");
   }, [providedSearchQuery]);
 
   useEffect(() => {
