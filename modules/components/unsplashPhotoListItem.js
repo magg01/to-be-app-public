@@ -5,6 +5,8 @@ import {
 } from 'react-native';
 import { downloadRemoteImageToLocalStorage } from '../FileSystem/fileSystem';
 import { apiMethods } from '../utils/unsplashApi';
+import CONSTANT_STRINGS from '../strings/constantStrings';
+import colors from '../utils/colors';
 
 const downloadImageFromUnsplash = (photo) => {
   apiMethods.notifyUnsplashOfImageDownload(photo);
@@ -58,7 +60,7 @@ function UnsplashPhotoListItem({ photo, onImageDownload, width }) {
         }
       })()}
       <TouchableOpacity 
-        style={{width: 100, height: 25, backgroundColor:'#ccc', opacity: 0.8, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginBottom: 10}}
+        style={{width: 100, height: 25, backgroundColor:'white', opacity: 0.9, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginBottom: 10}}
         onPress={() =>
           downloadStarted ?
           null
@@ -68,10 +70,10 @@ function UnsplashPhotoListItem({ photo, onImageDownload, width }) {
           { downloadStarted ? 
             <ActivityIndicator /> 
             :
-            <Text style={{color: 'white'}}>Choose image</Text>
+            <Text style={{color: colors.plans.textOrIconOnWhite }}>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.CHOOSE_IMAGE_TEXT}</Text>
           }
       </TouchableOpacity>
-      <Text style={{color: "white", fontSize: 10, alignSelf: 'flex-end', marginRight: 4}}>{`${user.name} / Unsplash`}</Text>
+      <Text style={{color: "white", fontSize: 10, alignSelf: 'flex-end', marginRight: 4}}>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.IMAGE_ATTRIBUTION(user.name)}</Text>
     </ImageBackground>
   );
 }
