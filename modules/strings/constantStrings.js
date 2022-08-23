@@ -18,6 +18,28 @@ const CONSTANT_STRINGS = {
       REMOVE_ALERT_MAIN_TITLE: 'Stop this recurring plan?',
       REMOVE_ALERT_DESCRIPTION: 'It will remain available in your non-recurring plans.',
       REMOVE_ALERT_CONFIRM_BUTTON_TITLE: 'Remove',
+      COMPLETION_TOAST_HEADER: () => {
+        // can add more messages here
+        const congrats = ['Well done!', 'Awesome!', 'Great work!'];
+        return congrats[Math.floor(Math.random() * congrats.length)];
+      },
+      COMPLETION_TOAST_CONTENT: (periodicity) => {
+        let messageSuffix;
+        switch (periodicity) {
+          case 'daily':
+            messageSuffix = 'tomorrow';
+            break;
+          case 'weekly':
+            messageSuffix = 'next week';
+            break;
+          case 'monthly':
+            messageSuffix = 'next month';
+            break;
+          default:
+            messageSuffix = '';
+        }
+        return `Keep it up ${messageSuffix}.`;
+      },
     },
     ADD_PLAN: {
       PROMPT_TEXT: (toBeItemTitle) => (

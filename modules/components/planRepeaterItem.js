@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
 import { confirmDeleteAlert } from '../utils/deleteConfirmation';
@@ -56,17 +57,23 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
   };
 
   const updateIsDoneForNow = () => {
-    setIsDoneForNow(!isDoneForNow);
     if (isDoneForNow) {
+      setIsDoneForNow(!isDoneForNow);
       updateLastDoneDateTimeOnRepeaterByRepeaterId(item.repeater_id, null)
         .then((updated) => {
           if (updated) onRepeaterModified();
         });
     } else {
+      setIsDoneForNow(!isDoneForNow);
       updateLastDoneDateTimeOnRepeaterByRepeaterId(item.repeater_id, (new Date()).toISOString())
         .then((updated) => {
           if (updated) onRepeaterModified();
         });
+      Toast.show({
+        type: 'info',
+        text1: CONSTANT_STRINGS.PLANS.REPEATERS.COMPLETION_TOAST_HEADER(),
+        text2: CONSTANT_STRINGS.PLANS.REPEATERS.COMPLETION_TOAST_CONTENT(item.repeater_periodicity),
+      });
     }
   };
 

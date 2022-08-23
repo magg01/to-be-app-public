@@ -2,6 +2,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { setNotificationHandler } from 'expo-notifications';
+import Toast from 'react-native-toast-message';
 import HomeScreen from './modules/screens/homeScreen';
 import ViewToBeScreen from './modules/screens/viewToBeScreen';
 import { fetchPermissionSettings, checkPermissionSettings } from './modules/utils/notifications';
@@ -53,6 +54,11 @@ export default function App() {
         <Stack.Screen name="ViewToBeScreen" component={ViewToBeScreen} />
         <Stack.Screen name="AddNewScreen" component={AddNewScreen} />
       </Stack.Navigator>
+      <Toast 
+        position='bottom'
+        bottomOffset={20}
+        visibilityTime={2000}
+      />
     </NavigationContainer>
   );
 }
