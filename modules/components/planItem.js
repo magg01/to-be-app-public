@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity, Text, TextInput, View } from 'react-nativ
 import Animated from 'react-native-reanimated';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from './dateTimePicker';
-import { addRepeater, deleteRepeaterByPlanId, updateEndDateTimeOnRepeaterByRepeaterId } from '../database/database';
+import { addRepeater, deleteRepeaterByPlanId, updateEndDateTimeOnRepeaterByRepeaterId, updatePlanDescriptionByPlanId } from '../database/database';
 import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
@@ -31,6 +31,10 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
 
   useEffect(() => {
     endDate.current = item.repeater_enddate;
+  }, [item]);
+
+  useEffect(() => {
+    setDescriptionText(item.plan_description);
   }, [item]);
 
   useEffect(() => {
@@ -109,6 +113,10 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
       });
   };
 
+  const updatePlanDetailText = () => {
+    updatePlanDescriptionByPlanId(item.plan_id, descriptionText)
+  }
+
   return (
     <Animated.View
       style={[styles.planLineContainer,
@@ -146,9 +154,10 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
           >
             <TextInput
               style={styles.descriptionTextInput}
-              placeholder={"Add more details here"}
+              placeholder={CONSTANT_STRINGS.PLANS.PLAN_DETAIL_PLACEHOLDER}
               value={descriptionText}
               onChangeText={setDescriptionText}
+              onEndEditing={updatePlanDetailText}
               multiline
               textAlignVertical="top"
             />

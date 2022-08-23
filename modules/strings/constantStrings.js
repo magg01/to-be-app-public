@@ -10,6 +10,12 @@ const CONSTANT_STRINGS = {
     IMAGE_PICKER_INSTRUCTION: 'Find a background image',
   },
   PLANS: {
+    ADD_PLAN: {
+      PROMPT_TEXT: (toBeItemTitle) => (
+        `How can you be more ${toBeItemTitle}?`
+      ),
+    },
+    PLAN_DETAIL_PLACEHOLDER: 'Add more details here',
     REPEATERS: {
       HEADER_TEXT_DAILIES: 'Dailies',
       HEADER_TEXT_WEEKLIES: 'Weeklies',
@@ -40,11 +46,6 @@ const CONSTANT_STRINGS = {
         }
         return `Keep it up ${messageSuffix}.`;
       },
-    },
-    ADD_PLAN: {
-      PROMPT_TEXT: (toBeItemTitle) => (
-        `How can you be more ${toBeItemTitle}?`
-      ),
     },
   },
 };

@@ -8,9 +8,7 @@ const db = SQLite.openDatabase('tobedb', '0.0.3');
 
 // default setting for sqlite is that foreign key constraints are not enforced.
 // So we need to turn the constraint enforcement on manually.
-db.exec([{ sql: 'PRAGMA foreign_keys = ON;', args: [] }], false, () =>
-  console.log('Foreign keys turned on'),
-);
+db.exec([{ sql: 'PRAGMA foreign_keys = ON;', args: [] }], false, () => console.log('Foreign keys turned on'));
 
 if (DEBUG) {
   // reset the tables on each reload
@@ -38,7 +36,7 @@ db.transaction(
       'create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text, tintColor text);',
     );
     tx.executeSql(
-      'create table if not exists plans (id integer primary key not null, done int, title text, tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);',
+      'create table if not exists plans (id integer primary key not null, done int, title text, description text NOT NULL DEFAULT "", tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);',
     );
     tx.executeSql(
       'create table if not exists repeaters (id integer primary key not null, lastdonedatetime string, periodicity string, enddate string, notificationId string, shouldshowincalendar integer, calstarttime string, calendtime string, calday integer, caldate integer, plan integer not null, FOREIGN KEY(plan) REFERENCES plans(id) on delete cascade);',
@@ -537,7 +535,7 @@ const getAllPlansWithRepeatersByToBeId = (toBeId) => new Promise((resolve, rejec
   db.transaction(
     (tx) => {
       tx.executeSql(
-        'select plans.id as plan_id, plans.done as plan_done, plans.title as plan_title, plans.tobeitem as plan_tobeitem, repeaters.id as repeater_id, repeaters.lastdonedatetime as repeater_lastdonedatetime, repeaters.periodicity as repeater_periodicity, repeaters.enddate as repeater_enddate, repeaters.shouldshowincalendar as repeater_shouldshowincalendar from plans plans left join repeaters repeaters on plans.id=repeaters.plan where plans.tobeitem = ?',
+        'select plans.id as plan_id, plans.done as plan_done, plans.title as plan_title, plans.description as plan_description, plans.tobeitem as plan_tobeitem, repeaters.id as repeater_id, repeaters.lastdonedatetime as repeater_lastdonedatetime, repeaters.periodicity as repeater_periodicity, repeaters.enddate as repeater_enddate, repeaters.shouldshowincalendar as repeater_shouldshowincalendar from plans plans left join repeaters repeaters on plans.id=repeaters.plan where plans.tobeitem = ?',
         [toBeId],
         (_, { rows: { _array } }) => {
           console.log(`getAllPlansWithRepeatersByToBeId: _array is ${JSON.stringify(_array, null, 1)}`);
@@ -606,6 +604,30 @@ const updateEndDateTimeOnRepeaterByRepeaterId = (repeaterId, dateTime) => new Pr
   );
 });
 
+const updatePlanDescriptionByPlanId = (planId, descriptionText) => new Promise((resolve, reject) => {
+  db.transaction(
+    (tx) => {
+      tx.executeSql(
+        'update plans set description = ? where id = ?',
+        [descriptionText, planId],
+        (_, { rows: { _array } }) => {
+          console.log(`updatePlanDescriptionByPlanId: _array is ${JSON.stringify(_array, null, 1)}`);
+        },
+      );
+    },
+    // transaction failure callback
+    (e) => {
+      console.log(`updatePlanDescriptionByPlanId encountered an error -> ${e}`);
+      reject(false);
+    },
+    // transaction success callback
+    () => {
+      console.log(`updatePlanDescriptionByPlanId: description for plan id:${planId} successfully updated.`);
+      resolve(true);
+    },
+  );
+});
+
 export {
   deleteToBeItemById,
   addToBeItem,
@@ -631,4 +653,5 @@ export {
   getAllPlansWithRepeatersByToBeId,
   updateLastDoneDateTimeOnRepeaterByRepeaterId,
   updateEndDateTimeOnRepeaterByRepeaterId,
+  updatePlanDescriptionByPlanId,
 };
