@@ -582,6 +582,30 @@ const updateLastDoneDateTimeOnRepeaterByRepeaterId = (repeaterId, dateTime) => n
   );
 });
 
+const updateEndDateTimeOnRepeaterByRepeaterId = (repeaterId, dateTime) => new Promise((resolve, reject) => {
+  db.transaction(
+    (tx) => {
+      tx.executeSql(
+        'update repeaters set enddate = ? where id = ?',
+        [dateTime, repeaterId],
+        (_, { rows: { _array } }) => {
+          console.log(`updateEndDateTimeOnRepeaterByRepeaterId: _array is ${JSON.stringify(_array, null, 1)}`);
+        },
+      );
+    },
+    // transaction failure callback
+    (e) => {
+      console.log(`updateEndDateTimeOnRepeaterByRepeaterId encountered an error -> ${e}`);
+      reject(false);
+    },
+    // transaction success callback
+    () => {
+      console.log(`updateEndDateTimeOnRepeaterByRepeaterId: lastDoneDateTime for repeater id:${repeaterId} successfully updated.`);
+      resolve(true);
+    },
+  );
+});
+
 export {
   deleteToBeItemById,
   addToBeItem,
@@ -606,4 +630,5 @@ export {
   getPlansWithRepeaterPeriodicityByToBeId,
   getAllPlansWithRepeatersByToBeId,
   updateLastDoneDateTimeOnRepeaterByRepeaterId,
+  updateEndDateTimeOnRepeaterByRepeaterId,
 };

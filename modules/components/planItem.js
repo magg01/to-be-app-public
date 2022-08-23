@@ -1,12 +1,15 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, TouchableOpacity, Text, Alert, TextInput, View} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, TouchableOpacity, Text, TextInput, View } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { addRepeater, deleteRepeaterByPlanId } from '../database/database';
+import DateTimePicker from './dateTimePicker';
+import { addRepeater, deleteRepeaterByPlanId, updateEndDateTimeOnRepeaterByRepeaterId } from '../database/database';
 import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
+import { getEndOfDay } from '../utils/datetime';
+import CONSTANT_STRINGS from '../strings/constantStrings';
 
 const planLineContainerHeightCollapsed = 40;
 const planLineContainerHeightExpanded = planLineContainerHeightCollapsed * 6;
@@ -17,21 +20,23 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
   const [hasDaily, setHasDaily] = useState(false);
   const [hasWeekly, setHasWeekly] = useState(false);
   const [hasMonthly, setHasMonthly] = useState(false);
-  const [descriptionText, setDescriptionText] = useState('');
   const [hasEndDate, setHasEndDate] = useState(false);
+  const [descriptionText, setDescriptionText] = useState('');
+  const [showEndDateDateTimePicker, setShowEndDateDateTimePicker] = useState(false);
+  const endDate = useRef(null);
 
   useEffect(() => {
     setHasEndDate(item.repeater_enddate !== null);
   }, [item]);
 
   useEffect(() => {
-    if (item.repeater_periodicity === 'daily') {
-      setHasDaily(true);
-    } else if (item.repeater_periodicity === 'weekly') {
-      setHasWeekly(true);
-    } else if (item.repeater_periodicity === 'monthly') {
-      setHasMonthly(true);
-    }
+    endDate.current = item.repeater_enddate;
+  }, [item]);
+
+  useEffect(() => {
+    setHasDaily(item.repeater_periodicity === 'daily');
+    setHasWeekly(item.repeater_periodicity === 'weekly');
+    setHasMonthly(item.repeater_periodicity === 'monthly');
   }, [item]);
 
   const confirmDeletePlan = (planId) => {
@@ -47,12 +52,10 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
     if (hasDaily) {
       deleteRepeaterByPlanId(item.plan_id)
         .then(() => {
-          setHasDaily(false);
           onRepeaterModified();
         });
     } else {
       addRepeater({ periodicity: 'daily', endDate: null, planId: item.plan_id });
-      setHasDaily(true);
       onRepeaterModified();
     }
   };
@@ -61,13 +64,13 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
     if (hasWeekly) {
       deleteRepeaterByPlanId(item.plan_id)
         .then(() => {
-          setHasWeekly(false);
           onRepeaterModified();
         });
     } else {
-      addRepeater({ periodicity: 'weekly', endDate: null, planId: item.plan_id });
-      setHasWeekly(true);
-      onRepeaterModified();
+      addRepeater({ periodicity: 'weekly', endDate: null, planId: item.plan_id })
+        .then(() => {
+          onRepeaterModified();
+        });
     }
   };
 
@@ -75,14 +78,35 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
     if (hasMonthly) {
       deleteRepeaterByPlanId(item.plan_id)
         .then(() => {
-          setHasMonthly(false);
           onRepeaterModified();
         });
     } else {
-      addRepeater({ periodicity: 'monthly', endDate: null, planId: item.plan_id });
-      setHasMonthly(true);
-      onRepeaterModified();
+      addRepeater({ periodicity: 'monthly', endDate: null, planId: item.plan_id })
+        .then(() => {
+          onRepeaterModified();
+        });
     }
+  };
+
+  const onEndDatePressed = () => {
+    if (hasEndDate) {
+      updateEndDateTimeOnRepeaterByRepeaterId(item.repeater_id, null)
+        .then(() => {
+          onRepeaterModified();
+        });
+    } else {
+      setShowEndDateDateTimePicker(true);
+    }
+  };
+
+  const onUpdateEndDate = (date) => {
+    setShowEndDateDateTimePicker(false);
+    const endOfDay = getEndOfDay(date);
+    console.log(endOfDay.toISOString());
+    updateEndDateTimeOnRepeaterByRepeaterId(item.repeater_id, endOfDay.toISOString())
+      .then(() => {
+        onRepeaterModified();
+      });
   };
 
   return (
@@ -207,12 +231,26 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
                           ? colors.plans.textOrIconOnWhite
                           : colors.plans.disabledIcon
                         }
-                      onPress={() => Alert.alert('TODO: add end date here')}
+                      onPress={() => onEndDatePressed()}
                     />
                   </Animated.View>
                 )}
             </View>
           </Animated.View>
+        )}
+      {showEndDateDateTimePicker
+        && (
+          <DateTimePicker
+            modalTitleText={CONSTANT_STRINGS.PLANS.REPEATERS.SET_END_DATE_PROMPT}
+            dateOnly
+            dateValue={endDate}
+            onSubmit={
+              // eslint-disable-next-line max-len
+              ({ date }) => onUpdateEndDate(date)
+            }
+            returnToScreenName="ViewToBeScreen"
+            onCancel={() => setShowEndDateDateTimePicker(false)}
+          />
         )}
     </Animated.View>
   );

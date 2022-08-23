@@ -71,9 +71,9 @@ function DateTimePicker(props) {
   const onClose = (shouldReturnDateTime) => {
     if (shouldReturnDateTime) {
       if (props.dateOnly) {
-        props.onDateTimeChange(datePicked);
+        props.onSubmit({ date: datePicked });
       } else {
-        props.onDateTimeChange(datePicked, startTimePicked, endTimePicked);
+        props.onSubmit({ date: datePicked, startTime: startTimePicked, endTime: endTimePicked });
       }
     } else {
       props.onCancel();
@@ -81,7 +81,12 @@ function DateTimePicker(props) {
   };
 
   return (
-    <Modal transparent={true}>
+    <Modal
+      transparent
+      statusBarTranslucent
+      animationType={'fade'}
+      onRequestClose={() => onClose(false)}
+    >
       <View style={styles.outerContainer}>
         <View style={styles.innerContainer}>
           {props.modalTitleText
@@ -157,6 +162,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'stretch',
     paddingHorizontal: 20,
+    backgroundColor: 'rgba(40,40,40,0.8)',
   },
   innerContainer: {
     backgroundColor: colors.general.defaultWhite,
@@ -182,6 +188,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     borderBottomWidth: 1,
     borderColor: colors.plans.textOrIconOnWhite,
+    marginHorizontal: 3,
     marginBottom: 18,
   },
   dateTimePickerHeader: {

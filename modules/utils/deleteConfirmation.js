@@ -8,7 +8,7 @@
 
 import { Alert } from 'react-native';
 
-const confirmDeleteAlert = (title, message, onConfirmed, onCancelled) => {
+const confirmDeleteAlert = (title, message, onConfirmed, onCancelled, destructiveButtonText = 'Delete') => {
   Alert.alert(
     title,
     message,
@@ -19,7 +19,7 @@ const confirmDeleteAlert = (title, message, onConfirmed, onCancelled) => {
         style: 'cancel',
       },
       {
-        text: 'Delete',
+        text: destructiveButtonText,
         onPress: onConfirmed,
         style: 'destructive',
       },

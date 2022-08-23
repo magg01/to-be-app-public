@@ -51,14 +51,26 @@ function ViewToBeScreen({route, navigation}) {
     setToBeId(route.params.toBeId);
   }, [route.params.toBeId]);
 
+  // takes an ISO datetime string
+  // returns true if the datetime is after the current datetime
+  // returns false if the datetime is equal to or earlier than the current datetime
+  const hasEndDateElapsed = (ISODateTimeString) => {
+    // if there is no enddate for this item
+    if (ISODateTimeString === null) return false;
+    const endDate = new Date(ISODateTimeString);
+    return (endDate < new Date());
+  };
+
   const refreshPlansAndRepeaters = useCallback(() => {
     if (toBeId !== undefined) {
       db.getAllPlansWithRepeatersByToBeId(toBeId)
         .then((result) => {
           setPlansWithRepeaters(result);
-          setDailies(result.filter((item) => item.repeater_periodicity === 'daily'));
-          setWeeklies(result.filter((item) => item.repeater_periodicity === 'weekly'));
-          setMonthlies(result.filter((item) => item.repeater_periodicity === 'monthly'));
+          // let through those repeaters that either have no end date
+          // or their end date is not in the past
+          setDailies(result.filter((item) => item.repeater_periodicity === 'daily' && !hasEndDateElapsed(item.repeater_enddate)));
+          setWeeklies(result.filter((item) => item.repeater_periodicity === 'weekly' && !hasEndDateElapsed(item.repeater_enddate)));
+          setMonthlies(result.filter((item) => item.repeater_periodicity === 'monthly' && !hasEndDateElapsed(item.repeater_enddate)));
         });
     }
   }, [toBeId]);

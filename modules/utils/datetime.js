@@ -21,4 +21,9 @@ function getPreviousPeriodReset(periodicity) {
   }
 }
 
-export { getPreviousPeriodReset };
+function getEndOfDay(dateTime) {
+  dateTime.setHours(23, 59, 59, 999);
+  return dateTime;
+}
+
+export { getPreviousPeriodReset, getEndOfDay };

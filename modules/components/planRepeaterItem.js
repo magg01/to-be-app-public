@@ -4,15 +4,16 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  Alert,
   View,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
+import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 import { getPreviousPeriodReset } from '../utils/datetime';
-import { updateLastDoneDateTimeOnRepeaterByRepeaterId } from '../database/database';
+import { updateLastDoneDateTimeOnRepeaterByRepeaterId, deleteRepeaterByPlanId } from '../database/database';
+import CONSTANT_STRINGS from '../strings/constantStrings';
 
 const planLineContainerHeightCollapsed = 40;
 
@@ -39,6 +40,36 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
     }
   }, [item.repeater_lastdonedatetime, item.repeater_periodicity]);
 
+  const confirmDeleteThisRepeaterItem = () => {
+    confirmDeleteAlert(
+      CONSTANT_STRINGS.PLANS.REPEATERS.REMOVE_ALERT_MAIN_TITLE,
+      CONSTANT_STRINGS.PLANS.REPEATERS.REMOVE_ALERT_DESCRIPTION,
+      () => {
+        deleteRepeaterByPlanId(item.plan_id)
+          .then(() => {
+            onRepeaterModified();
+          });
+      },
+      () => null,
+      CONSTANT_STRINGS.PLANS.REPEATERS.REMOVE_ALERT_CONFIRM_BUTTON_TITLE,
+    );
+  };
+
+  const updateIsDoneForNow = () => {
+    setIsDoneForNow(!isDoneForNow);
+    if (isDoneForNow) {
+      updateLastDoneDateTimeOnRepeaterByRepeaterId(item.repeater_id, null)
+        .then((updated) => {
+          if (updated) onRepeaterModified();
+        });
+    } else {
+      updateLastDoneDateTimeOnRepeaterByRepeaterId(item.repeater_id, (new Date()).toISOString())
+        .then((updated) => {
+          if (updated) onRepeaterModified();
+        });
+    }
+  };
+
   return (
     // unfortunately the opacity based on state does not work on an animated view,
     // at least not on initial render, so we need this outer container to
@@ -56,8 +87,8 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
           <TouchableOpacity
             style={styles.planLineHeader}
             key={item.repeater_id}
-            onPress={() => setShowDetailView(!showDetailView)}
-            onLongPress={() => Alert.alert('TODO: implement remove from repeater view here')}
+            onPress={updateIsDoneForNow}
+            onLongPress={confirmDeleteThisRepeaterItem}
           >
             <Text style={styles.planLineTitleText(isDoneForNow)}>{item.plan_title}</Text>
           </TouchableOpacity>
@@ -69,20 +100,7 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
             }
             size={22}
             color={colors.plans.textOrIconOnWhite}
-            onPress={() => {
-              setIsDoneForNow(!isDoneForNow);
-              if (isDoneForNow) {
-                updateLastDoneDateTimeOnRepeaterByRepeaterId(item.repeater_id, null)
-                  .then((updated) => {
-                    if (updated) onRepeaterModified();
-                  })
-              } else {
-                updateLastDoneDateTimeOnRepeaterByRepeaterId(item.repeater_id, (new Date()).toISOString())
-                  .then((updated) => {
-                    if (updated) onRepeaterModified();
-                  });
-              }
-            }}
+            onPress={updateIsDoneForNow}
           />
         </View>
       </Animated.View>
