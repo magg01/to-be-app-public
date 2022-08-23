@@ -5,7 +5,6 @@ import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { Entypo } from '@expo/vector-icons';
-import { getPreviousPeriodReset } from '../utils/datetime';
 import { getAllToBeItems } from '../database/database';
 import OptimisedToBeTile from '../components/optimisedToBeTile';
 

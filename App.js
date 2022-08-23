@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { setNotificationHandler } from 'expo-notifications';
 import Toast from 'react-native-toast-message';
@@ -35,6 +35,19 @@ setNotificationHandler({
   }
 })
 
+// solution for setting title header in nested navigators from the docs
+// see: https://reactnavigation.org/docs/screen-options-resolution/
+function getHeaderTitle(route) {
+  // If the focused route is not found, we need to assume it's the initial screen
+  // This can happen if there hasn't been any navigation inside the screen
+  // In our case, it's "Be" as that's the first screen inside the navigator
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Be';
+  switch (routeName) {
+    case 'Be':
+      return 'Be...';
+  }
+}
+
 export default function App() {
   return (
     <NavigationContainer>
@@ -50,11 +63,13 @@ export default function App() {
           }
         }}
       >
-        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{title: "Be..."}}/>
+        <Stack.Screen name="HomeScreen" component={HomeScreen} options={({route}) => ({
+          headerTitle: getHeaderTitle(route),
+        })} />
         <Stack.Screen name="ViewToBeScreen" component={ViewToBeScreen} />
         <Stack.Screen name="AddNewScreen" component={AddNewScreen} />
       </Stack.Navigator>
-      <Toast 
+      <Toast
         position='bottom'
         bottomOffset={20}
         visibilityTime={2000}
