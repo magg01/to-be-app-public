@@ -89,6 +89,10 @@ const styles = StyleSheet.create({
     margin: 6,
     borderRadius: 6,
     elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: .1,
+    shadowRadius: 8,
   },
   tileImageBackground: {
     flex: 1,
