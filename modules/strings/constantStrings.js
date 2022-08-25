@@ -19,6 +19,7 @@ const CONSTANT_STRINGS = {
         `How can you be more ${toBeItemTitle}?`
       ),
     },
+    ADD_CAL_EVENT_DATETIMEPICKER_HEADER: 'Add an event to the calendar for this plan.',
     PLAN_DETAIL_PLACEHOLDER: 'Add more details here',
     REPEATERS: {
       HEADER_TEXT_DAILIES: 'Dailies',

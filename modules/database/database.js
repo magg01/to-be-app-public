@@ -340,6 +340,22 @@ const deletePlanItemById = (id) => new Promise((resolve, reject) => {
   );
 });
 
+const deleteCalEventById = (id) => new Promise((resolve, reject) => {
+  db.transaction(
+    (tx) => {
+      tx.executeSql('delete from calevents where id = ?', [id]);
+    },
+    (e) => {
+      console.log(`deleteCalEventById encountered an error -> ${e}`);
+      reject(false);
+    },
+    () => {
+      console.log(`deleteCalEventById: calEvent with id:${id} successfully deleted from calevents table`);
+      resolve(true);
+    },
+  );
+});
+
 const getCalEventNotificationByCalEventId = (id) => new Promise((resolve, reject) => {
   let result;
   db.transaction(
@@ -529,23 +545,23 @@ const getPlansWithRepeaterPeriodicityByToBeId = (toBeId) => new Promise((resolve
   );
 });
 
-const getAllPlansWithRepeatersByToBeId = (toBeId) => new Promise((resolve, reject) => {
+const getAllPlansWithRepeatersAndCalEventsByToBeId = (toBeId) => new Promise((resolve, reject) => {
   console.log(`getAllPlansWithRepeatersByToBeId: supplied toBeId was: ${toBeId}`);
   let result;
   db.transaction(
     (tx) => {
       tx.executeSql(
-        'select plans.id as plan_id, plans.done as plan_done, plans.title as plan_title, plans.description as plan_description, plans.tobeitem as plan_tobeitem, repeaters.id as repeater_id, repeaters.lastdonedatetime as repeater_lastdonedatetime, repeaters.periodicity as repeater_periodicity, repeaters.enddate as repeater_enddate, repeaters.shouldshowincalendar as repeater_shouldshowincalendar from plans plans left join repeaters repeaters on plans.id=repeaters.plan where plans.tobeitem = ?',
+        'select plans.id as plan_id, plans.done as plan_done, plans.title as plan_title, plans.description as plan_description, plans.tobeitem as plan_tobeitem, repeaters.id as repeater_id, repeaters.lastdonedatetime as repeater_lastdonedatetime, repeaters.periodicity as repeater_periodicity, repeaters.enddate as repeater_enddate, repeaters.shouldshowincalendar as repeater_shouldshowincalendar, calevents.id as calevent_id from plans plans left join repeaters repeaters on plans.id=repeaters.plan left join calevents calevents on plans.id=calevents.planitem where plans.tobeitem = ?',
         [toBeId],
         (_, { rows: { _array } }) => {
-          console.log(`getAllPlansWithRepeatersByToBeId: _array is ${JSON.stringify(_array, null, 1)}`);
+          console.log(`getAllPlansWithRepeatersAndCalEventsByToBeId: _array is ${JSON.stringify(_array, null, 1)}`);
           result = _array;
         },
       );
     },
     // transaction failure callback
     (e) => {
-      console.log(`getAllPlansWithRepeatersByToBeId encountered an error -> ${e}`);
+      console.log(`getAllPlansWithRepeatersAndCalEventsByToBeId encountered an error -> ${e}`);
       reject(false);
     },
     // transaction success callback
@@ -650,8 +666,9 @@ export {
   getAllRepeatersByToBeId,
   deleteRepeaterByPlanId,
   getPlansWithRepeaterPeriodicityByToBeId,
-  getAllPlansWithRepeatersByToBeId,
+  getAllPlansWithRepeatersAndCalEventsByToBeId as getAllPlansWithRepeatersByToBeId,
   updateLastDoneDateTimeOnRepeaterByRepeaterId,
   updateEndDateTimeOnRepeaterByRepeaterId,
   updatePlanDescriptionByPlanId,
+  deleteCalEventById,
 };

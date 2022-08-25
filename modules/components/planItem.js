@@ -1,10 +1,17 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, Text, TextInput, View } from 'react-native';
+import { StyleSheet, TouchableOpacity, Text, TextInput, View, Alert } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from './dateTimePicker';
-import { addRepeater, deleteRepeaterByPlanId, updateEndDateTimeOnRepeaterByRepeaterId, updatePlanDescriptionByPlanId } from '../database/database';
+import {
+  addRepeater,
+  deleteRepeaterByPlanId,
+  updateEndDateTimeOnRepeaterByRepeaterId,
+  updatePlanDescriptionByPlanId,
+  deleteCalEventById,
+  addCalEvent,
+} from '../database/database';
 import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
@@ -21,12 +28,18 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
   const [hasWeekly, setHasWeekly] = useState(false);
   const [hasMonthly, setHasMonthly] = useState(false);
   const [hasEndDate, setHasEndDate] = useState(false);
+  const [hasCalEvent, setHasCalEvent] = useState(false);
   const [descriptionText, setDescriptionText] = useState('');
   const [showEndDateDateTimePicker, setShowEndDateDateTimePicker] = useState(false);
+  const [showCalEventDateTimePicker, setShowCalEventDateTimePicker] = useState(false);
   const endDate = useRef(null);
 
   useEffect(() => {
     setHasEndDate(item.repeater_enddate !== null);
+  }, [item]);
+
+  useEffect(() => {
+    setHasCalEvent(item.calevent_id !== null);
   }, [item]);
 
   useEffect(() => {
@@ -48,6 +61,22 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
       'Delete this plan?',
       'Data and notifications for your plan will be removed',
       () => onDelete(planId),
+      null,
+    );
+  };
+
+  const onDeleteCalEvent = (calEventId) => {
+    deleteCalEventById(calEventId)
+      .then(() => {
+        onRepeaterModified();
+      });
+  };
+
+  const confirmDeleteCalEvent = (calEventId) => {
+    confirmDeleteAlert(
+      'Remove from calendar?',
+      'Any associated notifications will also be removed',
+      () => onDeleteCalEvent(calEventId),
       null,
     );
   };
@@ -103,10 +132,18 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
     }
   };
 
+  const onCalendarPressed = () => {
+    if (hasCalEvent) {
+      confirmDeleteCalEvent(item.calevent_id);
+    } else {
+      // add cal event
+      setShowCalEventDateTimePicker(true);
+    }
+  };
+
   const onUpdateEndDate = (date) => {
     setShowEndDateDateTimePicker(false);
     const endOfDay = getEndOfDay(date);
-    console.log(endOfDay.toISOString());
     updateEndDateTimeOnRepeaterByRepeaterId(item.repeater_id, endOfDay.toISOString())
       .then(() => {
         onRepeaterModified();
@@ -114,8 +151,8 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
   };
 
   const updatePlanDetailText = () => {
-    updatePlanDescriptionByPlanId(item.plan_id, descriptionText)
-  }
+    updatePlanDescriptionByPlanId(item.plan_id, descriptionText);
+  };
 
   return (
     <Animated.View
@@ -162,8 +199,23 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
               textAlignVertical="top"
             />
             <View
-              style={styles.detailIconsContainer}
+              style={[styles.detailIconsContainer, {borderColor: 'red', borderWidth: 1}]}
             >
+              <MaterialCommunityIcons
+                style={[styles.repeaterIcon, {flexGrow: 1}]}
+                name={
+                  hasCalEvent
+                    ? 'calendar-minus'
+                    : 'calendar-plus'
+                }
+                size={iconSize}
+                color={
+                  hasCalEvent
+                    ? colors.plans.textOrIconOnWhite
+                    : colors.general.unactivatedIcon
+                }
+                onPress={onCalendarPressed}
+              />
               {(!hasWeekly && !hasMonthly)
                 && (
                   <Animated.View
@@ -254,11 +306,29 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
             dateOnly
             dateValue={endDate}
             onSubmit={
-              // eslint-disable-next-line max-len
               ({ date }) => onUpdateEndDate(date)
             }
             returnToScreenName="ViewToBeScreen"
             onCancel={() => setShowEndDateDateTimePicker(false)}
+          />
+        )}
+      {showCalEventDateTimePicker
+        && (
+          <DateTimePicker
+            modalTitleText={CONSTANT_STRINGS.PLANS.ADD_CAL_EVENT_DATETIMEPICKER_HEADER}
+            onSubmit={({ date, startTime, endTime }) => {
+              addCalEvent(
+                date.toISOString(),
+                startTime.toISOString(),
+                endTime.toISOString(),
+                item.plan_id,
+              );
+              setShowCalEventDateTimePicker(false);
+              onRepeaterModified();
+            }}
+            onCancel={() => {
+              setShowCalEventDateTimePicker(false);
+            }}
           />
         )}
     </Animated.View>

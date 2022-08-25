@@ -54,10 +54,9 @@ function AddPlan(props) {
       {showDateTimePicker
         && (
         <DateTimePicker
-          modalTitleText={"Add an event to the calendar for this plan."}
+          modalTitleText={CONSTANT_STRINGS.PLANS.ADD_CAL_EVENT_DATETIMEPICKER_HEADER}
           calEvent={calEvent.current}
           onSubmit={
-            // eslint-disable-next-line max-len
             ({ date, startTime, endTime }) => onDateTimeChange(date, startTime, endTime)
           }
           returnToScreenName="ViewToBeScreen"
