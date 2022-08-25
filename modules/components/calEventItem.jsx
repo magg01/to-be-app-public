@@ -112,7 +112,15 @@ function CalEventItem({ appointment }) {
         <Text style={styles.type}>{`Be: ${calEventWithDetails.tobeitem_title}`}</Text>
       </TouchableOpacity>
       <TouchableOpacity style={{alignSelf: 'center', }} onPress={() => onNotificationIconPressed()}>
-        <Ionicons name="notifications-outline" size={24} color={calEventWithDetails.eventnotification != null ? "black" : "lightgrey" } />
+        <Ionicons
+          name={
+            calEventWithDetails.eventnotification
+              ? "notifications-outline"
+              : "notifications-off-outline"
+          }
+          size={24}
+          color={calEventWithDetails.eventnotification != null ? "black" : "lightgrey" } 
+        />
       </TouchableOpacity>
       <Modal
         animationType="slide"
