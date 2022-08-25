@@ -1,4 +1,8 @@
 const CONSTANT_STRINGS = {
+
+  BE_SCREEN: {
+    HEADER_TITLE: 'Be...',
+  },
   UNSPLASH_IMAGE_SEARCH: {
     INPUT_PLACEHOLDER: 'Search for images',
     ON_ERROR_RESPONSE_MESSAGE: "We're sorry, there was an error getting images from Unsplash.",

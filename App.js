@@ -7,6 +7,7 @@ import HomeScreen from './modules/screens/homeScreen';
 import ViewToBeScreen from './modules/screens/viewToBeScreen';
 import { fetchPermissionSettings, checkPermissionSettings } from './modules/utils/notifications';
 import AddNewScreen from './modules/screens/addNewScreen';
+import CONSTANT_STRINGS from './modules/strings/constantStrings';
 
 const Stack = createStackNavigator();
 
@@ -41,11 +42,13 @@ function getHeaderTitle(route) {
   // If the focused route is not found, we need to assume it's the initial screen
   // This can happen if there hasn't been any navigation inside the screen
   // In our case, it's "To be" as that's the first screen inside the navigator
-  const routeName = getFocusedRouteNameFromRoute(route) ?? 'Be';
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'To be';
+  let headerTitle;
   switch (routeName) {
     case 'To be':
-      return 'Be...';
+      headerTitle = CONSTANT_STRINGS.BE_SCREEN.HEADER_TITLE;
   }
+  return headerTitle;
 }
 
 export default function App() {
