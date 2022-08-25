@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, ImageBackground, Text, View, InteractionManager, Button } from 'react-native';
+import { StyleSheet, FlatList, TouchableOpacity, ImageBackground, Text, View, InteractionManager } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { Entypo } from '@expo/vector-icons';
 import { getAllToBeItems } from '../database/database';
 import OptimisedToBeTile from '../components/optimisedToBeTile';
+import FocusAwareStatusBar from '../components/focusAwareStatusBar';
 
 const defaultImageBackground = require('../../assets/beScreenBackground7.jpg');
 
@@ -72,7 +72,7 @@ function BeScreen({ navigation }) {
         <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
           <Entypo name="add-to-list" size={24} color="black" />
         </TouchableOpacity>
-        <StatusBar style="light"/>
+        <FocusAwareStatusBar style="light" />
       </SafeAreaView>
     </ImageBackground>
   );

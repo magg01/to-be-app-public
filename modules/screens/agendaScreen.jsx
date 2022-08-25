@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StatusBar } from 'expo-status-bar';
 import { Agenda } from 'react-native-calendars';
 import CalEventItem from '../components/calEventItem';
 import * as db from '../database/database';
+import FocusAwareStatusBar from '../components/focusAwareStatusBar';
 
 function AgendaScreen() {
   const [loadedAppointments, setLoadedAppointments] = useState(null);
@@ -52,9 +52,9 @@ function AgendaScreen() {
         // theme={calendarTheme}
         loadItemsForMonth={loadItemsForMonth}
       />
-      <StatusBar style={"auto"}/>
+      <FocusAwareStatusBar style="dark"/>
     </SafeAreaView>
-  )
+  );
 }
 
 const styles = StyleSheet.create({

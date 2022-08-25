@@ -162,6 +162,7 @@ function ViewToBeScreen({route, navigation}) {
       </SafeAreaView>
     );
   }
+
   return (
     <ImageBackground source={{ uri: toBeItem.imageBackgroundUri }} resizeMode="cover" style={styles.backgroundImage}>
       <SafeAreaView style={styles.safeAreaContainer}>
