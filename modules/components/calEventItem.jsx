@@ -115,11 +115,11 @@ function CalEventItem({ appointment }) {
         <Ionicons
           name={
             calEventWithDetails.eventnotification
-              ? "notifications-outline"
-              : "notifications-off-outline"
+              ? 'notifications-outline'
+              : 'notifications-off-outline'
           }
           size={24}
-          color={calEventWithDetails.eventnotification != null ? "black" : "lightgrey" } 
+          color={calEventWithDetails.eventnotification ? 'black' : 'lightgrey'}
         />
       </TouchableOpacity>
       <Modal
