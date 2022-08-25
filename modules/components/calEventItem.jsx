@@ -19,7 +19,7 @@ function CalEventItem({ appointment }) {
         await db.getCalEventWithPlanDetailsByCalEventId(appointment.calEventId)
       );
     })();
-  }, []);
+  }, [appointment.calEventId]);
 
   const zeroPadTime = (time) => {
     // would rather use .toLocaleString on Date objects here but doesn't work for Android see (https://stackoverflow.com/questions/41408025/react-native-tolocalestring-not-working-on-android)

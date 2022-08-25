@@ -271,7 +271,7 @@ const getAllCalEvents = () => new Promise((resolve, reject) => {
   db.readTransaction(
     (tx) => {
       tx.executeSql(
-        'select * from calevents',
+        'select * from calevents order by eventstarttime',
         [],
         (_, { rows: { _array } }) => {
           console.log(`getAllCalEvents: _array is ${JSON.stringify(_array, null, 1)}`);
