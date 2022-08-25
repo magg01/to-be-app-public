@@ -9,14 +9,14 @@ const Tab = createMaterialBottomTabNavigator();
 function HomeScreen() {
   return (
     <Tab.Navigator
-      initialRouteName="Be"
+      initialRouteName="To be"
       activeColor="#34DDE6"
       inactiveColor="#176266"
       barStyle={{ backgroundColor: '#321F71' }}
       backBehavior="initialRoute"
     >
       <Tab.Screen
-        name="Be"
+        name="To be"
         component={BeScreen}
         options={{
           tabBarIcon: ({color}) => (

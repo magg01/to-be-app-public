@@ -40,10 +40,10 @@ setNotificationHandler({
 function getHeaderTitle(route) {
   // If the focused route is not found, we need to assume it's the initial screen
   // This can happen if there hasn't been any navigation inside the screen
-  // In our case, it's "Be" as that's the first screen inside the navigator
+  // In our case, it's "To be" as that's the first screen inside the navigator
   const routeName = getFocusedRouteNameFromRoute(route) ?? 'Be';
   switch (routeName) {
-    case 'Be':
+    case 'To be':
       return 'Be...';
   }
 }
