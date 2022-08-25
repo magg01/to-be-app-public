@@ -199,103 +199,107 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
               textAlignVertical="top"
             />
             <View
-              style={[styles.detailIconsContainer, {borderColor: 'red', borderWidth: 1}]}
+              style={styles.detailIconsContainer}
             >
-              <MaterialCommunityIcons
-                style={[styles.repeaterIcon, {flexGrow: 1}]}
-                name={
-                  hasCalEvent
-                    ? 'calendar-minus'
-                    : 'calendar-plus'
-                }
-                size={iconSize}
-                color={
-                  hasCalEvent
-                    ? colors.plans.textOrIconOnWhite
-                    : colors.general.unactivatedIcon
-                }
-                onPress={onCalendarPressed}
-              />
-              {(!hasWeekly && !hasMonthly)
-                && (
-                  <Animated.View
-                    entering={animations.plans.planItemForFlatList.entering}
-                    exiting={animations.plans.planItemForFlatList.exiting}
-                    layout={animations.plans.planItemForFlatList.layout}
-                  >
-                    <MaterialCommunityIcons
-                      style={styles.repeaterIcon}
-                      name="calendar-month"
-                      size={iconSize}
-                      color={
-                        hasDaily
-                          ? colors.plans.textOrIconOnWhite
-                          : colors.general.unactivatedIcon
-                        }
-                      onPress={onDailyPressed}
-                    />
-                  </Animated.View>
-                )}
-              {(!hasDaily && !hasMonthly)
-                && (
-                  <Animated.View
-                    entering={animations.plans.planItemForFlatList.entering}
-                    exiting={animations.plans.planItemForFlatList.exiting}
-                    layout={animations.plans.planItemForFlatList.layout}
-                  >
-                    <MaterialCommunityIcons
-                      style={styles.repeaterIcon}
-                      name="calendar-week"
-                      size={iconSize}
-                      color={
-                        hasWeekly
-                          ? colors.plans.textOrIconOnWhite
-                          : colors.general.unactivatedIcon
-                        }
-                      onPress={onWeeklyPressed}
-                    />
-                  </Animated.View>
-                )}
-              {(!hasDaily && !hasWeekly)
-                && (
-                  <Animated.View
-                    entering={animations.plans.planItemForFlatList.entering}
-                    exiting={animations.plans.planItemForFlatList.exiting}
-                    layout={animations.plans.planItemForFlatList.layout}
-                  >
-                    <MaterialCommunityIcons
-                      style={styles.repeaterIcon}
-                      name="calendar-today"
-                      size={iconSize}
-                      color={
-                        hasMonthly
-                          ? colors.plans.textOrIconOnWhite
-                          : colors.general.unactivatedIcon
-                        }
-                      onPress={onMonthlyPressed}
-                    />
-                  </Animated.View>
-                )}
-              {(hasDaily || hasWeekly || hasMonthly)
-                && (
-                  <Animated.View
-                    entering={animations.plans.planItemForFlatList.entering}
-                    exiting={animations.plans.planItemForFlatList.exiting}
-                    layout={animations.plans.planItemForFlatList.layout}
-                  >
-                    <MaterialCommunityIcons
-                      style={styles.repeaterIcon}
-                      name="calendar-end"
-                      size={iconSize}
-                      color={
-                        hasEndDate
-                          ? colors.plans.textOrIconOnWhite
-                          : colors.plans.disabledIcon
-                        }
-                      onPress={() => onEndDatePressed()}
-                    />
-                  </Animated.View>
-                )}
+              <View style={styles.detailIconsLeft}>
+                <MaterialCommunityIcons
+                  style={styles.repeaterIcon}
+                  name={
+                    hasCalEvent
+                      ? 'calendar-minus'
+                      : 'calendar-plus'
+                  }
+                  size={iconSize}
+                  color={
+                    hasCalEvent
+                      ? colors.plans.textOrIconOnWhite
+                      : colors.general.unactivatedIcon
+                  }
+                  onPress={onCalendarPressed}
+                />
+              </View>
+              <View style={styles.detailIconsRight}>
+                {(!hasWeekly && !hasMonthly)
+                  && (
+                    <Animated.View
+                      entering={animations.plans.planItemForFlatList.entering}
+                      exiting={animations.plans.planItemForFlatList.exiting}
+                      layout={animations.plans.planItemForFlatList.layout}
+                    >
+                      <MaterialCommunityIcons
+                        style={styles.repeaterIcon}
+                        name="calendar-month"
+                        size={iconSize}
+                        color={
+                          hasDaily
+                            ? colors.plans.textOrIconOnWhite
+                            : colors.general.unactivatedIcon
+                          }
+                        onPress={onDailyPressed}
+                      />
+                    </Animated.View>
+                  )}
+                {(!hasDaily && !hasMonthly)
+                  && (
+                    <Animated.View
+                      entering={animations.plans.planItemForFlatList.entering}
+                      exiting={animations.plans.planItemForFlatList.exiting}
+                      layout={animations.plans.planItemForFlatList.layout}
+                    >
+                      <MaterialCommunityIcons
+                        style={styles.repeaterIcon}
+                        name="calendar-week"
+                        size={iconSize}
+                        color={
+                          hasWeekly
+                            ? colors.plans.textOrIconOnWhite
+                            : colors.general.unactivatedIcon
+                          }
+                        onPress={onWeeklyPressed}
+                      />
+                    </Animated.View>
+                  )}
+                {(!hasDaily && !hasWeekly)
+                  && (
+                    <Animated.View
+                      entering={animations.plans.planItemForFlatList.entering}
+                      exiting={animations.plans.planItemForFlatList.exiting}
+                      layout={animations.plans.planItemForFlatList.layout}
+                    >
+                      <MaterialCommunityIcons
+                        style={styles.repeaterIcon}
+                        name="calendar-today"
+                        size={iconSize}
+                        color={
+                          hasMonthly
+                            ? colors.plans.textOrIconOnWhite
+                            : colors.general.unactivatedIcon
+                          }
+                        onPress={onMonthlyPressed}
+                      />
+                    </Animated.View>
+                  )}
+                {(hasDaily || hasWeekly || hasMonthly)
+                  && (
+                    <Animated.View
+                      entering={animations.plans.planItemForFlatList.entering}
+                      exiting={animations.plans.planItemForFlatList.exiting}
+                      layout={animations.plans.planItemForFlatList.layout}
+                    >
+                      <MaterialCommunityIcons
+                        style={styles.repeaterIcon}
+                        name="calendar-end"
+                        size={iconSize}
+                        color={
+                          hasEndDate
+                            ? colors.plans.textOrIconOnWhite
+                            : colors.plans.disabledIcon
+                          }
+                        onPress={() => onEndDatePressed()}
+                      />
+                    </Animated.View>
+                  )}
+              </View>
             </View>
           </Animated.View>
         )}
@@ -379,6 +383,15 @@ const styles = StyleSheet.create({
   planLineTitleText: {
     fontSize: 16,
     color: colors.plans.textOrIconOnWhite,
+  },
+  detailIconsLeft: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  detailIconsRight: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 });
 
