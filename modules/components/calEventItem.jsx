@@ -6,6 +6,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Notifications from 'expo-notifications';
 import { confirmRemoveNotification, cancelNotificationEvent, isScheduleNotificationAllowed } from '../utils/notifications';
 import * as db from '../database/database';
+import { zeroPadTime } from '../utils/datetime';
 
 function CalEventItem({ appointment }) {
   const [calEventWithDetails, setCalEventWithDetails] = useState(undefined);
@@ -20,15 +21,6 @@ function CalEventItem({ appointment }) {
       );
     })();
   }, [appointment.calEventId]);
-
-  const zeroPadTime = (time) => {
-    // would rather use .toLocaleString on Date objects here but doesn't work for Android see (https://stackoverflow.com/questions/41408025/react-native-tolocalestring-not-working-on-android)
-    // could get around it (see: https://expo.canny.io/feature-requests/p/add-intl-support) but wouldn't work in Expo Go. 
-    if (time < 10) {
-      return `0${time}`;
-    }
-    return time;
-  };
 
   useEffect(() => {
     if (calEventWithDetails !== undefined) {

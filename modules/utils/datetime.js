@@ -26,4 +26,13 @@ function getEndOfDay(dateTime) {
   return dateTime;
 }
 
-export { getPreviousPeriodReset, getEndOfDay };
+const zeroPadTime = (time) => {
+  // would rather use .toLocaleString on Date objects here but doesn't work for Android see (https://stackoverflow.com/questions/41408025/react-native-tolocalestring-not-working-on-android)
+  // could get around it (see: https://expo.canny.io/feature-requests/p/add-intl-support) but wouldn't work in Expo Go. 
+  if (time < 10) {
+    return `0${time}`;
+  }
+  return time;
+};
+
+export { getPreviousPeriodReset, getEndOfDay, zeroPadTime };
