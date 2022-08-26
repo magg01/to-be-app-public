@@ -22,6 +22,7 @@ import {
   deleteRepeaterByPlanId,
   updatePlanDescriptionByPlanId,
   updateEndDateTimeOnRepeaterByRepeaterId,
+  udpateRepeaterCalEvent,
 } from '../database/database';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 import RepeaterCalEventDateTimePicker from './repeaterCalEventDateTimePicker';
@@ -115,10 +116,19 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
   const onRepeatCalendarIconPressed = () => {
     if (hasRepeatingCalEvent) {
       // confirmDeleteCalEvent(item.calevent_id);
-      Alert.alert("confirm delete here")
+      confirmDeleteAlert(
+        'Are you sure you want to delete your repeating calendar event?',
+        'Any notifications will also be deleted',
+        () => {
+          udpateRepeaterCalEvent(item.repeater_id, null, null, null, null, 0)
+            .then((deleted) => {
+              if (deleted) onRepeaterModified();
+            });
+        },
+        null,
+        'Delete',
+      );
     } else {
-      // add cal event
-      // setShowCalEventDateTimePicker(true);
       setShowRepeatingCalEventDateTimePicker(true);
     }
   };
@@ -166,6 +176,20 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
     if (item.repeater_periodicity === 'daily') { return 'Choose the start and end time of your repeating event'; }
     if (item.repeater_periodicity === 'weekly') { return 'Choose the day of the week and times for your repeating event'; }
     if (item.repeater_periodicity === 'monthly') { return 'Choose the day of the month and times for your repeating event'; }
+  };
+
+  const setRepeatingCalendarEventOnRepeater = (dateTimeData) => {
+    if (item.repeater_periodicity === 'daily') {
+      udpateRepeaterCalEvent(item.repeater_id, dateTimeData.startTime.toISOString(), dateTimeData.endTime.toISOString(), null, null, 1)
+        .then((updated) => updated ? onRepeaterModified() : null);
+    } else if (item.repeater_periodicity === 'weekly') {
+      udpateRepeaterCalEvent(item.repeater_id, dateTimeData.startTime.toISOString(), dateTimeData.endTime.toISOString(), dateTimeData.dayOfWeek, null, 1)
+        .then((updated) => updated ? onRepeaterModified() : null);
+    } else if (item.repeater_periodicity === 'monthly') {
+      udpateRepeaterCalEvent(item.repeater_id, dateTimeData.startTime.toISOString(), dateTimeData.endTime.toISOString(), null, dateTimeData.dayOfMonth, 1)
+        .then((updated) => updated ? onRepeaterModified() : null);
+    }
+    setShowRepeatingCalEventDateTimePicker(false);
   };
 
   return (
@@ -293,7 +317,7 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
             <RepeaterCalEventDateTimePicker
               modalTitleText={getModalTitleTextForRepeatingEventPicker()}
               periodicity={item.repeater_periodicity}
-              onSubmit={() => Alert.alert('have to set repeating cal event here')}
+              onSubmit={(dateTimeData) => setRepeatingCalendarEventOnRepeater(dateTimeData)}
               onCancel={() => setShowRepeatingCalEventDateTimePicker(false)}
             />
           )}

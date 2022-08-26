@@ -668,6 +668,30 @@ const updatePlanDoneByPlanId = (planId, isDone) => new Promise((resolve, reject)
   );
 });
 
+const udpateRepeaterCalEvent = (repeaterId, startTime, endTime, dayOfTheWeek, dayOfTheMonth, shouldShowInCalendar) => new Promise ((resolve, reject) => {
+  db.transaction(
+    (tx) => {
+      tx.executeSql(
+        'update repeaters set calstarttime = ?, calendtime = ?, calday = ?, caldate = ?, shouldshowincalendar = ? where id = ?',
+        [startTime, endTime, dayOfTheWeek, dayOfTheMonth, shouldShowInCalendar, repeaterId],
+        (_, { rows: { _array } }) => {
+          console.log(`udpateRepeaterCalEvent: _array is ${JSON.stringify(_array, null, 1)}`);
+        },
+      );
+    },
+    // transaction failure callback
+    (e) => {
+      console.log(`udpateRepeaterCalEvent encountered an error -> ${e}`);
+      reject(false);
+    },
+    // transaction success callback
+    () => {
+      console.log(`udpateRepeaterCalEvent: done for repeater id:${repeaterId} successfully updated.`);
+      resolve(true);
+    },
+  );
+});
+
 export {
   deleteToBeItemById,
   addToBeItem,
@@ -696,4 +720,5 @@ export {
   updatePlanDescriptionByPlanId,
   deleteCalEventById,
   updatePlanDoneByPlanId,
+  udpateRepeaterCalEvent,
 };
