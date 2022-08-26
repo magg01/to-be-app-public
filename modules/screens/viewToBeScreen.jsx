@@ -28,6 +28,7 @@ import AddPlan from '../components/addPlan';
 import animations from '../utils/animations';
 import PlanRepeaterView from '../components/planRepeaterView';
 import colors from '../utils/colors';
+import { hasEndDateElapsed } from '../utils/datetime';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 
 const viewEnum = {
@@ -51,21 +52,12 @@ function ViewToBeScreen({route, navigation}) {
     setToBeId(route.params.toBeId);
   }, [route.params.toBeId]);
 
-  // takes an ISO datetime string
-  // returns true if the datetime is after the current datetime
-  // returns false if the datetime is equal to or earlier than the current datetime
-  const hasEndDateElapsed = (ISODateTimeString) => {
-    // if there is no enddate for this item
-    if (ISODateTimeString === null) return false;
-    const endDate = new Date(ISODateTimeString);
-    return (endDate < new Date());
-  };
-
   const refreshPlansAndRepeaters = useCallback(() => {
     if (toBeId !== undefined) {
       db.getAllPlansWithRepeatersByToBeId(toBeId)
         .then((result) => {
-          setPlansWithRepeaters(result.filter((item) => item.repeater_periodicity === null));
+          // put any non-repeating plans and repeaters whose end date has elapsed in the plan view
+          setPlansWithRepeaters(result.filter((item) => item.repeater_periodicity === null || hasEndDateElapsed(item.repeater_enddate)));
           // let through those repeaters that either have no end date
           // or their end date is not in the past
           setDailies(result.filter((item) => item.repeater_periodicity === 'daily' && !hasEndDateElapsed(item.repeater_enddate)));

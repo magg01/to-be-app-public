@@ -63,16 +63,23 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
   }, [item]);
 
   useEffect(() => {
+    if (hasEndDate) {
+      removeEndDate();
+      removeRepeater();
+    }
+  }, [hasEndDate]);
+
+  useEffect(() => {
     setHasDaily(item.repeater_periodicity === 'daily');
     setHasWeekly(item.repeater_periodicity === 'weekly');
     setHasMonthly(item.repeater_periodicity === 'monthly');
   }, [item]);
 
-  const confirmDeletePlan = (planId) => {
+  const confirmDeletePlan = () => {
     confirmDeleteAlert(
       'Delete this plan?',
       'Data and notifications for your plan will be removed',
-      () => onDelete(planId),
+      () => onDelete(item.plan_id),
       null,
     );
   };
@@ -93,24 +100,27 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
     );
   };
 
+  const removeRepeater = () => {
+    deleteRepeaterByPlanId(item.plan_id)
+      .then(() => {
+        onRepeaterModified();
+      });
+  };
+
   const onDailyPressed = () => {
     if (hasDaily) {
-      deleteRepeaterByPlanId(item.plan_id)
+      removeRepeater();
+    } else {
+      addRepeater({ periodicity: 'daily', endDate: null, planId: item.plan_id })
         .then(() => {
           onRepeaterModified();
         });
-    } else {
-      addRepeater({ periodicity: 'daily', endDate: null, planId: item.plan_id });
-      onRepeaterModified();
     }
   };
 
   const onWeeklyPressed = () => {
     if (hasWeekly) {
-      deleteRepeaterByPlanId(item.plan_id)
-        .then(() => {
-          onRepeaterModified();
-        });
+      removeRepeater();
     } else {
       addRepeater({ periodicity: 'weekly', endDate: null, planId: item.plan_id })
         .then(() => {
@@ -121,10 +131,7 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
 
   const onMonthlyPressed = () => {
     if (hasMonthly) {
-      deleteRepeaterByPlanId(item.plan_id)
-        .then(() => {
-          onRepeaterModified();
-        });
+      removeRepeater();
     } else {
       addRepeater({ periodicity: 'monthly', endDate: null, planId: item.plan_id })
         .then(() => {
@@ -133,12 +140,16 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
     }
   };
 
+  const removeEndDate = () => {
+    updateEndDateTimeOnRepeaterByRepeaterId(item.repeater_id, null)
+      .then(() => {
+        onRepeaterModified();
+      });
+  };
+
   const onEndDatePressed = () => {
     if (hasEndDate) {
-      updateEndDateTimeOnRepeaterByRepeaterId(item.repeater_id, null)
-        .then(() => {
-          onRepeaterModified();
-        });
+      removeEndDate();
     } else {
       setShowEndDateDateTimePicker(true);
     }
@@ -199,21 +210,19 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
           <TouchableOpacity
             style={styles.planLineHeader}
             key={item.plan_id}
-            onPress={() => {
-              updatePlanDone();
-            }}
-            onLongPress={() => confirmDeletePlan(item.plan_id)}
+            onPress={updatePlanDone}
+            onLongPress={confirmDeletePlan}
           >
             <MaterialCommunityIcons
               name={
                 isDone
-                  ? 'checkbox-marked-circle-outline'
-                  : 'checkbox-blank-circle-outline'
+                  ? 'checkbox-marked-outline'
+                  : 'checkbox-blank-outline'
               }
               size={22}
               color={colors.plans.textOrIconOnWhite}
             />
-            <Text style={styles.planLineTitleText}>{item.plan_title}</Text>
+            <Text style={styles.planLineTitleText(isDone)}>{item.plan_title}</Text>
           </TouchableOpacity>
           <MaterialIcons
             name={showDetailView ? 'expand-less' : 'expand-more'}
@@ -332,7 +341,7 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
                           size={iconSize}
                           color={
                             hasEndDate
-                              ? colors.plans.textOrIconOnWhite
+                              ? 'green'
                               : colors.plans.disabledIcon
                             }
                           onPress={() => onEndDatePressed()}
@@ -425,11 +434,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     alignItems: 'flex-end',
   },
-  planLineTitleText: {
+  planLineTitleText: (isDone) => ({
     marginLeft: 6,
     fontSize: 16,
     color: colors.plans.textOrIconOnWhite,
-  },
+    textDecorationLine: isDone ? 'line-through' : null,
+  }),
   detailIconsLeft: {
     flex: 1,
     flexDirection: 'row',

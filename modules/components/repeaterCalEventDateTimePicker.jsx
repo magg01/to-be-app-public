@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Button, View, Text, StyleSheet, Modal } from 'react-native';
+import { Button, View, Text, StyleSheet, Modal, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import colors from '../utils/colors';
@@ -19,24 +19,20 @@ const updateValueEnum = {
 const IconSize = 28;
 
 // TODO: look into proptypes library in order to codify the necessary functions to supply as props
-function DateTimePicker(props) {
+function RepeaterCalEventDateTimePicker(props) {
   const [isNativePickerVisible, setIsNativePickerVisibile] = useState(false);
-  const [datePicked, setDatePicked] = useState(props.calEvent ? new Date(props.calEvent.date) : new Date());
-  const [startTimePicked, setStartTimePicked] = useState(props.calEvent ? new Date(props.calEvent.start) : new Date());
-  const [endTimePicked, setEndTimePicked] = useState(props.calEvent ? new Date(props.calEvent.end) : new Date());
+  const [datePicked, setDatePicked] = useState(null);
+  const [startTimePicked, setStartTimePicked] = useState(new Date());
+  const [endTimePicked, setEndTimePicked] = useState(new Date());
+  const [dayOfTheWeek, setDayOfTheWeek] = useState(null);
+  const [dayOfTheMonth, setdayOfTheMonth] = useState(null);
 
-  const pickerMode = useRef(nativePickerModeEnum.date);
   const updateValue = useRef(updateValueEnum.date);
 
   const showNativePicker = (valueToUpdate) => {
-    if (valueToUpdate === updateValueEnum.date) {
-      pickerMode.current = nativePickerModeEnum.date;
-      updateValue.current = updateValueEnum.date;
-    } else if (valueToUpdate === updateValueEnum.startTime) {
-      pickerMode.current = nativePickerModeEnum.time;
+    if (valueToUpdate === updateValueEnum.startTime) {
       updateValue.current = updateValueEnum.startTime;
     } else if (valueToUpdate === updateValueEnum.endTime) {
-      pickerMode.current = nativePickerModeEnum.time;
       updateValue.current = updateValueEnum.endTime;
     }
     setIsNativePickerVisibile(true);
@@ -85,60 +81,77 @@ function DateTimePicker(props) {
             && (
               <Text style={styles.titleText}>{props.modalTitleText}</Text>
             )}
-          <View style={styles.selectorRowContainer}>
-            <Text style={styles.dateTimePickerHeader}>
-              Date:
-            </Text>
-            <Text style={styles.dateTimePickerDateTime}>
-              {datePicked.toDateString()}
-            </Text>
-            <MaterialCommunityIcons
-              name="calendar-edit"
-              size={IconSize}
-              color={colors.plans.textOrIconOnWhite}
-              onPress={() => showNativePicker('date')}
-            />
-          </View>
-          {!props.dateOnly
+          {props.periodicity === 'weekly'
             && (
-              <>
-                <View style={styles.selectorRowContainer}>
-                  <Text style={styles.dateTimePickerHeader}>
-                    Start:
-                  </Text>
-                  <Text style={styles.dateTimePickerDateTime}>
-                    {zeroPadTime(startTimePicked.getHours())}:{zeroPadTime(startTimePicked.getMinutes())}
-                  </Text>
-                  <MaterialCommunityIcons
-                    name="clock-edit-outline"
-                    size={IconSize}
-                    color={colors.plans.textOrIconOnWhite}
-                    onPress={() => showNativePicker('startTime')}
-                  />
-                </View>
-                <View style={styles.selectorRowContainer}>
-                  <Text style={styles.dateTimePickerHeader}>
-                    End:
-                  </Text>
-                  <Text style={styles.dateTimePickerDateTime}>
-                    {zeroPadTime(endTimePicked.getHours())}:{zeroPadTime(endTimePicked.getMinutes())}
-                  </Text>
-                  <MaterialCommunityIcons
-                    name="clock-edit-outline"
-                    size={IconSize}
-                    color={colors.plans.textOrIconOnWhite}
-                    onPress={() => showNativePicker('endTime')}
-                  />
-                </View>
-              </>
+            <View style={styles.selectorRowContainer}>
+              <Text style={styles.dateTimePickerHeader}>
+                Day:
+              </Text>
+              <Text style={styles.dateTimePickerDateTime}>
+                {dayOfTheWeek}
+              </Text>
+              <MaterialCommunityIcons
+                name="more"
+                size={IconSize}
+                color={colors.plans.textOrIconOnWhite}
+                onPress={() => Alert.alert("weekday picker here")}
+              />
+            </View>
             )}
+          {props.periodicity === 'monthly'
+            && (
+            <View style={styles.selectorRowContainer}>
+              <Text style={styles.dateTimePickerHeader}>
+                Day of month:
+              </Text>
+              <Text style={styles.dateTimePickerDateTime}>
+                {dayOfTheMonth}
+              </Text>
+              <MaterialCommunityIcons
+                name="more"
+                size={IconSize}
+                color={colors.plans.textOrIconOnWhite}
+                onPress={() => Alert.alert("day of month picker here")}
+              />
+            </View>
+            )}
+          <>
+            <View style={styles.selectorRowContainer}>
+              <Text style={styles.dateTimePickerHeader}>
+                Start:
+              </Text>
+              <Text style={styles.dateTimePickerDateTime}>
+                {zeroPadTime(startTimePicked.getHours())}:{zeroPadTime(startTimePicked.getMinutes())}
+              </Text>
+              <MaterialCommunityIcons
+                name="clock-edit-outline"
+                size={IconSize}
+                color={colors.plans.textOrIconOnWhite}
+                onPress={() => showNativePicker('startTime')}
+              />
+            </View>
+            <View style={styles.selectorRowContainer}>
+              <Text style={styles.dateTimePickerHeader}>
+                End:
+              </Text>
+              <Text style={styles.dateTimePickerDateTime}>
+                {zeroPadTime(endTimePicked.getHours())}:{zeroPadTime(endTimePicked.getMinutes())}
+              </Text>
+              <MaterialCommunityIcons
+                name="clock-edit-outline"
+                size={IconSize}
+                color={colors.plans.textOrIconOnWhite}
+                onPress={() => showNativePicker('endTime')}
+              />
+            </View>
+          </>
           <View style={styles.buttonRow}>
             <Button title="Cancel" onPress={() => onClose(false)} />
             <Button title="Submit" onPress={() => onClose(true)} />
           </View>
           <DateTimePickerModal
             isVisible={isNativePickerVisible}
-            mode={pickerMode.current}
+            mode={nativePickerModeEnum.time}
             onConfirm={handleConfirm}
             onCancel={hideNativePicker}
           />
@@ -201,4 +214,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DateTimePicker;
+export default RepeaterCalEventDateTimePicker;

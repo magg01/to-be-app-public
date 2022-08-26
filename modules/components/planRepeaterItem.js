@@ -1,25 +1,56 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
   Text,
   View,
+  TextInput,
+  Alert,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
 import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 import { getPreviousPeriodReset } from '../utils/datetime';
-import { updateLastDoneDateTimeOnRepeaterByRepeaterId, deleteRepeaterByPlanId } from '../database/database';
+import DateTimePicker from './dateTimePicker';
+import { getEndOfDay } from '../utils/datetime';
+import {
+  updateLastDoneDateTimeOnRepeaterByRepeaterId,
+  deleteRepeaterByPlanId,
+  updatePlanDescriptionByPlanId,
+  updateEndDateTimeOnRepeaterByRepeaterId,
+} from '../database/database';
 import CONSTANT_STRINGS from '../strings/constantStrings';
+import RepeaterCalEventDateTimePicker from './repeaterCalEventDateTimePicker';
 
 const planLineContainerHeightCollapsed = 40;
+const planLineContainerHeightExpanded = planLineContainerHeightCollapsed * 6;
+const iconSize = 28;
 
 function PlanRepeaterItem({ item, onRepeaterModified }) {
   const [isDoneForNow, setIsDoneForNow] = useState(false);
+  const [showDetailView, setShowDetailView] = useState(false);
+  const [descriptionText, setDescriptionText] = useState('');
+  const [hasRepeatingCalEvent, setHasRepeatingCalEvent] = useState(false);
+  const [hasEndDate, setHasEndDate] = useState(false);
+  const [showEndDateDateTimePicker, setShowEndDateDateTimePicker] = useState(false);
+  const [showRepeatingCalEventDateTimePicker,
+    setShowRepeatingCalEventDateTimePicker] = useState(false);
+
+  useEffect(() => {
+    setHasRepeatingCalEvent(item.repeater_shouldshowincalendar);
+  }, [item]);
+
+  useEffect(() => {
+    setHasEndDate(item.repeater_enddate !== null);
+  }, [item]);
+
+  useEffect(() => {
+    setDescriptionText(item.plan_description);
+  }, [item]);
 
   useEffect(() => {
     // if the repeaterItem has no lastdonedatetime then it is not complete
@@ -77,13 +108,76 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
     }
   };
 
+  const updatePlanDetailText = () => {
+    updatePlanDescriptionByPlanId(item.plan_id, descriptionText);
+  };
+
+  const onRepeatCalendarIconPressed = () => {
+    if (hasRepeatingCalEvent) {
+      // confirmDeleteCalEvent(item.calevent_id);
+      Alert.alert("confirm delete here")
+    } else {
+      // add cal event
+      // setShowCalEventDateTimePicker(true);
+      setShowRepeatingCalEventDateTimePicker(true);
+    }
+  };
+
+  const getIconNameForRepeaterIcon = () => {
+    if (item.repeater_periodicity === 'daily') {
+      return 'calendar-month';
+    }
+    if (item.repeater_periodicity === 'weekly') {
+      return 'calendar-week';
+    }
+    if (item.repeater_periodicity === 'monthly') {
+      return 'calendar-today';
+    }
+  };
+
+  const onRepeaterIconPressed = () => {
+    deleteRepeaterByPlanId(item.plan_id)
+      .then(() => {
+        onRepeaterModified();
+      });
+  };
+
+  const onEndDatePressed = () => {
+    if (hasEndDate) {
+      updateEndDateTimeOnRepeaterByRepeaterId(item.repeater_id, null)
+        .then(() => {
+          onRepeaterModified();
+        });
+    } else {
+      setShowEndDateDateTimePicker(true);
+    }
+  };
+
+  const onUpdateEndDate = (date) => {
+    setShowEndDateDateTimePicker(false);
+    const endOfDay = getEndOfDay(date);
+    updateEndDateTimeOnRepeaterByRepeaterId(item.repeater_id, endOfDay.toISOString())
+      .then(() => {
+        onRepeaterModified();
+      });
+  };
+
+  const getModalTitleTextForRepeatingEventPicker = () => {
+    if (item.repeater_periodicity === 'daily') { return 'Choose the start and end time of your repeating event'; }
+    if (item.repeater_periodicity === 'weekly') { return 'Choose the day of the week and times for your repeating event'; }
+    if (item.repeater_periodicity === 'monthly') { return 'Choose the day of the month and times for your repeating event'; }
+  };
+
   return (
     // unfortunately the opacity based on state does not work on an animated view,
     // at least not on initial render, so we need this outer container to
     // dynamically set the opacity based on state from first render on.
     <View style={styles.opacityOverlay(isDoneForNow)}>
       <Animated.View
-        style={[styles.planLineContainer]}
+        style={[styles.planLineContainer,
+          showDetailView ? { height: planLineContainerHeightExpanded }
+            : { height: planLineContainerHeightCollapsed },
+        ]}
         entering={animations.plans.planItemForFlatList.entering}
         exiting={animations.plans.planItemForFlatList.exiting}
         layout={animations.plans.planItemForFlatList.layout}
@@ -97,19 +191,112 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
             onPress={updateIsDoneForNow}
             onLongPress={confirmDeleteThisRepeaterItem}
           >
+            <MaterialCommunityIcons
+              name={
+                isDoneForNow
+                  ? 'checkbox-marked-outline'
+                  : 'checkbox-blank-outline'
+              }
+              size={22}
+              color={colors.plans.textOrIconOnWhite}
+            />
             <Text style={styles.planLineTitleText(isDoneForNow)}>{item.plan_title}</Text>
           </TouchableOpacity>
-          <MaterialCommunityIcons
-            name={
-              isDoneForNow
-                ? 'checkbox-marked-circle-outline'
-                : 'checkbox-blank-circle-outline'
-            }
+          <MaterialIcons
+            name={showDetailView ? 'expand-less' : 'expand-more'}
             size={22}
             color={colors.plans.textOrIconOnWhite}
-            onPress={updateIsDoneForNow}
+            onPress={() => setShowDetailView(!showDetailView)}
           />
         </View>
+        {showDetailView
+          && (
+            <Animated.View
+              style={styles.planLineDetailContainer}
+              entering={animations.plans.planItemForFlatList.entering}
+              exiting={animations.plans.planItemForFlatList.exiting}
+            >
+              <TextInput
+                style={styles.descriptionTextInput}
+                placeholder={CONSTANT_STRINGS.PLANS.PLAN_DETAIL_PLACEHOLDER}
+                value={descriptionText}
+                onChangeText={setDescriptionText}
+                onEndEditing={updatePlanDetailText}
+                multiline
+                textAlignVertical="top"
+              />
+              <View
+                style={styles.detailIconsContainer}
+              >
+                <View style={styles.detailIconsLeft}>
+                  <MaterialCommunityIcons
+                    style={styles.repeaterIcon}
+                    name="calendar-refresh"
+                    size={iconSize}
+                    color={
+                      hasRepeatingCalEvent
+                        ? colors.plans.textOrIconOnWhite
+                        : colors.general.unactivatedIcon
+                    }
+                    onPress={onRepeatCalendarIconPressed}
+                  />
+                </View>
+                <View style={styles.detailIconsRight}>
+                  <Animated.View
+                    entering={animations.plans.planItemForFlatList.entering}
+                    exiting={animations.plans.planItemForFlatList.exiting}
+                    layout={animations.plans.planItemForFlatList.layout}
+                  >
+                    <MaterialCommunityIcons
+                      style={styles.repeaterIcon}
+                      name={getIconNameForRepeaterIcon()}
+                      size={iconSize}
+                      color={colors.plans.textOrIconOnWhite}
+                      onPress={onRepeaterIconPressed}
+                    />
+                  </Animated.View>
+                  <Animated.View
+                    entering={animations.plans.planItemForFlatList.entering}
+                    exiting={animations.plans.planItemForFlatList.exiting}
+                    layout={animations.plans.planItemForFlatList.layout}
+                  >
+                    <MaterialCommunityIcons
+                      style={styles.repeaterIcon}
+                      name="calendar-end"
+                      size={iconSize}
+                      color={
+                        hasEndDate
+                          ? colors.plans.textOrIconOnWhite
+                          : colors.plans.disabledIcon
+                        }
+                      onPress={() => onEndDatePressed()}
+                    />
+                  </Animated.View>
+                </View>
+              </View>
+            </Animated.View>
+          )}
+        {showEndDateDateTimePicker
+          && (
+            <DateTimePicker
+              modalTitleText={CONSTANT_STRINGS.PLANS.REPEATERS.SET_END_DATE_PROMPT}
+              dateOnly
+              onSubmit={
+                ({ date }) => onUpdateEndDate(date)
+              }
+              returnToScreenName="ViewToBeScreen"
+              onCancel={() => setShowEndDateDateTimePicker(false)}
+            />
+          )}
+        {showRepeatingCalEventDateTimePicker
+          && (
+            <RepeaterCalEventDateTimePicker
+              modalTitleText={getModalTitleTextForRepeatingEventPicker()}
+              periodicity={item.repeater_periodicity}
+              onSubmit={() => Alert.alert('have to set repeating cal event here')}
+              onCancel={() => setShowRepeatingCalEventDateTimePicker(false)}
+            />
+          )}
       </Animated.View>
     </View>
   );
@@ -138,6 +325,7 @@ const styles = StyleSheet.create({
   planLineHeader: {
     flex: 1,
     flexGrow: 1,
+    flexDirection: 'row',
   },
   planLineDetailContainer: {
     flex: 8,
@@ -151,9 +339,36 @@ const styles = StyleSheet.create({
   },
   planLineTitleText: (isDoneForNow) => ({
     fontSize: 16,
+    marginLeft: 6,
     color: colors.plans.textOrIconOnWhite,
     textDecorationLine: isDoneForNow ? 'line-through' : null,
   }),
+  descriptionTextInput: {
+    flex: 5,
+    borderRadius: 3,
+    borderWidth: 1,
+    borderColor: colors.plans.textOrIconOnWhite,
+    padding: 4,
+    marginVertical: 6,
+  },
+  detailIconsContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
+  },
+  detailIconsLeft: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  detailIconsRight: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  repeaterIcon: {
+    marginRight: 4,
+  },
 });
 
 export default PlanRepeaterItem;

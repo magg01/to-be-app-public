@@ -35,4 +35,14 @@ const zeroPadTime = (time) => {
   return time;
 };
 
-export { getPreviousPeriodReset, getEndOfDay, zeroPadTime };
+// takes an ISO datetime string
+// returns true if the datetime is after the current datetime
+// returns false if the datetime is equal to or earlier than the current datetime
+const hasEndDateElapsed = (ISODateTimeString) => {
+  // if there is no enddate for this item
+  if (ISODateTimeString === null) return false;
+  const endDate = new Date(ISODateTimeString);
+  return (endDate < new Date());
+};
+
+export { getPreviousPeriodReset, getEndOfDay, zeroPadTime, hasEndDateElapsed };
