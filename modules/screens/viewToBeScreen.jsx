@@ -65,7 +65,7 @@ function ViewToBeScreen({route, navigation}) {
     if (toBeId !== undefined) {
       db.getAllPlansWithRepeatersByToBeId(toBeId)
         .then((result) => {
-          setPlansWithRepeaters(result);
+          setPlansWithRepeaters(result.filter((item) => item.repeater_periodicity === null));
           // let through those repeaters that either have no end date
           // or their end date is not in the past
           setDailies(result.filter((item) => item.repeater_periodicity === 'daily' && !hasEndDateElapsed(item.repeater_enddate)));

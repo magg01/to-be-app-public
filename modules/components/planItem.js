@@ -1,6 +1,12 @@
 /* eslint-disable react/jsx-filename-extension */
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, TouchableOpacity, Text, TextInput, View, Alert } from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import Animated from 'react-native-reanimated';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePicker from './dateTimePicker';
@@ -11,6 +17,7 @@ import {
   updatePlanDescriptionByPlanId,
   deleteCalEventById,
   addCalEvent,
+  updatePlanDoneByPlanId,
 } from '../database/database';
 import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 import animations from '../utils/animations';
@@ -29,6 +36,7 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
   const [hasMonthly, setHasMonthly] = useState(false);
   const [hasEndDate, setHasEndDate] = useState(false);
   const [hasCalEvent, setHasCalEvent] = useState(false);
+  const [isDone, setIsDone] = useState(false);
   const [descriptionText, setDescriptionText] = useState('');
   const [showEndDateDateTimePicker, setShowEndDateDateTimePicker] = useState(false);
   const [showCalEventDateTimePicker, setShowCalEventDateTimePicker] = useState(false);
@@ -48,6 +56,10 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
 
   useEffect(() => {
     setDescriptionText(item.plan_description);
+  }, [item]);
+
+  useEffect(() => {
+    setIsDone(item.plan_done);
   }, [item]);
 
   useEffect(() => {
@@ -154,192 +166,224 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
     updatePlanDescriptionByPlanId(item.plan_id, descriptionText);
   };
 
+  const updatePlanDone = () => {
+    // this is necessary because state update is async and we can't trust content of isDone
+    // after a call to change it.
+    const isDoneWhenClicked = isDone;
+    // setting this before actually changing for better responsiveness. However, if the database
+    // update encounters an error the state could get out of sync with the database.
+    // TODO: protect against the above.
+    setIsDone(!isDone);
+    updatePlanDoneByPlanId(item.plan_id, !isDoneWhenClicked)
+      .then((updated) => {
+        if (updated) {
+          onRepeaterModified();
+        }
+      });
+  };
+
   return (
-    <Animated.View
-      style={[styles.planLineContainer,
-        showDetailView ? { height: planLineContainerHeightExpanded }
-          : { height: planLineContainerHeightCollapsed },
-      ]}
-      entering={animations.plans.planItemForFlatList.entering}
-      exiting={animations.plans.planItemForFlatList.exiting}
-      layout={animations.plans.planItemForFlatList.layout}
-    >
-      <View
-        style={styles.planLineHeaderContainer}
+    <View style={styles.opacityOverlay(isDone)}>
+      <Animated.View
+        style={[styles.planLineContainer,
+          showDetailView ? { height: planLineContainerHeightExpanded }
+            : { height: planLineContainerHeightCollapsed },
+        ]}
+        entering={animations.plans.planItemForFlatList.entering}
+        exiting={animations.plans.planItemForFlatList.exiting}
+        layout={animations.plans.planItemForFlatList.layout}
       >
-        <TouchableOpacity
-          style={styles.planLineHeader}
-          key={item.plan_id}
-          onPress={() => setShowDetailView(!showDetailView)}
-          onLongPress={() => confirmDeletePlan(item.plan_id)}
+        <View
+          style={styles.planLineHeaderContainer}
         >
-          <Text style={styles.planLineTitleText}>{item.plan_title}</Text>
-        </TouchableOpacity>
-        <MaterialIcons
-          name={showDetailView ? 'expand-less' : 'expand-more'}
-          size={22}
-          color={colors.plans.textOrIconOnWhite}
-          onPress={() => setShowDetailView(!showDetailView)}
-        />
-      </View>
-      {showDetailView
-        && (
-          <Animated.View
-            style={styles.planLineDetailContainer}
-            entering={animations.plans.planItemForFlatList.entering}
-            exiting={animations.plans.planItemForFlatList.exiting}
+          <TouchableOpacity
+            style={styles.planLineHeader}
+            key={item.plan_id}
+            onPress={() => {
+              updatePlanDone();
+            }}
+            onLongPress={() => confirmDeletePlan(item.plan_id)}
           >
-            <TextInput
-              style={styles.descriptionTextInput}
-              placeholder={CONSTANT_STRINGS.PLANS.PLAN_DETAIL_PLACEHOLDER}
-              value={descriptionText}
-              onChangeText={setDescriptionText}
-              onEndEditing={updatePlanDetailText}
-              multiline
-              textAlignVertical="top"
+            <MaterialCommunityIcons
+              name={
+                isDone
+                  ? 'checkbox-marked-circle-outline'
+                  : 'checkbox-blank-circle-outline'
+              }
+              size={22}
+              color={colors.plans.textOrIconOnWhite}
             />
-            <View
-              style={styles.detailIconsContainer}
+            <Text style={styles.planLineTitleText}>{item.plan_title}</Text>
+          </TouchableOpacity>
+          <MaterialIcons
+            name={showDetailView ? 'expand-less' : 'expand-more'}
+            size={22}
+            color={colors.plans.textOrIconOnWhite}
+            onPress={() => setShowDetailView(!showDetailView)}
+          />
+        </View>
+        {showDetailView
+          && (
+            <Animated.View
+              style={styles.planLineDetailContainer}
+              entering={animations.plans.planItemForFlatList.entering}
+              exiting={animations.plans.planItemForFlatList.exiting}
             >
-              <View style={styles.detailIconsLeft}>
-                <MaterialCommunityIcons
-                  style={styles.repeaterIcon}
-                  name={
-                    hasCalEvent
-                      ? 'calendar-minus'
-                      : 'calendar-plus'
-                  }
-                  size={iconSize}
-                  color={
-                    hasCalEvent
-                      ? colors.plans.textOrIconOnWhite
-                      : colors.general.unactivatedIcon
-                  }
-                  onPress={onCalendarPressed}
-                />
+              <TextInput
+                style={styles.descriptionTextInput}
+                placeholder={CONSTANT_STRINGS.PLANS.PLAN_DETAIL_PLACEHOLDER}
+                value={descriptionText}
+                onChangeText={setDescriptionText}
+                onEndEditing={updatePlanDetailText}
+                multiline
+                textAlignVertical="top"
+              />
+              <View
+                style={styles.detailIconsContainer}
+              >
+                <View style={styles.detailIconsLeft}>
+                  <MaterialCommunityIcons
+                    style={styles.repeaterIcon}
+                    name={
+                      hasCalEvent
+                        ? 'calendar-minus'
+                        : 'calendar-plus'
+                    }
+                    size={iconSize}
+                    color={
+                      hasCalEvent
+                        ? colors.plans.textOrIconOnWhite
+                        : colors.general.unactivatedIcon
+                    }
+                    onPress={onCalendarPressed}
+                  />
+                </View>
+                <View style={styles.detailIconsRight}>
+                  {(!hasWeekly && !hasMonthly)
+                    && (
+                      <Animated.View
+                        entering={animations.plans.planItemForFlatList.entering}
+                        exiting={animations.plans.planItemForFlatList.exiting}
+                        layout={animations.plans.planItemForFlatList.layout}
+                      >
+                        <MaterialCommunityIcons
+                          style={styles.repeaterIcon}
+                          name="calendar-month"
+                          size={iconSize}
+                          color={
+                            hasDaily
+                              ? colors.plans.textOrIconOnWhite
+                              : colors.general.unactivatedIcon
+                            }
+                          onPress={onDailyPressed}
+                        />
+                      </Animated.View>
+                    )}
+                  {(!hasDaily && !hasMonthly)
+                    && (
+                      <Animated.View
+                        entering={animations.plans.planItemForFlatList.entering}
+                        exiting={animations.plans.planItemForFlatList.exiting}
+                        layout={animations.plans.planItemForFlatList.layout}
+                      >
+                        <MaterialCommunityIcons
+                          style={styles.repeaterIcon}
+                          name="calendar-week"
+                          size={iconSize}
+                          color={
+                            hasWeekly
+                              ? colors.plans.textOrIconOnWhite
+                              : colors.general.unactivatedIcon
+                            }
+                          onPress={onWeeklyPressed}
+                        />
+                      </Animated.View>
+                    )}
+                  {(!hasDaily && !hasWeekly)
+                    && (
+                      <Animated.View
+                        entering={animations.plans.planItemForFlatList.entering}
+                        exiting={animations.plans.planItemForFlatList.exiting}
+                        layout={animations.plans.planItemForFlatList.layout}
+                      >
+                        <MaterialCommunityIcons
+                          style={styles.repeaterIcon}
+                          name="calendar-today"
+                          size={iconSize}
+                          color={
+                            hasMonthly
+                              ? colors.plans.textOrIconOnWhite
+                              : colors.general.unactivatedIcon
+                            }
+                          onPress={onMonthlyPressed}
+                        />
+                      </Animated.View>
+                    )}
+                  {(hasDaily || hasWeekly || hasMonthly)
+                    && (
+                      <Animated.View
+                        entering={animations.plans.planItemForFlatList.entering}
+                        exiting={animations.plans.planItemForFlatList.exiting}
+                        layout={animations.plans.planItemForFlatList.layout}
+                      >
+                        <MaterialCommunityIcons
+                          style={styles.repeaterIcon}
+                          name="calendar-end"
+                          size={iconSize}
+                          color={
+                            hasEndDate
+                              ? colors.plans.textOrIconOnWhite
+                              : colors.plans.disabledIcon
+                            }
+                          onPress={() => onEndDatePressed()}
+                        />
+                      </Animated.View>
+                    )}
+                </View>
               </View>
-              <View style={styles.detailIconsRight}>
-                {(!hasWeekly && !hasMonthly)
-                  && (
-                    <Animated.View
-                      entering={animations.plans.planItemForFlatList.entering}
-                      exiting={animations.plans.planItemForFlatList.exiting}
-                      layout={animations.plans.planItemForFlatList.layout}
-                    >
-                      <MaterialCommunityIcons
-                        style={styles.repeaterIcon}
-                        name="calendar-month"
-                        size={iconSize}
-                        color={
-                          hasDaily
-                            ? colors.plans.textOrIconOnWhite
-                            : colors.general.unactivatedIcon
-                          }
-                        onPress={onDailyPressed}
-                      />
-                    </Animated.View>
-                  )}
-                {(!hasDaily && !hasMonthly)
-                  && (
-                    <Animated.View
-                      entering={animations.plans.planItemForFlatList.entering}
-                      exiting={animations.plans.planItemForFlatList.exiting}
-                      layout={animations.plans.planItemForFlatList.layout}
-                    >
-                      <MaterialCommunityIcons
-                        style={styles.repeaterIcon}
-                        name="calendar-week"
-                        size={iconSize}
-                        color={
-                          hasWeekly
-                            ? colors.plans.textOrIconOnWhite
-                            : colors.general.unactivatedIcon
-                          }
-                        onPress={onWeeklyPressed}
-                      />
-                    </Animated.View>
-                  )}
-                {(!hasDaily && !hasWeekly)
-                  && (
-                    <Animated.View
-                      entering={animations.plans.planItemForFlatList.entering}
-                      exiting={animations.plans.planItemForFlatList.exiting}
-                      layout={animations.plans.planItemForFlatList.layout}
-                    >
-                      <MaterialCommunityIcons
-                        style={styles.repeaterIcon}
-                        name="calendar-today"
-                        size={iconSize}
-                        color={
-                          hasMonthly
-                            ? colors.plans.textOrIconOnWhite
-                            : colors.general.unactivatedIcon
-                          }
-                        onPress={onMonthlyPressed}
-                      />
-                    </Animated.View>
-                  )}
-                {(hasDaily || hasWeekly || hasMonthly)
-                  && (
-                    <Animated.View
-                      entering={animations.plans.planItemForFlatList.entering}
-                      exiting={animations.plans.planItemForFlatList.exiting}
-                      layout={animations.plans.planItemForFlatList.layout}
-                    >
-                      <MaterialCommunityIcons
-                        style={styles.repeaterIcon}
-                        name="calendar-end"
-                        size={iconSize}
-                        color={
-                          hasEndDate
-                            ? colors.plans.textOrIconOnWhite
-                            : colors.plans.disabledIcon
-                          }
-                        onPress={() => onEndDatePressed()}
-                      />
-                    </Animated.View>
-                  )}
-              </View>
-            </View>
-          </Animated.View>
-        )}
-      {showEndDateDateTimePicker
-        && (
-          <DateTimePicker
-            modalTitleText={CONSTANT_STRINGS.PLANS.REPEATERS.SET_END_DATE_PROMPT}
-            dateOnly
-            dateValue={endDate}
-            onSubmit={
-              ({ date }) => onUpdateEndDate(date)
-            }
-            returnToScreenName="ViewToBeScreen"
-            onCancel={() => setShowEndDateDateTimePicker(false)}
-          />
-        )}
-      {showCalEventDateTimePicker
-        && (
-          <DateTimePicker
-            modalTitleText={CONSTANT_STRINGS.PLANS.ADD_CAL_EVENT_DATETIMEPICKER_HEADER}
-            onSubmit={({ date, startTime, endTime }) => {
-              addCalEvent(
-                date.toISOString(),
-                startTime.toISOString(),
-                endTime.toISOString(),
-                item.plan_id,
-              );
-              setShowCalEventDateTimePicker(false);
-              onRepeaterModified();
-            }}
-            onCancel={() => {
-              setShowCalEventDateTimePicker(false);
-            }}
-          />
-        )}
-    </Animated.View>
+            </Animated.View>
+          )}
+        {showEndDateDateTimePicker
+          && (
+            <DateTimePicker
+              modalTitleText={CONSTANT_STRINGS.PLANS.REPEATERS.SET_END_DATE_PROMPT}
+              dateOnly
+              dateValue={endDate}
+              onSubmit={
+                ({ date }) => onUpdateEndDate(date)
+              }
+              returnToScreenName="ViewToBeScreen"
+              onCancel={() => setShowEndDateDateTimePicker(false)}
+            />
+          )}
+        {showCalEventDateTimePicker
+          && (
+            <DateTimePicker
+              modalTitleText={CONSTANT_STRINGS.PLANS.ADD_CAL_EVENT_DATETIMEPICKER_HEADER}
+              onSubmit={({ date, startTime, endTime }) => {
+                addCalEvent(
+                  date.toISOString(),
+                  startTime.toISOString(),
+                  endTime.toISOString(),
+                  item.plan_id,
+                );
+                setShowCalEventDateTimePicker(false);
+                onRepeaterModified();
+              }}
+              onCancel={() => {
+                setShowCalEventDateTimePicker(false);
+              }}
+            />
+          )}
+      </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  opacityOverlay: (isDone) => ({
+    opacity: isDone ? 0.3 : 1,
+  }),
   planLineContainer: {
     flex: 1,
     width: '100%',
@@ -358,6 +402,7 @@ const styles = StyleSheet.create({
   planLineHeader: {
     flex: 1,
     flexGrow: 1,
+    flexDirection: 'row',
   },
   planLineDetailContainer: {
     flex: 8,
@@ -381,6 +426,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   planLineTitleText: {
+    marginLeft: 6,
     fontSize: 16,
     color: colors.plans.textOrIconOnWhite,
   },

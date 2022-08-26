@@ -551,7 +551,7 @@ const getAllPlansWithRepeatersAndCalEventsByToBeId = (toBeId) => new Promise((re
   db.transaction(
     (tx) => {
       tx.executeSql(
-        'select plans.id as plan_id, plans.done as plan_done, plans.title as plan_title, plans.description as plan_description, plans.tobeitem as plan_tobeitem, repeaters.id as repeater_id, repeaters.lastdonedatetime as repeater_lastdonedatetime, repeaters.periodicity as repeater_periodicity, repeaters.enddate as repeater_enddate, repeaters.shouldshowincalendar as repeater_shouldshowincalendar, calevents.id as calevent_id from plans plans left join repeaters repeaters on plans.id=repeaters.plan left join calevents calevents on plans.id=calevents.planitem where plans.tobeitem = ?',
+        'select plans.id as plan_id, plans.done as plan_done, plans.title as plan_title, plans.description as plan_description, plans.tobeitem as plan_tobeitem, repeaters.id as repeater_id, repeaters.lastdonedatetime as repeater_lastdonedatetime, repeaters.periodicity as repeater_periodicity, repeaters.enddate as repeater_enddate, repeaters.shouldshowincalendar as repeater_shouldshowincalendar, calevents.id as calevent_id from plans plans left join repeaters repeaters on plans.id=repeaters.plan left join calevents calevents on plans.id=calevents.planitem where plans.tobeitem = ? order by plans.done, repeaters.lastdonedatetime',
         [toBeId],
         (_, { rows: { _array } }) => {
           console.log(`getAllPlansWithRepeatersAndCalEventsByToBeId: _array is ${JSON.stringify(_array, null, 1)}`);
@@ -644,6 +644,30 @@ const updatePlanDescriptionByPlanId = (planId, descriptionText) => new Promise((
   );
 });
 
+const updatePlanDoneByPlanId = (planId, isDone) => new Promise((resolve, reject) => {
+  db.transaction(
+    (tx) => {
+      tx.executeSql(
+        'update plans set done = ? where id = ?',
+        [isDone, planId],
+        (_, { rows: { _array } }) => {
+          console.log(`updatePlanDoneByPlanId: _array is ${JSON.stringify(_array, null, 1)}`);
+        },
+      );
+    },
+    // transaction failure callback
+    (e) => {
+      console.log(`updatePlanDoneByPlanId encountered an error -> ${e}`);
+      reject(false);
+    },
+    // transaction success callback
+    () => {
+      console.log(`updatePlanDoneByPlanId: done for plan id:${planId} successfully updated.`);
+      resolve(true);
+    },
+  );
+});
+
 export {
   deleteToBeItemById,
   addToBeItem,
@@ -671,4 +695,5 @@ export {
   updateEndDateTimeOnRepeaterByRepeaterId,
   updatePlanDescriptionByPlanId,
   deleteCalEventById,
+  updatePlanDoneByPlanId,
 };
