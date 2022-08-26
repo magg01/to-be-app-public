@@ -8,19 +8,45 @@ import { confirmRemoveNotification, cancelNotificationEvent, isScheduleNotificat
 import * as db from '../database/database';
 import { zeroPadTime } from '../utils/datetime';
 
+const eventTypeEnum = {
+  calEvent: 0,
+  repeater: 1,
+};
+
 function CalEventItem({ appointment }) {
+  const [calEventOrRepeater, setCalEventOrRepeater] = useState(undefined);
   const [calEventWithDetails, setCalEventWithDetails] = useState(undefined);
+  const [repeaterEventWithDetails, setRepeaterEventWithDetails] = useState(undefined);
   const [eventDisplayStartTime, setEventDisplayStartTime] = useState(null);
   const [eventDisplayEndTime, setEventDisplayEndTime] = useState(null);
   const [notificationModalVisible, setNotificationModalVisible] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      setCalEventWithDetails(
-        await db.getCalEventWithPlanDetailsByCalEventId(appointment.calEventId)
-      );
-    })();
-  }, [appointment.calEventId]);
+    if (appointment.calEventId !== null) {
+      setCalEventOrRepeater(eventTypeEnum.calEvent);
+    } else if (appointment.repeaterId !== null) {
+      setCalEventOrRepeater(eventTypeEnum.repeater);
+    }
+  }, [appointment.calEventId, appointment.repeaterId]);
+
+  useEffect(() => {
+    if (calEventOrRepeater !== undefined) {
+      if (calEventOrRepeater === eventTypeEnum.calEvent) {
+        (async () => {
+          setCalEventWithDetails(
+            await db.getCalEventWithPlanDetailsByCalEventId(appointment.calEventId),
+          );
+        })();
+      }
+      if (calEventOrRepeater === eventTypeEnum.repeater) {
+        (async () => {
+          setRepeaterEventWithDetails(
+            await db.getRepeaterEventWithPlanDetailsByRepeaterId(appointment.repeaterId),
+          );
+        })();
+      }
+    }
+  }, [appointment.calEventId, appointment.repeaterId, calEventOrRepeater]);
 
   useEffect(() => {
     if (calEventWithDetails !== undefined) {
@@ -31,6 +57,18 @@ function CalEventItem({ appointment }) {
     }
   }, [calEventWithDetails]);
 
+  useEffect(() => {
+    if (repeaterEventWithDetails !== undefined) {
+      const eventStartTimeDate = new Date(repeaterEventWithDetails.calstarttime);
+      const eventEndTimeDate = new Date(repeaterEventWithDetails.calendtime);
+      setEventDisplayStartTime(`${zeroPadTime(eventStartTimeDate.getHours())}:${zeroPadTime(eventStartTimeDate.getMinutes())}`);
+      setEventDisplayEndTime(`${zeroPadTime(eventEndTimeDate.getHours())}:${zeroPadTime(eventEndTimeDate.getMinutes())}`);
+    }
+  }, [repeaterEventWithDetails]);
+
+
+
+  //TODO: add conditions for repeater event type
   const onNotificationIconPressed = async () => {
     // check if the calevent already has a notification identifier
     if (calEventWithDetails.eventnotification != null) {
@@ -44,8 +82,7 @@ function CalEventItem({ appointment }) {
         // remove the identifier from the database
         await db.removeNotificationFromCalEvent(calEventWithDetails.id);
         setCalEventWithDetails(
-          // eslint-disable-next-line comma-dangle
-          await db.getCalEventWithPlanDetailsByCalEventId(appointment.calEventId)
+          await db.getCalEventWithPlanDetailsByCalEventId(appointment.calEventId),
         );
       // if no
       } else {
@@ -92,7 +129,7 @@ function CalEventItem({ appointment }) {
     setCalEventWithDetails(await db.getCalEventWithPlanDetailsByCalEventId(appointment.calEventId));
   };
 
-  if (calEventWithDetails === undefined) {
+  if (calEventWithDetails === undefined && repeaterEventWithDetails === undefined) {
     return (
       <View style={[styles.item, { height: appointment.height, flexDirection: 'row' }]}>
         <ActivityIndicator />
@@ -101,27 +138,54 @@ function CalEventItem({ appointment }) {
   }
   return (
     <View style={[styles.item, { height: appointment.height, flexDirection: 'row' }]}>
-      <TouchableOpacity
-        style={{ flexGrow: 1}}
-        onPress={() => Alert.alert(calEventWithDetails.plan_title)}
-      >
-        <Text style={styles.timing}>
-          {eventDisplayStartTime} - {eventDisplayEndTime}
-        </Text>
-        <Text style={styles.name}>{calEventWithDetails.plan_title}</Text>
-        <Text style={styles.type}>{`Be: ${calEventWithDetails.tobeitem_title}`}</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={{alignSelf: 'center', }} onPress={() => onNotificationIconPressed()}>
-        <Ionicons
-          name={
-            calEventWithDetails.eventnotification
-              ? 'notifications-outline'
-              : 'notifications-off-outline'
-          }
-          size={24}
-          color={calEventWithDetails.eventnotification ? 'black' : 'lightgrey'}
-        />
-      </TouchableOpacity>
+      {calEventWithDetails
+        && (
+          <>
+            <TouchableOpacity
+            style={{ flexGrow: 1 }}
+            onPress={() => Alert.alert(calEventWithDetails.plan_title)}
+            >
+              <Text style={styles.timing}>
+                {eventDisplayStartTime} - {eventDisplayEndTime}
+              </Text>
+              <Text style={styles.name}>{calEventWithDetails.plan_title}</Text>
+              <Text style={styles.type}>{`Be: ${calEventWithDetails.tobeitem_title}`}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ alignSelf: 'center', }} onPress={() => onNotificationIconPressed()}>
+              <Ionicons
+                name={calEventWithDetails.eventnotification
+                  ? 'notifications-outline'
+                  : 'notifications-off-outline'}
+                size={24}
+                color={calEventWithDetails.eventnotification ? 'black' : 'lightgrey'}
+              />
+            </TouchableOpacity>
+          </>
+        )}
+      {repeaterEventWithDetails
+        && (
+          <>
+            <TouchableOpacity
+              style={{ flexGrow: 1 }}
+              onPress={() => Alert.alert(repeaterEventWithDetails.plan_title)}
+            >
+              <Text style={styles.timing}>
+                {eventDisplayStartTime} - {eventDisplayEndTime}
+              </Text>
+              <Text style={styles.name}>{repeaterEventWithDetails.plan_title}</Text>
+              <Text style={styles.type}>{`Be: ${repeaterEventWithDetails.tobeitem_title}`}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={{ alignSelf: 'center', }} onPress={() => onNotificationIconPressed()}>
+              <Ionicons
+                name={repeaterEventWithDetails.notificationId
+                  ? 'notifications-outline'
+                  : 'notifications-off-outline'}
+                size={24}
+                color={repeaterEventWithDetails.notificationId ? 'black' : 'lightgrey'}
+              />
+            </TouchableOpacity>
+          </>
+        )}
       <Modal
         animationType="slide"
         transparent
@@ -136,7 +200,7 @@ function CalEventItem({ appointment }) {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text>
-              Add notification for{calEventWithDetails.plan_title}
+              Add notification for {(calEventWithDetails ?? repeaterEventWithDetails).plan_title}
             </Text>
             <Button
               title="30 minutes before"

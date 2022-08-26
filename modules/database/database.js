@@ -172,6 +172,27 @@ const getCalEventWithPlanDetailsByCalEventId = (calEventId) => new Promise((reso
   );
 });
 
+const getRepeaterEventWithPlanDetailsByRepeaterId = (repeaterId) => new Promise((resolve, reject) => {
+  let result;
+  db.readTransaction(
+    (tx) => {
+      tx.executeSql(
+        'SELECT R.id, R.calstarttime, R.calendtime, R.notificationId, P.title as plan_title, T.title as tobeitem_title, T.imageBackgroundUri from repeaters R left join plans P ON R.plan = P.id left join tobeitems T ON P.tobeitem = T.id where R.id = ?;',
+        [repeaterId],
+        (_, { rows: { _array } }) => {
+          console.log(`getRepeaterEventWithPlanDetailsByRepeaterId: _array is ${JSON.stringify(_array, null, 1)}`);
+          result = _array[0];
+        },
+      );
+    },
+    (e) => {
+      console.log(`getRepeaterEventWithPlanDetailsByRepeaterId encountered an error -> ${e}`);
+      reject(e);
+    },
+    () => resolve(result),
+  );
+});
+
 const getNextToBeItemIdById = (id) => new Promise((resolve, reject) => {
   let result;
   db.readTransaction(
@@ -692,6 +713,27 @@ const udpateRepeaterCalEvent = (repeaterId, startTime, endTime, dayOfTheWeek, da
   );
 });
 
+const getAllRepeatersWithCalEvents = () => new Promise((resolve, reject) => {
+  let result;
+  db.readTransaction(
+    (tx) => {
+      tx.executeSql(
+        'select * from repeaters where shouldshowincalendar = 1;',
+        [],
+        (_, { rows: { _array } }) => {
+          console.log(`getAllRepeatersWithCalEvents: _array is ${JSON.stringify(_array, null, 1)}`);
+          result = _array;
+        },
+      );
+    },
+    (e) => {
+      console.log(`getAllRepeatersWithCalEvents encountered an error -> ${e}`);
+      reject(e);
+    },
+    () => resolve(result),
+  );
+});
+
 export {
   deleteToBeItemById,
   addToBeItem,
@@ -709,6 +751,7 @@ export {
   addNotificationToCalEvent,
   removeNotificationFromCalEvent,
   getCalEventWithPlanDetailsByCalEventId,
+  getRepeaterEventWithPlanDetailsByRepeaterId,
   addRepeater,
   getRepeatersByToBeIdAndPeriodicity,
   getAllRepeatersByToBeId,
@@ -721,4 +764,5 @@ export {
   deleteCalEventById,
   updatePlanDoneByPlanId,
   udpateRepeaterCalEvent,
+  getAllRepeatersWithCalEvents,
 };
