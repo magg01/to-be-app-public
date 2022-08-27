@@ -34,6 +34,9 @@ function AgendaScreen() {
       for (let i = -10; i < 31; i += 1) {
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
         const strTime = timeToString(time);
+        const currentDay = new Date(time);
+        const dayOfWeek = currentDay.getDay();
+        const dayOfMonth = currentDay.getDate();
 
         if (!items[strTime]) {
           items[strTime] = [];
@@ -46,10 +49,12 @@ function AgendaScreen() {
             return dayOfAppointment === strTime;
           });
           const repeatersForDay = repeaterEvents.filter((item) => {
-            const daily = item.periodicity === 'daily';
-            const thisDayOfWeek = item.periodicity === 'weekly' && item.calday === new Date(time).getDay();
-            const thisDayOfMonth = item.periodicity === 'monthly' && item.caldate === new Date(time).getDate();
-            return daily || thisDayOfWeek || thisDayOfMonth;
+            const isDaily = item.periodicity === 'daily';
+            const isDayOfWeek = item.periodicity === 'weekly' && item.calday === dayOfWeek;
+            const isDayOfMonth = item.periodicity === 'monthly' && item.caldate === dayOfMonth;
+            const hasNoEndDate = item.enddate === null;
+            const hasNotReachedEndDate = new Date(item.enddate) >= currentDay;
+            return (isDaily || isDayOfWeek || isDayOfMonth) && (hasNotReachedEndDate || hasNoEndDate);
           });
           // console.log(`appointmentsForDay == ${JSON.stringify(appointmentsForDay, null, 1)}`);
           appointmentsForDay.forEach((appointment) => items[strTime].push(
