@@ -437,6 +437,22 @@ const removeNotificationFromCalEvent = (calEventId) => new Promise((resolve, rej
   );
 });
 
+const removeNotificationFromRepeaterByRepeaterId = (repeaterId) => new Promise((resolve, reject) => {
+  db.transaction(
+    (tx) => {
+      tx.executeSql('UPDATE repeaters set notificationId = null WHERE id = ?', [repeaterId]);
+    },
+    (e) => {
+      console.log(`removeNotificationFromRepeaterByRepeaterId encountered an error -> ${e}`);
+      reject(e);
+    },
+    () => {
+      console.log(`removeNotificationFromRepeaterByRepeaterId: calevent with id=${repeaterId} eventnotification successfully set to null`);
+      resolve(true);
+    },
+  );
+});
+
 const getAllPlansByToBeId = (id) => new Promise((resolve, reject) => {
   let result;
   db.transaction(
@@ -750,6 +766,7 @@ export {
   getCalEventNotificationByCalEventId,
   addNotificationToCalEvent,
   removeNotificationFromCalEvent,
+  removeNotificationFromRepeaterByRepeaterId,
   getCalEventWithPlanDetailsByCalEventId,
   getRepeaterEventWithPlanDetailsByRepeaterId,
   addRepeater,

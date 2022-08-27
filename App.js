@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { setNotificationHandler } from 'expo-notifications';
@@ -15,26 +16,25 @@ const Stack = createStackNavigator();
 // what to do with a notification that is received when the app is in foreground
 setNotificationHandler({
   handleNotification: async () => {
-    const permissionSettings = fetchPermissionSettings();
-    if (Platform.OS === 'ios'){
+    const permissionSettings = await fetchPermissionSettings();
+    if (Platform.OS === 'ios') {
       return {
         shouldShowAlert: permissionSettings.ios?.allowsAlert,
         shouldPlaySound: permissionSettings.ios?.allowsSound,
         shouldSetBadge: false,
         shouldShowAnnouncement: permissionSettings.ios?.allowsAnnouncements,
-      }
-    } else {
-      if (checkPermissionSettings(permissionSettings) === 'granted'){
-        return {
-          shouldShowAlert: true,
-          shouldPlaySound: true,
-          shouldSetBadge: false,
-          shouldShowAnnouncement: true,
-        }
-      }
+      };
     }
-  }
-})
+    if (checkPermissionSettings(permissionSettings) === 'granted') {
+      return {
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: false,
+        shouldShowAnnouncement: true,
+      };
+    }
+  },
+});
 
 // solution for setting title header in nested navigators from the docs
 // see: https://reactnavigation.org/docs/screen-options-resolution/
