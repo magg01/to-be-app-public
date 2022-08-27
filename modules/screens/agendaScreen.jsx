@@ -15,7 +15,7 @@ function AgendaScreen() {
     return date.toISOString().split('T')[0];
   };
 
-  const loadItemsForMonth = (day) => {
+  const loadItemsForMonth = useCallback((day) => {
     const items = {};
 
     setTimeout(async () => {
@@ -61,12 +61,12 @@ function AgendaScreen() {
       });
       setLoadedAppointments(newItems);
     }, 1000);
-  };
+  }, []);
 
   useFocusEffect(
     useCallback(() => {
       loadItemsForMonth({ timestamp: new Date().getTime() });
-    }, []),
+    }, [loadItemsForMonth]),
   );
 
   return (

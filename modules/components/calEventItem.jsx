@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-  StyleSheet, View, TouchableOpacity, Text, Alert, ActivityIndicator,
+  StyleSheet, View, TouchableOpacity, Text, Alert, ActivityIndicator, Platform,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { confirmRemoveNotification, cancelNotificationEvent, isScheduleNotificationAllowed } from '../utils/notifications';
@@ -99,6 +99,13 @@ function CalEventItem({ appointment }) {
   };
 
   const processRepeatingNotificationRequest = async () => {
+    if (repeaterEventWithDetails.periodicity === 'monthly' && Platform.OS === 'android') {
+      Alert.alert(
+        'We\'re sorry.',
+        'Unfortunately monthly repeating notifications are not currently supported on Android.',
+      );
+      return;
+    }
     // check if the repeating event already has a notification identifier
     if (repeaterEventWithDetails.notificationId != null) {
       console.log(`present notification with identifier: ${repeaterEventWithDetails.notificationId}`);
@@ -117,8 +124,8 @@ function CalEventItem({ appointment }) {
       } else {
         // do nothing
       }
-      // check permissions, has the user granted permissions to send notifications?
-      // if permissions granted
+    // check permissions, has the user granted permissions to send notifications?
+    // if permissions granted
     } else if (await isScheduleNotificationAllowed()) {
       // show modal
       setNotificationModalVisible(true);
@@ -203,6 +210,7 @@ function CalEventItem({ appointment }) {
         calEvent={calEventWithDetails}
         updateCalEvent={(calEvent) => setCalEventWithDetails(calEvent)}
         repeater={repeaterEventWithDetails}
+        updateRepeater={(repeater) => setRepeaterEventWithDetails(repeater)}
       />
     </View>
   );

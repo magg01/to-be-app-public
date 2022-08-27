@@ -1,17 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  StyleSheet, View, Text, Modal, Button, Pressable, TextInput, Alert,
+  StyleSheet, View, Text, Modal, Button, Pressable, TextInput, Alert, Platform,
 } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as db from '../database/database';
 import colors from '../utils/colors';
 
-function AddNotificationModal({isVisible, onRequestClose, onDismiss, calEvent, repeater, updateCalEvent}) {
+
+const MS_PER_MINUTE = 60000;
+
+function AddNotificationModal({isVisible, onRequestClose, onDismiss, calEvent, repeater, updateCalEvent, updateRepeater}) {
   const [minutesBeforeStartTime, setMinutesBeforeStartTime] = useState('0');
 
   const addOneOffNotificationMinBeforeStartTime = async (minutesPriorToStart) => {
     // TODO: change this to use SchedulableNotificationTriggerInput with a DateTriggerInput - https://docs.expo.dev/versions/v46.0.0/sdk/notifications/#datetriggerinput
-    const MS_PER_MINUTE = 60000;
     const notificationTime = new Date(new Date(calEvent.eventstarttime).getTime()
       - MS_PER_MINUTE * minutesPriorToStart).getTime();
     const secondsToNotificationTime = Math.floor(
@@ -33,10 +35,71 @@ function AddNotificationModal({isVisible, onRequestClose, onDismiss, calEvent, r
   };
 
   const addRepeatingNotificationMinutesBeforeStartTime = async (minutesPriorToStart) => {
-    Alert.alert('add repeating notif here');
+    // Alert.alert('add repeating notif here');
+    const notificationTime = new Date(new Date(repeater.calstarttime).getTime()
+      - MS_PER_MINUTE * minutesPriorToStart);
+
+    let repeatingNotificationTrigger;
+    if (Platform.OS === 'ios') {
+      // ios repeating notification
+      if (repeater.calday) {
+        // weekly repeater
+        repeatingNotificationTrigger = {
+          repeats: true,
+          hour: notificationTime.getHours(),
+          minute: notificationTime.getMinutes(),
+          second: 0,
+          weekday: repeater.calday + 1,
+        };
+      } else if (repeater.caldate) {
+        // monthly repeater
+        repeatingNotificationTrigger = {
+          repeats: true,
+          hour: notificationTime.getHours(),
+          minute: notificationTime.getMinutes(),
+          second: 0,
+          day: repeater.caldate,
+        };
+      } else {
+        // daily repeater
+        repeatingNotificationTrigger = {
+          repeats: true,
+          hour: notificationTime.getHours(),
+          minute: notificationTime.getMinutes(),
+          second: 0,
+        };
+      }
+    // android repeating notification
+    } else if (repeater.calday) {
+      // weekly repeating
+      repeatingNotificationTrigger = {
+        repeats: true,
+        weekday: repeater.calday + 1,
+        hour: notificationTime.getHours(),
+        minute: notificationTime.getMinutes(),
+      };
+    } else if (repeater.caldate) {
+      // this shouldn't occur on Android and is handeled in CalEventItem component
+    } else {
+      // daily repeater
+      repeatingNotificationTrigger = {
+        repeats: true,
+        hour: notificationTime.getHours(),
+        minute: notificationTime.getMinutes(),
+      };
+    }
+    const notificationID = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `Be: ${repeater.tobeitem_title}`,
+        body: repeater.plan_title,
+      },
+      trigger: repeatingNotificationTrigger,
+    });
+    db.addNotificationToRepeater(repeater.id, notificationID);
+    updateRepeater(await db.getRepeaterEventWithPlanDetailsByRepeaterId(repeater.id));
   };
 
-  const addNotificationMinBeforeStartTime = () => {
+  const addNotification = () => {
     if (calEvent) {
       addOneOffNotificationMinBeforeStartTime(minutesBeforeStartTime);
     }
@@ -47,7 +110,7 @@ function AddNotificationModal({isVisible, onRequestClose, onDismiss, calEvent, r
 
   const onClose = (shouldSetNotification) => {
     if (shouldSetNotification) {
-      addNotificationMinBeforeStartTime(minutesBeforeStartTime);
+      addNotification();
       onDismiss();
     } else {
       onDismiss();

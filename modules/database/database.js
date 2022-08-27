@@ -177,7 +177,7 @@ const getRepeaterEventWithPlanDetailsByRepeaterId = (repeaterId) => new Promise(
   db.readTransaction(
     (tx) => {
       tx.executeSql(
-        'SELECT R.id, R.calstarttime, R.calendtime, R.notificationId, P.title as plan_title, T.title as tobeitem_title, T.imageBackgroundUri from repeaters R left join plans P ON R.plan = P.id left join tobeitems T ON P.tobeitem = T.id where R.id = ?;',
+        'SELECT R.id, R.periodicity, R.calstarttime, R.calendtime, R.calday, R.caldate, R.notificationId, P.title as plan_title, T.title as tobeitem_title, T.imageBackgroundUri from repeaters R left join plans P ON R.plan = P.id left join tobeitems T ON P.tobeitem = T.id where R.id = ?;',
         [repeaterId],
         (_, { rows: { _array } }) => {
           console.log(`getRepeaterEventWithPlanDetailsByRepeaterId: _array is ${JSON.stringify(_array, null, 1)}`);
@@ -416,6 +416,26 @@ const addNotificationToCalEvent = (calEventId, notificationIdentifier) => new Pr
     },
     () => {
       console.log(`addNotificationToCalEvent: notification with identifier ${notificationIdentifier} successfully added to calevent with id=${calEventId}`);
+      resolve(result);
+    },
+  );
+});
+
+const addNotificationToRepeater = (repeaterId, notificationIdentifier) => new Promise((resolve, reject) => {
+  let result;
+  db.transaction(
+    (tx) => {
+      tx.executeSql(
+        'UPDATE repeaters set notificationid = ? WHERE id = ?',
+        [notificationIdentifier, repeaterId],
+      );
+    },
+    (e) => {
+      console.log(`addNotificationToRepeater encountered an error -> ${e}`);
+      reject(e);
+    },
+    () => {
+      console.log(`addNotificationToRepeater: notification with identifier ${notificationIdentifier} successfully added to calevent with id=${repeaterId}`);
       resolve(result);
     },
   );
@@ -766,6 +786,7 @@ export {
   getCalEventNotificationByCalEventId,
   addNotificationToCalEvent,
   removeNotificationFromCalEvent,
+  addNotificationToRepeater,
   removeNotificationFromRepeaterByRepeaterId,
   getCalEventWithPlanDetailsByCalEventId,
   getRepeaterEventWithPlanDetailsByRepeaterId,
