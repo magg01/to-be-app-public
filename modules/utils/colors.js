@@ -12,6 +12,9 @@ const colors = {
     defaultBlack: '#000000',
     unactivatedIcon: 'lightgrey',
   },
+  modals: {
+    outerColorOpacity: 'rgba(40,40,40,0.8)',
+  },
 };
 
 export default colors;

@@ -45,4 +45,12 @@ const hasEndDateElapsed = (ISODateTimeString) => {
   return (endDate < new Date());
 };
 
-export { getPreviousPeriodReset, getEndOfDay, zeroPadTime, hasEndDateElapsed };
+const MS_PER_MINUTE = 60000;
+
+export {
+  getPreviousPeriodReset,
+  getEndOfDay,
+  zeroPadTime,
+  hasEndDateElapsed,
+  MS_PER_MINUTE,
+};

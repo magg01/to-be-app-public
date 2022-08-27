@@ -1,216 +1,226 @@
 import React, { useState, useEffect } from 'react';
 import {
-  StyleSheet, View, TouchableOpacity, Text, Alert, ActivityIndicator, Platform,
+  StyleSheet, View, TouchableOpacity, Text, Alert, Platform,
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import * as Notifications from 'expo-notifications';
 import { confirmRemoveNotification, cancelNotificationEvent, isScheduleNotificationAllowed } from '../utils/notifications';
 import * as db from '../database/database';
-import { zeroPadTime } from '../utils/datetime';
 import AddNotificationModal from './addNotificationModal';
+import { zeroPadTime, MS_PER_MINUTE } from '../utils/datetime';
 import colors from '../utils/colors';
+import { calEventTypeEnum } from '../utils/enums';
 
-const eventTypeEnum = {
-  calEvent: 0,
-  repeater: 1,
-};
-
-function CalEventItem({ appointment }) {
-  const [calEventOrRepeater, setCalEventOrRepeater] = useState(undefined);
-  const [calEventWithDetails, setCalEventWithDetails] = useState(undefined);
-  const [repeaterEventWithDetails, setRepeaterEventWithDetails] = useState(undefined);
+function CalEventItem({ eventItem, onEventModified }) {
   const [eventDisplayStartTime, setEventDisplayStartTime] = useState(null);
   const [eventDisplayEndTime, setEventDisplayEndTime] = useState(null);
   const [notificationModalVisible, setNotificationModalVisible] = useState(false);
+  const [hasNotification, setHasNotification] = useState();
 
   useEffect(() => {
-    if (appointment.calEventId !== null) {
-      setCalEventOrRepeater(eventTypeEnum.calEvent);
-    } else if (appointment.repeaterId !== null) {
-      setCalEventOrRepeater(eventTypeEnum.repeater);
-    }
-  }, [appointment.calEventId, appointment.repeaterId]);
+    setHasNotification(eventItem.notificationId);
+  }, [eventItem.notificationId]);
 
   useEffect(() => {
-    if (calEventOrRepeater !== undefined) {
-      if (calEventOrRepeater === eventTypeEnum.calEvent) {
-        (async () => {
-          setCalEventWithDetails(
-            await db.getCalEventWithPlanDetailsByCalEventId(appointment.calEventId),
-          );
-        })();
-      }
-      if (calEventOrRepeater === eventTypeEnum.repeater) {
-        (async () => {
-          setRepeaterEventWithDetails(
-            await db.getRepeaterEventWithPlanDetailsByRepeaterId(appointment.repeaterId),
-          );
-        })();
-      }
-    }
-  }, [appointment.calEventId, appointment.repeaterId, calEventOrRepeater]);
+    const eventStartTimeDate = new Date(eventItem.startTime);
+    const eventEndTimeDate = new Date(eventItem.endTime);
+    setEventDisplayStartTime(`${zeroPadTime(eventStartTimeDate.getHours())}:${zeroPadTime(eventStartTimeDate.getMinutes())}`);
+    setEventDisplayEndTime(`${zeroPadTime(eventEndTimeDate.getHours())}:${zeroPadTime(eventEndTimeDate.getMinutes())}`);
+  }, [eventItem.startTime, eventItem.endTime]);
 
-  useEffect(() => {
-    if (calEventWithDetails !== undefined) {
-      const eventStartTimeDate = new Date(calEventWithDetails.eventstarttime);
-      const eventEndTimeDate = new Date(calEventWithDetails.eventendtime);
-      setEventDisplayStartTime(`${zeroPadTime(eventStartTimeDate.getHours())}:${zeroPadTime(eventStartTimeDate.getMinutes())}`);
-      setEventDisplayEndTime(`${zeroPadTime(eventEndTimeDate.getHours())}:${zeroPadTime(eventEndTimeDate.getMinutes())}`);
-    }
-  }, [calEventWithDetails]);
-
-  useEffect(() => {
-    if (repeaterEventWithDetails !== undefined) {
-      const eventStartTimeDate = new Date(repeaterEventWithDetails.calstarttime);
-      const eventEndTimeDate = new Date(repeaterEventWithDetails.calendtime);
-      setEventDisplayStartTime(`${zeroPadTime(eventStartTimeDate.getHours())}:${zeroPadTime(eventStartTimeDate.getMinutes())}`);
-      setEventDisplayEndTime(`${zeroPadTime(eventEndTimeDate.getHours())}:${zeroPadTime(eventEndTimeDate.getMinutes())}`);
-    }
-  }, [repeaterEventWithDetails]);
-
-  const processOneOffNotificationRequest = async () => {
-    // check if the calevent already has a notification identifier
-    if (calEventWithDetails.eventnotification != null) {
-      console.log(`present notification with identifier: ${calEventWithDetails.eventnotification}`);
-      // ask if the currently set notification should be removed
-      const shouldRemove = await confirmRemoveNotification();
-      // if yes
-      if (shouldRemove) {
-        // delete the scheduled notification
-        cancelNotificationEvent(calEventWithDetails.eventnotification);
-        // remove the identifier from the database
-        await db.removeNotificationFromCalEvent(calEventWithDetails.id);
-        setCalEventWithDetails(
-          await db.getCalEventWithPlanDetailsByCalEventId(appointment.calEventId),
-        );
-      // if no
-      } else {
-        // do nothing
-      }
-      // check permissions, has the user granted permissions to send notifications?
-      // if permissions granted
-    } else if (await isScheduleNotificationAllowed()) {
-      // show modal
-      setNotificationModalVisible(true);
-      // if permissions denied
-    } else {
-      // inform the user to update permissions if they want to use notifications
-      Alert.alert('Notifications not allowed', 'You or your device settings have not allowed notifications to be scheduled. If you want to use the notification feature please enable notifications for this app in your device settings.');
-    }
+  const displayAndroidMonthlyNotificationUnsupportedAlert = () => {
+    Alert.alert(
+      'We\'re sorry.',
+      'Unfortunately monthly repeating notifications are not currently supported on Android.',
+    );
   };
 
-  const processRepeatingNotificationRequest = async () => {
-    if (repeaterEventWithDetails.periodicity === 'monthly' && Platform.OS === 'android') {
-      Alert.alert(
-        'We\'re sorry.',
-        'Unfortunately monthly repeating notifications are not currently supported on Android.',
-      );
-      return;
-    }
-    // check if the repeating event already has a notification identifier
-    if (repeaterEventWithDetails.notificationId != null) {
-      console.log(`present notification with identifier: ${repeaterEventWithDetails.notificationId}`);
-      // ask if the currently set notification should be removed
-      const shouldRemove = await confirmRemoveNotification();
-      // if yes
-      if (shouldRemove) {
-        // delete the scheduled notification
-        cancelNotificationEvent(repeaterEventWithDetails.notificationId);
-        // remove the identifier from the database
-        await db.removeNotificationFromRepeaterByRepeaterId(repeaterEventWithDetails.id);
-        setRepeaterEventWithDetails(
-          await db.getRepeaterEventWithPlanDetailsByRepeaterId(appointment.repeaterId),
-        );
-      // if no
-      } else {
-        // do nothing
-      }
+  const checkNotificationsPermissions = async () => {
     // check permissions, has the user granted permissions to send notifications?
     // if permissions granted
-    } else if (await isScheduleNotificationAllowed()) {
-      // show modal
-      setNotificationModalVisible(true);
-      // if permissions denied
+    if (await isScheduleNotificationAllowed()) {
+      return true;
+    }
+    // if permissions denied
+    // inform the user to update permissions if they want to use notifications
+    Alert.alert('Notifications not allowed', 'You or your device settings have not allowed notifications to be scheduled. If you want to use the notification feature please enable notifications for this app in your device settings.');
+    return false;
+  };
+
+  const unscheduleAndRemoveNotification = () => {
+    // delete the scheduled notification
+    cancelNotificationEvent(eventItem.notificationId);
+    // remove the identifier from the database
+    if (eventItem.type === calEventTypeEnum.singleEvent) {
+      db.removeNotificationFromCalEvent(eventItem.id);
+    } else if (eventItem.type === calEventTypeEnum.repeaterEvent) {
+      db.removeNotificationFromRepeaterByRepeaterId(eventItem.id);
+    }
+  };
+
+  const onNotificationIconPressed = async () => {
+    // check if user is trying to add a monthly repeating notification on Android (unsupported)
+    if (eventItem.periodicity === 'monthly' && Platform.OS === 'android') {
+      displayAndroidMonthlyNotificationUnsupportedAlert();
+      return;
+    }
+    // check if there is already a notification present
+    if (hasNotification) {
+      // check with user before removing the notification
+      const shouldRemove = await confirmRemoveNotification();
+      if (shouldRemove) {
+        unscheduleAndRemoveNotification();
+        setHasNotification(false);
+        onEventModified();
+      }
     } else {
-      // inform the user to update permissions if they want to use notifications
-      Alert.alert('Notifications not allowed', 'You or your device settings have not allowed notifications to be scheduled. If you want to use the notification feature please enable notifications for this app in your device settings.');
+      // check permissions and show modal on granted.
+      const notificationsAllowed = checkNotificationsPermissions();
+      if (notificationsAllowed) {
+        // show the modal to get user input
+        setNotificationModalVisible(true);
+      }
     }
   };
 
-  const onNotificationIconPressed = (event) => {
-    // check if this is calEvent or repeaterEvent
-    if (event === 'calEvent') {
-      processOneOffNotificationRequest();
+  const onNotificationScheduled = async (notificationId) => {
+    if (eventItem.type === calEventTypeEnum.singleEvent) {
+      setHasNotification(true);
+      await db.addNotificationToCalEvent(eventItem.id, notificationId);
+      onEventModified();
     }
-    if (event === 'repeaterEvent') {
-      processRepeatingNotificationRequest();
+    if (eventItem.type === calEventTypeEnum.repeaterEvent) {
+      setHasNotification(true);
+      await db.addNotificationToRepeater(eventItem.id, notificationId);
+      onEventModified();
     }
   };
 
-  if (calEventWithDetails === undefined && repeaterEventWithDetails === undefined) {
-    return (
-      <View style={[styles.item, { height: appointment.height, flexDirection: 'row' }]}>
-        <ActivityIndicator />
-      </View>
+  const addOneOffNotificationMinBeforeStartTime = async (minutesPriorToStart) => {
+    // TODO: change this to use SchedulableNotificationTriggerInput with a DateTriggerInput - https://docs.expo.dev/versions/v46.0.0/sdk/notifications/#datetriggerinput
+    const notificationTime = new Date(new Date(eventItem.startTime).getTime()
+      - MS_PER_MINUTE * minutesPriorToStart).getTime();
+    const secondsToNotificationTime = Math.floor(
+      // eslint-disable-next-line comma-dangle
+      Math.abs((new Date().getTime() - notificationTime) / 1000)
     );
-  }
+
+    const notificationID = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `Be: ${eventItem.toBeTitle}`,
+        body: `${eventItem.planTitle} - ${eventDisplayStartTime}`,
+      },
+      trigger: {
+        seconds: secondsToNotificationTime,
+      },
+    });
+    onNotificationScheduled(notificationID);
+  };
+
+  const addRepeatingNotificationMinutesBeforeStartTime = async (minutesPriorToStart) => {
+    // Alert.alert('add repeating notif here');
+    const notificationTime = new Date(new Date(eventItem.startTime).getTime()
+      - MS_PER_MINUTE * minutesPriorToStart);
+
+    let repeatingNotificationTrigger;
+    if (Platform.OS === 'ios') {
+      // ios repeating notification
+      if (eventItem.calday) {
+        // weekly repeater
+        repeatingNotificationTrigger = {
+          repeats: true,
+          hour: notificationTime.getHours(),
+          minute: notificationTime.getMinutes(),
+          second: 0,
+          weekday: eventItem.calday + 1,
+        };
+      } else if (eventItem.caldate) {
+        // monthly repeater
+        repeatingNotificationTrigger = {
+          repeats: true,
+          hour: notificationTime.getHours(),
+          minute: notificationTime.getMinutes(),
+          second: 0,
+          day: eventItem.caldate,
+        };
+      } else {
+        // daily repeater
+        repeatingNotificationTrigger = {
+          repeats: true,
+          hour: notificationTime.getHours(),
+          minute: notificationTime.getMinutes(),
+          second: 0,
+        };
+      }
+    // android repeating notification
+    } else if (eventItem.calday) {
+      // weekly repeating
+      repeatingNotificationTrigger = {
+        repeats: true,
+        weekday: eventItem.calday + 1,
+        hour: notificationTime.getHours(),
+        minute: notificationTime.getMinutes(),
+      };
+    } else if (eventItem.caldate) {
+      // this shouldn't occur on Android and is handeled in CalEventItem component
+    } else {
+      // daily repeater
+      repeatingNotificationTrigger = {
+        repeats: true,
+        hour: notificationTime.getHours(),
+        minute: notificationTime.getMinutes(),
+      };
+    }
+    const notificationID = await Notifications.scheduleNotificationAsync({
+      content: {
+        title: `Be: ${eventItem.toBeTitle}`,
+        body: `${eventItem.planTitle} - ${eventDisplayStartTime}`,
+      },
+      trigger: repeatingNotificationTrigger,
+    });
+    onNotificationScheduled(notificationID);
+  };
+
+  const addNotification = (minutesBeforeStartTime) => {
+    if (eventItem.type === calEventTypeEnum.singleEvent) {
+      addOneOffNotificationMinBeforeStartTime(minutesBeforeStartTime);
+    }
+    if (eventItem.type === calEventTypeEnum.repeaterEvent) {
+      addRepeatingNotificationMinutesBeforeStartTime(minutesBeforeStartTime);
+    }
+  };
+
   return (
-    <View style={[styles.item, { height: appointment.height, flexDirection: 'row' }]}>
-      {calEventWithDetails
-        && (
-          <>
-            <TouchableOpacity
-            style={{ flexGrow: 1 }}
-            onPress={() => Alert.alert(calEventWithDetails.plan_title)}
-            >
-              <Text style={styles.timing}>
-                {eventDisplayStartTime} - {eventDisplayEndTime}
-              </Text>
-              <Text style={styles.name}>{calEventWithDetails.plan_title}</Text>
-              <Text style={styles.type}>{`Be: ${calEventWithDetails.tobeitem_title}`}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ alignSelf: 'center', }} onPress={() => onNotificationIconPressed('calEvent')}>
-              <Ionicons
-                name={calEventWithDetails.eventnotification
-                  ? 'notifications-outline'
-                  : 'notifications-off-outline'}
-                size={24}
-                color={calEventWithDetails.eventnotification ? 'black' : 'lightgrey'}
-              />
-            </TouchableOpacity>
-          </>
-        )}
-      {repeaterEventWithDetails
-        && (
-          <>
-            <TouchableOpacity
-              style={{ flexGrow: 1 }}
-              onPress={() => Alert.alert(repeaterEventWithDetails.plan_title)}
-            >
-              <Text style={styles.timing}>
-                {eventDisplayStartTime} - {eventDisplayEndTime}
-              </Text>
-              <Text style={styles.name}>{repeaterEventWithDetails.plan_title}</Text>
-              <Text style={styles.type}>{`Be: ${repeaterEventWithDetails.tobeitem_title}`}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ alignSelf: 'center', }} onPress={() => onNotificationIconPressed('repeaterEvent')}>
-              <Ionicons
-                name={repeaterEventWithDetails.notificationId
-                  ? 'notifications-outline'
-                  : 'notifications-off-outline'}
-                size={24}
-                color={repeaterEventWithDetails.notificationId ? 'black' : 'lightgrey'}
-              />
-            </TouchableOpacity>
-          </>
-        )}
+    <View style={[styles.item, { height: eventItem.height, flexDirection: 'row' }]}>
+      <TouchableOpacity
+        style={{ flexGrow: 1 }}
+        onPress={() => Alert.alert(eventItem.plan_title)}
+      >
+        <Text style={styles.timing}>
+          {`${eventDisplayStartTime} - ${eventDisplayEndTime}`}
+        </Text>
+        <Text style={styles.name}>{eventItem.planTitle}</Text>
+        <Text style={styles.type}>{`Be: ${eventItem.toBeTitle}`}</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={{ alignSelf: 'center', }} onPress={() => onNotificationIconPressed()}>
+        <Ionicons
+          name={hasNotification
+            ? 'notifications-outline'
+            : 'notifications-off-outline'}
+          size={24}
+          color={hasNotification
+            ? colors.plans.textOrIconOnWhite
+            : colors.plans.disabledIcon}
+        />
+      </TouchableOpacity>
       <AddNotificationModal
         isVisible={notificationModalVisible}
         onRequestClose={() => setNotificationModalVisible(false)}
         onDismiss={() => setNotificationModalVisible(false)}
-        calEvent={calEventWithDetails}
-        updateCalEvent={(calEvent) => setCalEventWithDetails(calEvent)}
-        repeater={repeaterEventWithDetails}
-        updateRepeater={(repeater) => setRepeaterEventWithDetails(repeater)}
+        eventItem={eventItem}
+        onShouldSetNotification={
+          (minutesBeforeStartTime) => addNotification(minutesBeforeStartTime)
+        }
       />
     </View>
   );
