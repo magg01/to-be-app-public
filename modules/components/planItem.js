@@ -178,17 +178,17 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
   };
 
   const updatePlanDone = () => {
-    // this is necessary because state update is async and we can't trust content of isDone
-    // after a call to change it.
+    // copying to a local variable is necessary because state update is async
+    // and we can't trust content of isDone after a call to change it.
     const isDoneWhenClicked = isDone;
-    // setting this before actually changing for better responsiveness. However, if the database
-    // update encounters an error the state could get out of sync with the database.
-    // TODO: protect against the above.
-    setIsDone(!isDone);
+    // setting state change before actually changing in database for better responsiveness.
+    setIsDone(!isDoneWhenClicked);
     updatePlanDoneByPlanId(item.plan_id, !isDoneWhenClicked)
       .then((updated) => {
         if (updated) {
           onRepeaterModified();
+        } else {
+          setIsDone(isDoneWhenClicked);
         }
       });
   };
