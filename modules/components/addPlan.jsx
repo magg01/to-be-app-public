@@ -1,82 +1,86 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import Animated from 'react-native-reanimated';
 import {
-  StyleSheet, Text, TextInput, Alert, TouchableOpacity,
+  StyleSheet, Text, TextInput, Alert, TouchableOpacity, View,
 } from 'react-native';
 import * as db from '../database/database';
-import DateTimePicker from './dateTimePicker';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 
-function AddPlan(props) {
-  const toBeId = useRef(props.toBeId);
+function AddPlan({ toBeId, onAdd, toBeItemTitle, tintColor }) {
   const [newPlanTitle, setNewPlanTitle] = useState('');
-  const [showDateTimePicker, setShowDateTimePicker] = useState(false);
-  const calEvent = useRef(null);
 
   const addPlan = () => {
-    db.addPlan(newPlanTitle, toBeId.current, calEvent.current)
+    db.addPlan(newPlanTitle, toBeId)
       .then((success) => {
         if (success) {
-          props.onAdd();
+          onAdd();
         } else {
-          Alert.alert("Unable to add a new plan at this time.");
+          Alert.alert('Unable to add a new plan at this time.');
         }
       });
   };
 
-  const onDateTimeChange = (eventDate, eventStartTime, eventEndTime) => {
-    calEvent.current = {
-      date: eventDate.toISOString(),
-      start: eventStartTime.toISOString(),
-      end: eventEndTime.toISOString(),
-    };
-    setShowDateTimePicker(false);
-  };
-
   return (
-    <Animated.View
-      style={styles.container}
-      entering={animations.addPlan.addPlanView.entering}
-      exiting={animations.addPlan.addPlanView.exiting}
-    >
-      <Text style={styles.questionText(props.tintColor)}>
-        {CONSTANT_STRINGS.PLANS.ADD_PLAN.PROMPT_TEXT(props.toBeItemTitle.toLowerCase())}
-      </Text>
-      <TextInput style={styles.input(props.tintColor)} onChangeText={(text) => setNewPlanTitle(text)} />
-      <TouchableOpacity style={styles.addButton} onPress={addPlan}>
-        <Text>Add</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.addButton} onPress={() => setShowDateTimePicker(true)}>
-        <Text>Cal</Text>
-      </TouchableOpacity>
-      {showDateTimePicker
-        && (
-        <DateTimePicker
-          modalTitleText={CONSTANT_STRINGS.PLANS.ADD_CAL_EVENT_DATETIMEPICKER_HEADER}
-          calEvent={calEvent.current}
-          onSubmit={
-            ({ date, startTime, endTime }) => onDateTimeChange(date, startTime, endTime)
-          }
-          returnToScreenName="ViewToBeScreen"
-          onCancel={() => setShowDateTimePicker(false)}
+    <>
+      <Animated.View
+        style={styles.container(tintColor)}
+        entering={animations.addPlan.addPlanView.entering}
+        exiting={animations.addPlan.addPlanView.exiting}
+      >
+        <View style={styles.headerContainer(tintColor)}>
+          <Text style={styles.headerText(tintColor)}>
+            {CONSTANT_STRINGS.PLANS.ADD_PLAN.PROMPT_TEXT(toBeItemTitle.toLowerCase())}
+          </Text>
+        </View>
+        <TextInput
+          style={styles.input(tintColor)}
+          onChangeText={(text) => setNewPlanTitle(text)}
+          textAlign="center"
+          selectionColor={tintColor}
         />
-        )}
-    </Animated.View>
+      </Animated.View>
+      <Animated.View
+        style={styles.bottomButtonContainer}
+        entering={animations.addPlan.addPlanView.entering}
+        exiting={animations.addPlan.addPlanView.exiting}
+      >
+        <TouchableOpacity
+          style={styles.bottomButton}
+          onPress={addPlan}
+        >
+          <Text style={styles.bottomButtonText}>Add</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    width: 300,
-    height: 300,
-    alignItems: 'center',
+  container: (tintColor) => ({
+    justifyContent: 'flex-end',
+    width: '100%',
+    borderWidth: 1.5,
+    borderRadius: 6,
+    padding: '3%',
+    backgroundColor: colors.plans.planViewBackground,
+    marginBottom: 12,
+    borderColor: tintColor,
+  }),
+  headerContainer: (tintColor) => ({
+    borderBottomWidth: 1.5,
+    borderBottomColor: tintColor,
+    marginBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  }),
+  container2: {
+    flex: 1,
+    alignItems: 'stretch',
     justifyContent: 'center',
-    paddingTop: 8,
   },
   input: (tintColor) => ({
-    width: '50%',
     margin: 12,
     borderBottomWidth: 2,
     padding: 6,
@@ -84,20 +88,29 @@ const styles = StyleSheet.create({
     borderBottomColor: tintColor,
     color: tintColor,
   }),
-  addButton: {
-    marginTop: 8,
-    alignSelf: 'flex-end',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: colors.general.defaultWhite,
-  },
-  questionText: (tintColor) => ({
+  headerText: (tintColor) => ({
     color: tintColor,
     fontSize: 20,
+    flexGrow: 1,
   }),
+  bottomButtonContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    alignItems: 'center',
+  },
+  bottomButton: {
+    margin: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    opacity: 0.7,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.general.defaultWhite,
+    borderRadius: 8,
+  },
+  bottomButtonText: {
+    fontSize: 16,
+  },
 });
 
 export default AddPlan;

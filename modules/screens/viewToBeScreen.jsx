@@ -226,14 +226,14 @@ function ViewToBeScreen({route, navigation}) {
             </ScrollView>
           )}
           {viewMode === viewEnum.addPlan
-          && (
-            <AddPlan
-              toBeId={toBeId}
-              onAdd={onNewPlanAdded}
-              toBeItemTitle={toBeItem.title}
-              tintColor={tintColor}
-            />
-          )}
+            && (
+              <AddPlan
+                toBeId={toBeId}
+                onAdd={onNewPlanAdded}
+                toBeItemTitle={toBeItem.title}
+                tintColor={tintColor}
+              />
+            )}
         </View>
         {viewMode === viewEnum.overview
           && (
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   },
   directionChevrons: {
     opacity: 0.7,
-  }
+  },
 });
 
 export default ViewToBeScreen;
