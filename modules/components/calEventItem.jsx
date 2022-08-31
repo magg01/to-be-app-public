@@ -4,7 +4,9 @@ import {
 } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Notifications from 'expo-notifications';
-import { confirmRemoveNotification, cancelNotificationEvent, isScheduleNotificationAllowed } from '../utils/notifications';
+import {
+  confirmRemoveNotification, cancelNotificationEvent, isScheduleNotificationAllowed
+} from '../utils/notifications';
 import * as db from '../database/database';
 import AddNotificationModal from './addNotificationModal';
 import { zeroPadTime, MS_PER_MINUTE } from '../utils/datetime';
@@ -191,10 +193,10 @@ function CalEventItem({ eventItem, onEventModified }) {
   };
 
   return (
-    <View style={[styles.item, { height: eventItem.height, flexDirection: 'row' }]}>
+    <View style={[styles.item(eventItem.height)]}>
       <TouchableOpacity
-        style={{ flexGrow: 1 }}
-        onPress={() => Alert.alert(eventItem.plan_title)}
+        style={styles.itemMainTouchable}
+        onPress={() => Alert.alert(eventItem.planTitle)}
       >
         <Text style={styles.timing}>
           {`${eventDisplayStartTime} - ${eventDisplayEndTime}`}
@@ -202,7 +204,10 @@ function CalEventItem({ eventItem, onEventModified }) {
         <Text style={styles.name}>{eventItem.planTitle}</Text>
         <Text style={styles.type}>{`Be: ${eventItem.toBeTitle}`}</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={{ alignSelf: 'center', }} onPress={() => onNotificationIconPressed()}>
+      <TouchableOpacity
+        style={styles.notificationIconTouchable}
+        onPress={() => onNotificationIconPressed()}
+      >
         <Ionicons
           name={hasNotification
             ? 'notifications-outline'
@@ -227,13 +232,21 @@ function CalEventItem({ eventItem, onEventModified }) {
 }
 
 const styles = StyleSheet.create({
-  item: {
-    backgroundColor: colors.general.defaultWhite,
+  item: (eventItemHeight) => ({
     flex: 1,
+    backgroundColor: colors.general.defaultWhite,
+    height: eventItemHeight,
     borderRadius: 5,
     padding: 10,
     marginRight: 10,
     marginTop: 17,
+    flexDirection: 'row',
+  }),
+  itemMainTouchable: {
+    flexGrow: 1,
+  },
+  notificationIconTouchable: {
+    alignSelf: 'center',
   },
 });
 

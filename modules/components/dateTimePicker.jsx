@@ -18,7 +18,6 @@ const updateValueEnum = {
 
 const IconSize = 28;
 
-// TODO: look into proptypes library in order to codify the necessary functions to supply as props
 function DateTimePicker(props) {
   const [isNativePickerVisible, setIsNativePickerVisibile] = useState(false);
   const [datePicked, setDatePicked] = useState(props.calEvent ? new Date(props.calEvent.date) : new Date());
