@@ -19,7 +19,6 @@ const updateValueEnum = {
 
 const IconSize = 28;
 
-// TODO: look into proptypes library in order to codify the necessary functions to supply as props
 function RepeaterCalEventDateTimePicker(props) {
   const [isNativePickerVisible, setIsNativePickerVisibile] = useState(false);
   const [datePicked, setDatePicked] = useState(null);

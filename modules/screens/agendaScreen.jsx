@@ -12,7 +12,7 @@ function AgendaScreen() {
   const [loadedAppointments, setLoadedAppointments] = useState(null);
   const agendaRef = useRef(undefined);
 
-  const timeToString = (time) => {
+  const timeToDateString = (time) => {
     const date = new Date(time);
     return date.toISOString().split('T')[0];
   };
@@ -25,7 +25,7 @@ function AgendaScreen() {
 
     for (let i = -10; i < 31; i += 1) {
       const time = day.timestamp + i * 24 * 60 * 60 * 1000;
-      const strTime = timeToString(time);
+      const strTime = timeToDateString(time);
       const currentDay = new Date(time);
       const dayOfWeek = currentDay.getDay();
       const dayOfMonth = currentDay.getDate();
@@ -75,12 +75,25 @@ function AgendaScreen() {
             toBeTitle: repeater.tobeitem_title,
           },
         ));
-        // items[strTime].sort((a, b) => {
-        //   // TODO: check if this is necessary, sort by string should work too.
-        //   const startA = new Date(a.startTime);
-        //   const startB = new Date(b.startTime);
-        //   return startA - startB;
-        // });
+
+        // sort the events in one day by only their start time
+        // note: in this 'day' repeater's startTimes will have the date that they were started
+        // so it's important to check just the time portion against each others. i.e. HH and MM.
+        items[strTime].sort((a, b) => {
+          const aStartDateTime = new Date(a.startTime);
+          const bStartDateTime = new Date(b.startTime);
+          const startAHours = aStartDateTime.getHours();
+          const startBHours = bStartDateTime.getHours();
+          if (startAHours !== startBHours) {
+            return startAHours - startBHours;
+          }
+          const startAMins = aStartDateTime.getMinutes();
+          const startBMins = bStartDateTime.getMinutes();
+          if (startAMins !== startBMins) {
+            return startAMins - startBMins;
+          }
+          return 0;
+        });
       }
     }
 
