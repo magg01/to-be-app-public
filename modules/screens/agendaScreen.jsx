@@ -115,13 +115,18 @@ function AgendaScreen() {
       <Agenda
         ref={agendaRef}
         items={loadedAppointments}
-        renderItem={(item) => <CalEventItem eventItem={item} onEventModified={() => loadItemsForMonth({timestamp: new Date().getTime()})} />}
+        renderItem={(item) => (
+          <CalEventItem
+            eventItem={item}
+            onEventModified={() => loadItemsForMonth({ timestamp: new Date().getTime() })}
+          />
+        )}
         selected={Date()}
         // max months can scroll to past on full calendar
         pastScrollRange={1}
         // max months can scroll to future on full calendar
         futureScrollRange={12}
-        loadItemsForMonth={loadItemsForMonth}
+        onDayPress={loadItemsForMonth}
         showOnlySelectedDayItems
       />
       <FocusAwareStatusBar style={'dark'}/>
