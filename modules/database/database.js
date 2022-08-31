@@ -812,6 +812,27 @@ const getAllRepeatersThatShouldBeInCalendar = () => new Promise((resolve, reject
   );
 });
 
+const getNumberOfUsesForImage = (imageBackgroundUri) => new Promise((resolve, reject) => {
+  let result;
+  db.readTransaction(
+    (tx) => {
+      tx.executeSql(
+        'select count(id) from tobeitems where imageBackgroundUri = ?;',
+        [imageBackgroundUri],
+        (_, { rows: { _array } }) => {
+          console.log(`getNumberOfUsesForImage: _array is ${JSON.stringify(_array, null, 1)}`);
+          result = _array[0]['count(id)'];
+        },
+      );
+    },
+    (e) => {
+      console.log(`getNumberOfUsesForImage encountered an error -> ${e}`);
+      reject(e);
+    },
+    () => resolve(result),
+  );
+});
+
 export {
   deleteToBeItemById,
   addToBeItem,
@@ -847,4 +868,5 @@ export {
   udpateRepeaterCalEvent,
   getAllRepeatersThatShouldBeInCalendar,
   getAllRepeaterEventsWithPlanDetails,
+  getNumberOfUsesForImage,
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ImageBackground, TouchableHighlight, Text, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { deleteToBeItemById } from '../database/database';
+import { deleteToBeItemById, getNumberOfUsesForImage } from '../database/database';
 import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
 
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
@@ -25,9 +25,9 @@ function OptimisedToBeTile({toBeId, title, imageBackgroundUri, tintColor, onPres
             deleteToBeItemById(toBeId)
               .then((deleted) => {
                 if (deleted) {
-                  // TODO: implement check if this is the only use of the image
-                  // before deleting (another tobe might be sharing this image filepath)
-                  deleteLocallyStoredImage(imageBackgroundUri);
+                  if (getNumberOfUsesForImage(imageBackgroundUri) === 0) {
+                    deleteLocallyStoredImage(imageBackgroundUri);
+                  }
                   onDelete();
                 }
               })
