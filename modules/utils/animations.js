@@ -7,7 +7,7 @@ const animations = {
       layout: Layout.duration(500),
     },
     detailsButton: {
-      entering: FadeIn.duration(1000).delay(1000),
+      entering: FadeIn.duration(500).delay(500),
       exiting: FadeOut.duration(800),
     },
   },

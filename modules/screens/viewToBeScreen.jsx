@@ -18,6 +18,7 @@ import {
 import Animated from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { HeaderBackButton, useHeaderHeight } from '@react-navigation/elements';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
 import * as db from '../database/database';
@@ -241,26 +242,37 @@ function ViewToBeScreen({route, navigation}) {
             entering={animations.viewToBeScreen.detailsButton.entering}
             exiting={animations.viewToBeScreen.detailsButton.exiting}
           >
+            {/* TODO: reimplement as swipe action */}
+            <MaterialCommunityIcons
+              style={styles.directionChevrons}
+              name="chevron-double-left"
+              size={24}
+              color={tintColor}
+              onPress={() => {
+                db.getPreviousToBeItemIdById(toBeId).then((result) => setToBeId(result));
+              }}
+            />
             <TouchableOpacity
               style={styles.bottomButton}
               onPress={() => setViewMode(viewEnum.details)}
             >
               <Text style={styles.bottomButtonText}>Details</Text>
             </TouchableOpacity>
+            <MaterialCommunityIcons
+              style={styles.directionChevrons}
+              name="chevron-double-right"
+              size={24}
+              color={tintColor}
+              onPress={() => {
+                db.getNextToBeItemIdById(toBeId).then((result) => setToBeId(result));
+              }}
+            />
           </Animated.View>
           )}
       </SafeAreaView>
       <StatusBar style="light" />
     </ImageBackground>
   );
-
-  // TODO: reimplement as swipe action
-  //        <Button title={"next"} onPress={() => {
-  //           db.getNextToBeItemIdById(toBeId).then((result) => setToBeId(result))
-  //         }}/>
-  //         <Button title={"previous"} onPress={() => {
-  //           db.getPreviousToBeItemIdById(toBeId).then((result) => setToBeId(result))
-  //         }}/>
 }
 
 const styles = StyleSheet.create({
@@ -300,21 +312,26 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   bottomButtonContainer: {
+    justifyContent: 'space-around',
     alignItems: 'center',
+    flexDirection: 'row',
   },
   bottomButton: {
     margin: 10,
-    opacity: 0.85,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    opacity: 0.7,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.general.defaultWhite,
-    borderRadius: 14,
-    width: 120,
-    height: 40,
+    borderRadius: 8,
   },
   bottomButtonText: {
     fontSize: 16,
   },
+  directionChevrons: {
+    opacity: 0.7,
+  }
 });
 
 export default ViewToBeScreen;
