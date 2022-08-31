@@ -13,7 +13,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Platform,
-  Alert,
   ScrollView,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
@@ -21,7 +20,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { HeaderBackButton, useHeaderHeight } from '@react-navigation/elements';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
-import { Feather } from '@expo/vector-icons';
 import * as db from '../database/database';
 import PlanView from '../components/plans';
 import AddPlan from '../components/addPlan';
@@ -57,12 +55,22 @@ function ViewToBeScreen({route, navigation}) {
       db.getAllPlansWithRepeatersByToBeId(toBeId)
         .then((result) => {
           // put any non-repeating plans and repeaters whose end date has elapsed in the plan view
-          setPlansWithRepeaters(result.filter((item) => item.repeater_periodicity === null || hasEndDateElapsed(item.repeater_enddate)));
+          setPlansWithRepeaters(
+            result.filter((item) => (
+              item.repeater_periodicity === null || hasEndDateElapsed(item.repeater_enddate)
+            )),
+          );
           // let through those repeaters that either have no end date
           // or their end date is not in the past
-          setDailies(result.filter((item) => item.repeater_periodicity === 'daily' && !hasEndDateElapsed(item.repeater_enddate)));
-          setWeeklies(result.filter((item) => item.repeater_periodicity === 'weekly' && !hasEndDateElapsed(item.repeater_enddate)));
-          setMonthlies(result.filter((item) => item.repeater_periodicity === 'monthly' && !hasEndDateElapsed(item.repeater_enddate)));
+          setDailies(result.filter((item) => (
+            item.repeater_periodicity === 'daily' && !hasEndDateElapsed(item.repeater_enddate)
+          )));
+          setWeeklies(result.filter((item) => (
+            item.repeater_periodicity === 'weekly' && !hasEndDateElapsed(item.repeater_enddate)
+          )));
+          setMonthlies(result.filter((item) => (
+            item.repeater_periodicity === 'monthly' && !hasEndDateElapsed(item.repeater_enddate)
+          )));
         });
     }
   }, [toBeId]);
@@ -108,33 +116,40 @@ function ViewToBeScreen({route, navigation}) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      // eslint-disable-next-line react/no-unstable-nested-components
       headerLeft: () => (
-        <HeaderBackButton 
+        <HeaderBackButton
           onPress={() => {
-            if (viewMode === viewEnum.addPlan){
-              setViewMode(viewEnum.details)
-            }
-            else if(viewMode === viewEnum.details){
-              setViewMode(viewEnum.overview)
+            if (viewMode === viewEnum.addPlan) {
+              setViewMode(viewEnum.details);
+            } else if (viewMode === viewEnum.details) {
+              setViewMode(viewEnum.overview);
             } else {
               navigation.goBack();
             }
-          }} 
+          }}
           tintColor={tintColor}
-          labelVisible = {Platform.OS === 'ios' ? true : false}
+          labelVisible={Platform.OS === 'ios'}
         />
       ),
-      headerRight: () => (
-        viewMode === viewEnum.details 
-        && (
-          <Animated.View 
-            entering={animations.viewToBeScreen.mainTitleText.entering}
-            exiting={animations.viewToBeScreen.detailsButton.exiting}
-          >
-            <Feather style={{marginRight: 10}} name="edit-2" size={24} color={tintColor} onPress={() => Alert.alert("TODO: Implement edit mode here")} />
-          </Animated.View>
-        )
-      ),
+      // ToDo: implement edit mode here
+      // headerRight: () => (
+      //   viewMode === viewEnum.details
+      //   && (
+      //     <Animated.View
+      //       entering={animations.viewToBeScreen.mainTitleText.entering}
+      //       exiting={animations.viewToBeScreen.detailsButton.exiting}
+      //     >
+      //       <Feather
+      //          style={{marginRight: 10}}
+      //          name="edit-2"
+      //          size={24}
+      //          color={tintColor}
+      //          onPress={null}
+      //       />
+      //     </Animated.View>
+      //   )
+      // ),
     });
   });
 
@@ -279,7 +294,7 @@ const styles = StyleSheet.create({
     color: tintColor,
   }),
   scrollViewOuterContainer: {
-    width: "100%",
+    width: '100%',
   },
   scrollViewContentContainer: {
     flexGrow: 1,
