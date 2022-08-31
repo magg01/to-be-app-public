@@ -20,7 +20,7 @@ function CalEventItem({ eventItem, onEventModified }) {
   const [hasNotification, setHasNotification] = useState();
 
   useEffect(() => {
-    setHasNotification(eventItem.notificationId);
+    setHasNotification(eventItem.notificationId !== null);
   }, [eventItem.notificationId]);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ function CalEventItem({ eventItem, onEventModified }) {
     return false;
   };
 
-  const unscheduleAndRemoveNotification = () => {
+  const unscheduleAndRemoveNotification = async () => {
     // delete the scheduled notification
     cancelNotificationEvent(eventItem.notificationId);
     // remove the identifier from the database
@@ -71,9 +71,9 @@ function CalEventItem({ eventItem, onEventModified }) {
       // check with user before removing the notification
       const shouldRemove = await confirmRemoveNotification();
       if (shouldRemove) {
-        unscheduleAndRemoveNotification();
         setHasNotification(false);
-        onEventModified();
+        unscheduleAndRemoveNotification()
+          .then(() => onEventModified());
       }
     } else {
       // check permissions and show modal on granted.
@@ -99,22 +99,15 @@ function CalEventItem({ eventItem, onEventModified }) {
   };
 
   const addOneOffNotificationMinBeforeStartTime = async (minutesPriorToStart) => {
-    // TODO: change this to use SchedulableNotificationTriggerInput with a DateTriggerInput - https://docs.expo.dev/versions/v46.0.0/sdk/notifications/#datetriggerinput
     const notificationTime = new Date(new Date(eventItem.startTime).getTime()
       - MS_PER_MINUTE * minutesPriorToStart).getTime();
-    const secondsToNotificationTime = Math.floor(
-      // eslint-disable-next-line comma-dangle
-      Math.abs((new Date().getTime() - notificationTime) / 1000)
-    );
 
     const notificationID = await Notifications.scheduleNotificationAsync({
       content: {
         title: `Be: ${eventItem.toBeTitle}`,
         body: `${eventItem.planTitle} - ${eventDisplayStartTime}`,
       },
-      trigger: {
-        seconds: secondsToNotificationTime,
-      },
+      trigger: notificationTime,
     });
     onNotificationScheduled(notificationID);
   };
