@@ -10,6 +10,7 @@ const colors = {
   general: {
     defaultWhite: '#ffffff',
     defaultBlack: '#000000',
+    defaultRed: '#ff0000',
     unactivatedIcon: 'lightgrey',
   },
   modals: {

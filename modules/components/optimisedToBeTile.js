@@ -3,10 +3,11 @@ import { StyleSheet, View, ImageBackground, TouchableHighlight, Text, Alert } fr
 import { Ionicons } from '@expo/vector-icons';
 import { deleteToBeItemById, getNumberOfUsesForImage } from '../database/database';
 import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
+import colors from '../utils/colors';
 
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
 
-function OptimisedToBeTile({toBeId, title, imageBackgroundUri, tintColor, onPress, onDelete, navigation}) {
+function OptimisedToBeTile({toBeId, title, imageBackgroundUri, tintColor, onDelete, navigation}) {
   const [deleteMode, setDeleteMode] = useState(false);
 
   const confirmDelete = () => {
@@ -33,7 +34,7 @@ function OptimisedToBeTile({toBeId, title, imageBackgroundUri, tintColor, onPres
               })
               .catch((err) => {
                 console.error(`confirmDelete encountered an error -> ${err}`);
-                Alert.alert("There was a problem deleting your to be. Please try again.");
+                Alert.alert('There was a problem deleting your to be. Please try again.');
               });
           },
           style: 'destructive',
@@ -89,9 +90,9 @@ const styles = StyleSheet.create({
     margin: 6,
     borderRadius: 6,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: colors.general.defaultBlack,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: .1,
+    shadowOpacity: 0.1,
     shadowRadius: 8,
   },
   tileImageBackground: {
@@ -104,13 +105,13 @@ const styles = StyleSheet.create({
   },
   deleteView: {
     flexGrow: 1,
-    width: "100%",
+    width: '100%',
     borderWidth: 2,
-    borderColor: 'red',
+    borderColor: colors.general.defaultRed,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 6,
-  }
+  },
 });
 
 export default OptimisedToBeTile;
