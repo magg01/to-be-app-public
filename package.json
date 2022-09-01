@@ -62,7 +62,7 @@
         "displayName": "ios",
         "preset": "jest-expo/ios",
         "setupFiles": [
-          "<rootDir>/modules/jest/setup.js",
+          "./jest-setup.js",
           "./node_modules/react-native-gesture-handler/jestSetup.js"
         ],
         "moduleNameMapper": {
@@ -72,13 +72,16 @@
           "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
         ],
         "setupFilesAfterEnv": [
-          "@testing-library/jest-native/extend-expect"
-        ]
+          "@testing-library/jest-native/extend-expect",
+          "./jest-setup-animations"
+        ],
+        "timers": "fake",
+        "testEnvironment": "jsdom"
       },
       {
         "preset": "jest-expo/android",
         "setupFiles": [
-          "<rootDir>/modules/jest/setup.js",
+          "./jest-setup.js",
           "./node_modules/react-native-gesture-handler/jestSetup.js"
         ],
         "moduleNameMapper": {
@@ -88,8 +91,11 @@
           "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
         ],
         "setupFilesAfterEnv": [
-          "@testing-library/jest-native/extend-expect"
-        ]
+          "@testing-library/jest-native/extend-expect",
+          "./jest-setup-animations"
+        ],
+        "timers": "fake",
+        "testEnvironment": "jsdom"
       }
     ]
   },
