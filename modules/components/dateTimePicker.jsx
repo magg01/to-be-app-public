@@ -4,17 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import colors from '../utils/colors';
 import { zeroPadTime } from '../utils/datetime';
-
-const nativePickerModeEnum = {
-  date: 'date',
-  time: 'time',
-};
-
-const updateValueEnum = {
-  date: 'date',
-  startTime: 'startTime',
-  endTime: 'endTime',
-};
+import { DTPickerNativePickerModeEnum, DTPickerUpdateValueEnum } from '../utils/enums';
 
 const IconSize = 28;
 
@@ -30,19 +20,19 @@ function DateTimePicker(props) {
     props.calEvent ? new Date(props.calEvent.end) : new Date(),
   );
 
-  const pickerMode = useRef(nativePickerModeEnum.date);
-  const updateValue = useRef(updateValueEnum.date);
+  const pickerMode = useRef(DTPickerNativePickerModeEnum.date);
+  const updateValue = useRef(DTPickerUpdateValueEnum.date);
 
   const showNativePicker = (valueToUpdate) => {
-    if (valueToUpdate === updateValueEnum.date) {
-      pickerMode.current = nativePickerModeEnum.date;
-      updateValue.current = updateValueEnum.date;
-    } else if (valueToUpdate === updateValueEnum.startTime) {
-      pickerMode.current = nativePickerModeEnum.time;
-      updateValue.current = updateValueEnum.startTime;
-    } else if (valueToUpdate === updateValueEnum.endTime) {
-      pickerMode.current = nativePickerModeEnum.time;
-      updateValue.current = updateValueEnum.endTime;
+    if (valueToUpdate === DTPickerUpdateValueEnum.date) {
+      pickerMode.current = DTPickerNativePickerModeEnum.date;
+      updateValue.current = DTPickerUpdateValueEnum.date;
+    } else if (valueToUpdate === DTPickerUpdateValueEnum.startTime) {
+      pickerMode.current = DTPickerNativePickerModeEnum.time;
+      updateValue.current = DTPickerUpdateValueEnum.startTime;
+    } else if (valueToUpdate === DTPickerUpdateValueEnum.endTime) {
+      pickerMode.current = DTPickerNativePickerModeEnum.time;
+      updateValue.current = DTPickerUpdateValueEnum.endTime;
     }
     setIsNativePickerVisibile(true);
   };
@@ -52,13 +42,13 @@ function DateTimePicker(props) {
   };
 
   const handleConfirm = (date) => {
-    if (updateValue.current === updateValueEnum.date) {
+    if (updateValue.current === DTPickerUpdateValueEnum.date) {
       console.log('A date has been picked: ', date);
       setDatePicked(date);
-    } else if (updateValue.current === updateValueEnum.startTime) {
+    } else if (updateValue.current === DTPickerUpdateValueEnum.startTime) {
       console.log('A start time has been picked: ', date);
       setStartTimePicked(date);
-    } else if (updateValue.current === updateValueEnum.endTime) {
+    } else if (updateValue.current === DTPickerUpdateValueEnum.endTime) {
       console.log('An end time has been picked: ', date);
       setEndTimePicked(date);
     }

@@ -15,8 +15,21 @@ const viewToBeScreenViewEnum = {
   addPlan: 2,
 };
 
+const DTPickerNativePickerModeEnum = {
+  date: 'date',
+  time: 'time',
+};
+
+const DTPickerUpdateValueEnum = {
+  date: 'date',
+  startTime: 'startTime',
+  endTime: 'endTime',
+};
+
 export {
   calEventTypeEnum,
   addNewScreenViewEnum,
   viewToBeScreenViewEnum,
+  DTPickerNativePickerModeEnum,
+  DTPickerUpdateValueEnum,
 };

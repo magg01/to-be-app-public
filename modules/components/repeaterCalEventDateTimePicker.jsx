@@ -7,17 +7,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import colors from '../utils/colors';
 import { zeroPadTime } from '../utils/datetime';
-
-const nativePickerModeEnum = {
-  date: 'date',
-  time: 'time',
-};
-
-const updateValueEnum = {
-  date: 'date',
-  startTime: 'startTime',
-  endTime: 'endTime',
-};
+import { DTPickerNativePickerModeEnum, DTPickerUpdateValueEnum } from '../utils/enums';
 
 const IconSize = 28;
 
@@ -28,7 +18,7 @@ function RepeaterCalEventDateTimePicker(props) {
   const [selectedDayOfTheWeek, setSelectedDayOfTheWeek] = useState(null);
   const [selectedDayOfTheMonth, setSelectedDayOfTheMonth] = useState(null);
 
-  const updateValue = useRef(updateValueEnum.date);
+  const updateValue = useRef(DTPickerUpdateValueEnum.date);
 
   useEffect(() => {
     const dayOfTheMonth = new Date().getDate();
@@ -40,10 +30,10 @@ function RepeaterCalEventDateTimePicker(props) {
   }, []);
 
   const showNativePicker = (valueToUpdate) => {
-    if (valueToUpdate === updateValueEnum.startTime) {
-      updateValue.current = updateValueEnum.startTime;
-    } else if (valueToUpdate === updateValueEnum.endTime) {
-      updateValue.current = updateValueEnum.endTime;
+    if (valueToUpdate === DTPickerUpdateValueEnum.startTime) {
+      updateValue.current = DTPickerUpdateValueEnum.startTime;
+    } else if (valueToUpdate === DTPickerUpdateValueEnum.endTime) {
+      updateValue.current = DTPickerUpdateValueEnum.endTime;
     }
     setIsNativePickerVisibile(true);
   };
@@ -53,9 +43,9 @@ function RepeaterCalEventDateTimePicker(props) {
   };
 
   const handleConfirm = (date) => {
-    if (updateValue.current === updateValueEnum.startTime) {
+    if (updateValue.current === DTPickerUpdateValueEnum.startTime) {
       setStartTimePicked(date);
-    } else if (updateValue.current === updateValueEnum.endTime) {
+    } else if (updateValue.current === DTPickerUpdateValueEnum.endTime) {
       setEndTimePicked(date);
     }
     hideNativePicker();
@@ -190,7 +180,7 @@ function RepeaterCalEventDateTimePicker(props) {
           </View>
           <DateTimePickerModal
             isVisible={isNativePickerVisible}
-            mode={nativePickerModeEnum.time}
+            mode={DTPickerNativePickerModeEnum.time}
             onConfirm={handleConfirm}
             onCancel={hideNativePicker}
           />
