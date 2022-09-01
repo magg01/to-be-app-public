@@ -22,7 +22,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
 import * as db from '../database/database';
-import PlanView from '../components/plans';
+import PlanView from '../components/planView';
 import AddPlan from '../components/addPlan';
 import animations from '../utils/animations';
 import PlanRepeaterView from '../components/planRepeaterView';
