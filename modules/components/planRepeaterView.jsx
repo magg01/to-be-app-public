@@ -17,9 +17,9 @@ function PlanRepeaterView({planRepeaters, tintColor, headerText, onRepeaterModif
   return (
     <Animated.View
       style={styles.outerContainer(tintColor)}
-      entering={animations.plans.planView.entering}
-      exiting={animations.plans.planView.exiting}
-      layout={animations.plans.planView.layout}
+      entering={animations.plans.planView.entering()}
+      exiting={animations.plans.planView.exiting()}
+      layout={animations.plans.planView.layout()}
     >
       <View style={styles.headerContainer(tintColor)}>
         <Text style={styles.headerText(tintColor)}>{headerText}</Text>

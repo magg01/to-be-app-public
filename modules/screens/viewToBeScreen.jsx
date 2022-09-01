@@ -135,8 +135,8 @@ function ViewToBeScreen({route, navigation}) {
       //   viewMode === viewEnum.details
       //   && (
       //     <Animated.View
-      //       entering={animations.viewToBeScreen.mainTitleText.entering}
-      //       exiting={animations.viewToBeScreen.detailsButton.exiting}
+      //       entering={animations.viewToBeScreen.mainTitleText.entering()}
+      //       exiting={animations.viewToBeScreen.detailsButton.exiting()}
       //     >
       //       <Feather
       //          style={{marginRight: 10}}
@@ -179,8 +179,8 @@ function ViewToBeScreen({route, navigation}) {
         <View style={styles.container(headerHeight, viewMode)}>
           <Animated.Text
             style={styles.mainTitle(tintColor)}
-            entering={animations.viewToBeScreen.mainTitleText.entering}
-            layout={animations.viewToBeScreen.mainTitleText.layout}
+            entering={animations.viewToBeScreen.mainTitleText.entering()}
+            layout={animations.viewToBeScreen.mainTitleText.layout()}
           >
             {toBeItem.title}
           </Animated.Text>
@@ -240,8 +240,8 @@ function ViewToBeScreen({route, navigation}) {
           && (
           <Animated.View
             style={styles.bottomButtonContainer}
-            entering={animations.viewToBeScreen.detailsButton.entering}
-            exiting={animations.viewToBeScreen.detailsButton.exiting}
+            entering={animations.viewToBeScreen.detailsButton.entering()}
+            exiting={animations.viewToBeScreen.detailsButton.exiting()}
           >
             {/* TODO: reimplement as swipe action */}
             <MaterialCommunityIcons

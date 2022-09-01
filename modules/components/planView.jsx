@@ -36,9 +36,9 @@ function PlanView({providedPlansWithRepeaters, onAddNewPressed, tintColor, onPla
   return (
     <Animated.View
       style={styles.container(tintColor)}
-      entering={animations.plans.planView.entering}
-      exiting={animations.plans.planView.exiting}
-      layout={animations.plans.planView.layout}
+      entering={animations.plans.planView.entering()}
+      exiting={animations.plans.planView.exiting()}
+      layout={animations.plans.planView.layout()}
     >
       <View style={styles.headerContainer(tintColor)}>
         <Text style={styles.headerText(tintColor)}>Plans</Text>
@@ -66,9 +66,9 @@ function PlanView({providedPlansWithRepeaters, onAddNewPressed, tintColor, onPla
               ))}
           </ScrollView>
           <Animated.View
-            layout={animations.plans.planView.layout}
-            entering={animations.plans.planView.entering}
-            exiting={animations.plans.planView.exiting}
+            layout={animations.plans.planView.layout()}
+            entering={animations.plans.planView.entering()}
+            exiting={animations.plans.planView.exiting()}
           >
             <TouchableOpacity style={styles.addButton} onPress={() => onAddNewPressed()}>
               <Entypo name="add-to-list" size={18} color={colors.plans.textOrIconOnWhite} />

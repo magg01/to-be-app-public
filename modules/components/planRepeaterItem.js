@@ -201,9 +201,9 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
           showDetailView ? { height: planLineContainerHeightExpanded }
             : { height: planLineContainerHeightCollapsed },
         ]}
-        entering={animations.plans.planItemForFlatList.entering}
-        exiting={animations.plans.planItemForFlatList.exiting}
-        layout={animations.plans.planItemForFlatList.layout}
+        entering={animations.plans.planItemForFlatList.entering()}
+        exiting={animations.plans.planItemForFlatList.exiting()}
+        layout={animations.plans.planItemForFlatList.layout()}
       >
         <View
           style={styles.planLineHeaderContainer}
@@ -236,8 +236,8 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
           && (
             <Animated.View
               style={styles.planLineDetailContainer}
-              entering={animations.plans.planItemForFlatList.entering}
-              exiting={animations.plans.planItemForFlatList.exiting}
+              entering={animations.plans.planItemForFlatList.entering()}
+              exiting={animations.plans.planItemForFlatList.exiting()}
             >
               <TextInput
                 style={styles.descriptionTextInput}
@@ -266,9 +266,9 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
                 </View>
                 <View style={styles.detailIconsRight}>
                   <Animated.View
-                    entering={animations.plans.planItemForFlatList.entering}
-                    exiting={animations.plans.planItemForFlatList.exiting}
-                    layout={animations.plans.planItemForFlatList.layout}
+                    entering={animations.plans.planItemForFlatList.entering()}
+                    exiting={animations.plans.planItemForFlatList.exiting()}
+                    layout={animations.plans.planItemForFlatList.layout()}
                   >
                     <MaterialCommunityIcons
                       style={styles.repeaterIcon}
@@ -279,9 +279,9 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
                     />
                   </Animated.View>
                   <Animated.View
-                    entering={animations.plans.planItemForFlatList.entering}
-                    exiting={animations.plans.planItemForFlatList.exiting}
-                    layout={animations.plans.planItemForFlatList.layout}
+                    entering={animations.plans.planItemForFlatList.entering()}
+                    exiting={animations.plans.planItemForFlatList.exiting()}
+                    layout={animations.plans.planItemForFlatList.layout()}
                   >
                     <MaterialCommunityIcons
                       style={styles.repeaterIcon}

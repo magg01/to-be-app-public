@@ -200,9 +200,9 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
           showDetailView ? { height: planLineContainerHeightExpanded }
             : { height: planLineContainerHeightCollapsed },
         ]}
-        entering={animations.plans.planItemForFlatList.entering}
-        exiting={animations.plans.planItemForFlatList.exiting}
-        layout={animations.plans.planItemForFlatList.layout}
+        entering={animations.plans.planItemForFlatList.entering()}
+        exiting={animations.plans.planItemForFlatList.exiting()}
+        layout={animations.plans.planItemForFlatList.layout()}
       >
         <View
           style={styles.planLineHeaderContainer}
@@ -235,8 +235,8 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
           && (
             <Animated.View
               style={styles.planLineDetailContainer}
-              entering={animations.plans.planItemForFlatList.entering}
-              exiting={animations.plans.planItemForFlatList.exiting}
+              entering={animations.plans.planItemForFlatList.entering()}
+              exiting={animations.plans.planItemForFlatList.exiting()}
             >
               <TextInput
                 style={styles.descriptionTextInput}
@@ -271,9 +271,9 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
                   {(!hasWeekly && !hasMonthly)
                     && (
                       <Animated.View
-                        entering={animations.plans.planItemForFlatList.entering}
-                        exiting={animations.plans.planItemForFlatList.exiting}
-                        layout={animations.plans.planItemForFlatList.layout}
+                        entering={animations.plans.planItemForFlatList.entering()}
+                        exiting={animations.plans.planItemForFlatList.exiting()}
+                        layout={animations.plans.planItemForFlatList.layout()}
                       >
                         <MaterialCommunityIcons
                           style={styles.repeaterIcon}
@@ -291,9 +291,9 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
                   {(!hasDaily && !hasMonthly)
                     && (
                       <Animated.View
-                        entering={animations.plans.planItemForFlatList.entering}
-                        exiting={animations.plans.planItemForFlatList.exiting}
-                        layout={animations.plans.planItemForFlatList.layout}
+                        entering={animations.plans.planItemForFlatList.entering()}
+                        exiting={animations.plans.planItemForFlatList.exiting()}
+                        layout={animations.plans.planItemForFlatList.layout()}
                       >
                         <MaterialCommunityIcons
                           style={styles.repeaterIcon}
@@ -311,9 +311,9 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
                   {(!hasDaily && !hasWeekly)
                     && (
                       <Animated.View
-                        entering={animations.plans.planItemForFlatList.entering}
-                        exiting={animations.plans.planItemForFlatList.exiting}
-                        layout={animations.plans.planItemForFlatList.layout}
+                        entering={animations.plans.planItemForFlatList.entering()}
+                        exiting={animations.plans.planItemForFlatList.exiting()}
+                        layout={animations.plans.planItemForFlatList.layout()}
                       >
                         <MaterialCommunityIcons
                           style={styles.repeaterIcon}
@@ -331,9 +331,9 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
                   {(hasDaily || hasWeekly || hasMonthly)
                     && (
                       <Animated.View
-                        entering={animations.plans.planItemForFlatList.entering}
-                        exiting={animations.plans.planItemForFlatList.exiting}
-                        layout={animations.plans.planItemForFlatList.layout}
+                        entering={animations.plans.planItemForFlatList.entering()}
+                        exiting={animations.plans.planItemForFlatList.exiting()}
+                        layout={animations.plans.planItemForFlatList.layout()}
                       >
                         <MaterialCommunityIcons
                           style={styles.repeaterIcon}

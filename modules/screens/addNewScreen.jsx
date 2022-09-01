@@ -194,8 +194,8 @@ function AddNewScreen({ navigation }) {
               </View>
               <Animated.View
                 style={styles.bottomButtonContainer}
-                entering={animations.addNewScreen.bottomButtons.entering}
-                exiting={animations.addNewScreen.bottomButtons.exiting}
+                entering={animations.addNewScreen.bottomButtons.entering()}
+                exiting={animations.addNewScreen.bottomButtons.exiting()}
               >
                 <TouchableOpacity
                   style={styles.bottomButton}
@@ -223,8 +223,8 @@ function AddNewScreen({ navigation }) {
               && (
                 <Animated.View
                   style={styles.colorPicker(headerHeight, tintColor)}
-                  entering={animations.addNewScreen.colorPicker.entering}
-                  exiting={animations.addNewScreen.colorPicker.exiting}
+                  entering={animations.addNewScreen.colorPicker.entering()}
+                  exiting={animations.addNewScreen.colorPicker.exiting()}
                 >
                   <ColorPicker
                     color={tintColor}
@@ -240,8 +240,8 @@ function AddNewScreen({ navigation }) {
               )}
               <Animated.View
                 style={styles.bottomButtonContainer}
-                entering={animations.addNewScreen.bottomButtons.entering}
-                exiting={animations.addNewScreen.bottomButtons.exiting}
+                entering={animations.addNewScreen.bottomButtons.entering()}
+                exiting={animations.addNewScreen.bottomButtons.exiting()}
               >
                 <TouchableOpacity
                   style={styles.bottomButton}
