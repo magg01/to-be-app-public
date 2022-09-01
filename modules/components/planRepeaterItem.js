@@ -1,12 +1,11 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
   Text,
   View,
   TextInput,
-  Alert,
 } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -14,9 +13,8 @@ import Toast from 'react-native-toast-message';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
 import { confirmDeleteAlert } from '../utils/deleteConfirmation';
-import { getPreviousPeriodReset } from '../utils/datetime';
+import { getPreviousPeriodReset, getEndOfDay } from '../utils/datetime';
 import DateTimePicker from './dateTimePicker';
-import { getEndOfDay } from '../utils/datetime';
 import {
   updateLastDoneDateTimeOnRepeaterByRepeaterId,
   deleteRepeaterByPlanId,
@@ -180,7 +178,8 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
 
   const setRepeatingCalendarEventOnRepeater = (dateTimeData) => {
     if (item.repeater_periodicity === 'daily') {
-      udpateRepeaterCalEvent(item.repeater_id, dateTimeData.startTime.toISOString(), dateTimeData.endTime.toISOString(), null, null, 1)
+      udpateRepeaterCalEvent(
+        item.repeater_id, dateTimeData.startTime.toISOString(), dateTimeData.endTime.toISOString(), null, null, 1)
         .then((updated) => updated ? onRepeaterModified() : null);
     } else if (item.repeater_periodicity === 'weekly') {
       udpateRepeaterCalEvent(item.repeater_id, dateTimeData.startTime.toISOString(), dateTimeData.endTime.toISOString(), dateTimeData.dayOfWeek, null, 1)
@@ -354,12 +353,6 @@ const styles = StyleSheet.create({
   planLineDetailContainer: {
     flex: 8,
     alignItems: 'stretch',
-  },
-  planLineDetailFooter: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
   },
   planLineTitleText: (isDoneForNow) => ({
     fontSize: 16,

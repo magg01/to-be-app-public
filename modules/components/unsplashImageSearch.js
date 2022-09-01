@@ -6,6 +6,7 @@ import {
 import UnsplashPhotoListItem from './unsplashPhotoListItem';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 import { apiMethods } from '../utils/unsplashApi';
+import colors from '../utils/colors';
 
 function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQuery}) {
   const [searchQuery, setSearchQuery] = useState(undefined);
@@ -50,9 +51,9 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
   }, [searchQuery]);
 
   return (
-    <View style={{height: height, width: width, alignItems: 'center'}}>
+    <View style={styles.container(width, height)}>
       <TextInput
-        style={{width: width * 0.8, backgroundColor: 'white', marginBottom: 20, borderRadius: 5, padding: 6, opacity: 0.9}}
+        style={styles.imageSearchBar}
         onSubmitEditing={() => setSearchQuery(searchInput)}
         onChangeText={setSearchInput}
         value={searchInput}
@@ -117,6 +118,19 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
 }
 
 const styles = StyleSheet.create({
+  container: (width, height) => ({
+    width,
+    height,
+    alignItems: 'center',
+  }),
+  imageSearchBar: {
+    width: '80%',
+    backgroundColor: colors.general.defaultWhite,
+    marginBottom: 20,
+    borderRadius: 5,
+    padding: 6,
+    opacity: 0.9,
+  },
   dataDisplayImages: {
     flex: 1,
     borderRadius: 6,
@@ -129,7 +143,7 @@ const styles = StyleSheet.create({
     paddingTop: '20%',
   },
   messageText: {
-    color: '#fff', 
+    color: colors.general.defaultWhite,
     fontSize: 18,
   },
 });

@@ -75,11 +75,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-start',
   }),
-  container2: {
-    flex: 1,
-    alignItems: 'stretch',
-    justifyContent: 'center',
-  },
   input: (tintColor) => ({
     margin: 12,
     borderBottomWidth: 2,

@@ -20,9 +20,15 @@ const IconSize = 28;
 
 function DateTimePicker(props) {
   const [isNativePickerVisible, setIsNativePickerVisibile] = useState(false);
-  const [datePicked, setDatePicked] = useState(props.calEvent ? new Date(props.calEvent.date) : new Date());
-  const [startTimePicked, setStartTimePicked] = useState(props.calEvent ? new Date(props.calEvent.start) : new Date());
-  const [endTimePicked, setEndTimePicked] = useState(props.calEvent ? new Date(props.calEvent.end) : new Date());
+  const [datePicked, setDatePicked] = useState(
+    props.calEvent ? new Date(props.calEvent.date) : new Date(),
+  );
+  const [startTimePicked, setStartTimePicked] = useState(
+    props.calEvent ? new Date(props.calEvent.start) : new Date(),
+  );
+  const [endTimePicked, setEndTimePicked] = useState(
+    props.calEvent ? new Date(props.calEvent.end) : new Date(),
+  );
 
   const pickerMode = useRef(nativePickerModeEnum.date);
   const updateValue = useRef(updateValueEnum.date);
@@ -106,7 +112,9 @@ function DateTimePicker(props) {
                     Start:
                   </Text>
                   <Text style={styles.dateTimePickerDateTime}>
-                    {zeroPadTime(startTimePicked.getHours())}:{zeroPadTime(startTimePicked.getMinutes())}
+                    {zeroPadTime(startTimePicked.getHours())}
+                    :
+                    {zeroPadTime(startTimePicked.getMinutes())}
                   </Text>
                   <MaterialCommunityIcons
                     name="clock-edit-outline"
@@ -120,7 +128,9 @@ function DateTimePicker(props) {
                     End:
                   </Text>
                   <Text style={styles.dateTimePickerDateTime}>
-                    {zeroPadTime(endTimePicked.getHours())}:{zeroPadTime(endTimePicked.getMinutes())}
+                    {zeroPadTime(endTimePicked.getHours())}
+                    :
+                    {zeroPadTime(endTimePicked.getMinutes())}
                   </Text>
                   <MaterialCommunityIcons
                     name="clock-edit-outline"
@@ -153,13 +163,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'stretch',
     paddingHorizontal: 20,
-    backgroundColor: 'rgba(40,40,40,0.8)',
+    backgroundColor: colors.modals.outerColorOpacity,
   },
   innerContainer: {
     backgroundColor: colors.general.defaultWhite,
     padding: 20,
     opacity: 1,
-    shadowColor: "#000",
+    shadowColor: colors.general.defaultBlack,
     shadowOffset: {
       width: 0,
       height: 1,

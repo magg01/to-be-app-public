@@ -1,7 +1,11 @@
 // import React from 'react';
-import { render, screen, cleanup, waitFor, act, fireEvent} from '@testing-library/react-native';
-import UnsplashImageSearch from './UnsplashImageSearch';
-import { mockApiGetPhotosSuccessResponse, mockApiGetPhotosErrorResponse, mockApiGetPhotosEmptyResponse } from './__mocks__/unsplashImageSearch';
+import {
+  render, screen, cleanup, waitFor, act, fireEvent,
+} from '@testing-library/react-native';
+import UnsplashImageSearch from './unsplashImageSearch';
+import {
+  mockApiGetPhotosSuccessResponse, mockApiGetPhotosErrorResponse, mockApiGetPhotosEmptyResponse
+} from './__mocks__/unsplashImageSearch';
 import { apiMethods } from '../utils/unsplashApi';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 
