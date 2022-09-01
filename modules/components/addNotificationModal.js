@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-filename-extension */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet, View, Text, Modal, Button, TextInput,
 } from 'react-native';
@@ -7,7 +7,11 @@ import colors from '../utils/colors';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 
 function AddNotificationModal({isVisible, onRequestClose, onDismiss, eventItem, onShouldSetNotification}) {
-  const [minutesBeforeStartTime, setMinutesBeforeStartTime] = useState('0');
+  const [minutesBeforeStartTime, setMinutesBeforeStartTime] = useState();
+
+  useEffect(() => {
+    setMinutesBeforeStartTime('0');
+  }, [])
 
   const onClose = (shouldSetNotification) => {
     if (shouldSetNotification) {
