@@ -16,20 +16,15 @@ import { addToBeItem } from '../database/database';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 import colors from '../utils/colors';
 import animations from '../utils/animations';
+import { addNewScreenViewEnum } from '../utils/enums';
 
 const { height, width } = Dimensions.get('window');
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
 
-const viewEnum = {
-  titleInput: 0,
-  imagePicker: 1,
-  review: 2,
-};
-
 function AddNewScreen({ navigation }) {
   const [titleText, updateTitleText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState(viewEnum.titleInput);
+  const [viewMode, setViewMode] = useState(addNewScreenViewEnum.titleInput);
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
   const [tintColor, setTintColor] = useState(colors.toBes.defaultTintColor);
   const headerHeight = useHeaderHeight();
@@ -37,15 +32,16 @@ function AddNewScreen({ navigation }) {
   const [imageBackgroundUri, setImageBackgroundUri] = useState(defaultBackgroundImage);
   const textInputRef = useRef(null);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const backMethods = {
     backTotitleInputView: () => {
-      setViewMode(viewEnum.titleInput);
+      setViewMode(addNewScreenViewEnum.titleInput);
     },
     backToImagePickerView: () => {
-      setTintColor('#ffffff');
+      setTintColor(colors.general.defaultWhite);
       setColorPickerVisible(false);
       setImageBackgroundUri(defaultBackgroundImage);
-      setViewMode(viewEnum.imagePicker);
+      setViewMode(addNewScreenViewEnum.imagePicker);
       navigation.setOptions({
         headerRight: () => null,
       });
@@ -53,7 +49,7 @@ function AddNewScreen({ navigation }) {
   };
 
   useEffect(() => {
-    if (viewMode === viewEnum.review) {
+    if (viewMode === addNewScreenViewEnum.review) {
       navigation.setOptions({
         headerRight: () => (
           <Ionicons 
@@ -76,7 +72,7 @@ function AddNewScreen({ navigation }) {
   // when blurred and then refocussed
   useFocusEffect(
     useCallback(() => {
-      setViewMode(viewEnum.titleInput);
+      setViewMode(addNewScreenViewEnum.titleInput);
       updateTitleText('');
       setSearchQuery('');
       setImageBackgroundUri(defaultBackgroundImage);
@@ -86,11 +82,11 @@ function AddNewScreen({ navigation }) {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        if (viewMode === viewEnum.imagePicker) {
+        if (viewMode === addNewScreenViewEnum.imagePicker) {
           backMethods.backTotitleInputView();
           return true;
         }
-        if (viewMode === viewEnum.review) {
+        if (viewMode === addNewScreenViewEnum.review) {
           backMethods.backToImagePickerView();
           return true;
         }
@@ -109,10 +105,10 @@ function AddNewScreen({ navigation }) {
         <Animated.View entering={FadeIn.duration(1000)} exiting={FadeOut.duration(1000)}>
           <HeaderBackButton 
             onPress={() => {
-              if (viewMode === viewEnum.imagePicker){
+              if (viewMode === addNewScreenViewEnum.imagePicker){
                 backMethods.backTotitleInputView();
               }
-              else if(viewMode === viewEnum.review){
+              else if(viewMode === addNewScreenViewEnum.review){
                 backMethods.backToImagePickerView();
               } else {
                 navigation.goBack();
@@ -136,11 +132,11 @@ function AddNewScreen({ navigation }) {
 
   const proceedToReviewView = (uri) => {
     setImageBackgroundUri({ uri });
-    setViewMode(viewEnum.review);
+    setViewMode(addNewScreenViewEnum.review);
   };
 
   const skipImageSelection = () => {
-    setViewMode(viewEnum.review);
+    setViewMode(addNewScreenViewEnum.review);
   };
 
   const onNewSave = () => {
@@ -155,7 +151,7 @@ function AddNewScreen({ navigation }) {
       style={styles.backgroundImage}
     >
       <SafeAreaView style={{flex: 1}}>
-        {viewMode === viewEnum.titleInput && (
+        {viewMode === addNewScreenViewEnum.titleInput && (
           <Animated.View
             style={styles.container}
             entering={FadeIn.duration(1000).delay(500)}
@@ -169,7 +165,7 @@ function AddNewScreen({ navigation }) {
               onChangeText={updateTitleText}
               onSubmitEditing={(e) => {
                 setSearchQuery(e.nativeEvent.text);
-                setViewMode(viewEnum.imagePicker);
+                setViewMode(addNewScreenViewEnum.imagePicker);
               }}
               value={titleText}
               textAlign="center"
@@ -179,7 +175,7 @@ function AddNewScreen({ navigation }) {
             />
           </Animated.View>
         )}
-        {viewMode === viewEnum.imagePicker
+        {viewMode === addNewScreenViewEnum.imagePicker
             && (
             <>
               <View style={[styles.container, styles.containerImagePicker(headerHeight)]}>
@@ -218,7 +214,7 @@ function AddNewScreen({ navigation }) {
               </Animated.View>
             </>
             )}
-        {viewMode === viewEnum.review
+        {viewMode === addNewScreenViewEnum.review
           && (
             <>
               <View style={[styles.container, styles.containerReview]}>

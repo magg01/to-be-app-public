@@ -3,4 +3,13 @@ const calEventTypeEnum = {
   repeaterEvent: 1,
 };
 
-export { calEventTypeEnum };
+const addNewScreenViewEnum = {
+  titleInput: 0,
+  imagePicker: 1,
+  review: 2,
+};
+
+export {
+  calEventTypeEnum,
+  addNewScreenViewEnum,
+};
