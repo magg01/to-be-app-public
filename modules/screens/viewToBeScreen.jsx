@@ -36,6 +36,8 @@ const viewEnum = {
   addPlan: 2,
 };
 
+const defaultBackgroundImage = require('../../assets/addNew.jpg');
+
 function ViewToBeScreen({route, navigation}) {
   const [toBeId, setToBeId] = useState(undefined);
   const [toBeItem, setToBeItem] = useState(undefined);
@@ -172,7 +174,12 @@ function ViewToBeScreen({route, navigation}) {
   }
 
   return (
-    <ImageBackground source={{ uri: toBeItem.imageBackgroundUri }} resizeMode="cover" style={styles.backgroundImage}>
+    <ImageBackground
+      source={{ uri: toBeItem.imageBackgroundUri }}
+      resizeMode="cover"
+      style={styles.backgroundImage}
+      defaultSource={defaultBackgroundImage}
+    >
       <SafeAreaView style={styles.safeAreaContainer}>
         <View style={styles.container(headerHeight, viewMode)}>
           <Animated.Text

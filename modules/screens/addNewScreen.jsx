@@ -139,6 +139,10 @@ function AddNewScreen({ navigation }) {
     setViewMode(viewEnum.review);
   };
 
+  const skipImageSelection = () => {
+    setViewMode(viewEnum.review);
+  };
+
   const onNewSave = () => {
     addToBeItem(titleText, imageBackgroundUri.uri, tintColor);
     navigation.goBack();
@@ -177,28 +181,42 @@ function AddNewScreen({ navigation }) {
         )}
         {viewMode === viewEnum.imagePicker
             && (
-            <View style={[styles.container, styles.containerImagePicker(headerHeight)]}>
-              <Animated.Text
-                style={styles.imagePickerInstructions}
-                entering={FadeIn.duration(1000).delay(250)}
-                exiting={FadeOut.duration(500)}
-                key="test3"
-              >
-                {CONSTANT_STRINGS.ADD_NEW_SCREEN.IMAGE_PICKER_INSTRUCTION}
-              </Animated.Text>
+            <>
+              <View style={[styles.container, styles.containerImagePicker(headerHeight)]}>
+                <Animated.Text
+                  style={styles.imagePickerInstructions}
+                  entering={FadeIn.duration(1000).delay(250)}
+                  exiting={FadeOut.duration(500)}
+                  key="test3"
+                >
+                  {CONSTANT_STRINGS.ADD_NEW_SCREEN.IMAGE_PICKER_INSTRUCTION}
+                </Animated.Text>
+                <Animated.View
+                  style={styles.unsplashContainer}
+                  entering={FadeIn.duration(1000).delay(500)}
+                  exiting={FadeOut.duration(500)}
+                >
+                  <UnsplashImageSearch
+                    width={width * 0.75}
+                    height={height * 0.75}
+                    providedSearchQuery={searchQuery}
+                    onImageDownload={proceedToReviewView}
+                  />
+                </Animated.View>
+              </View>
               <Animated.View
-                style={styles.unsplashContainer}
-                entering={FadeIn.duration(1000).delay(500)}
-                exiting={FadeOut.duration(500)}
+                style={styles.bottomButtonContainer}
+                entering={animations.addNewScreen.bottomButtons.entering}
+                exiting={animations.addNewScreen.bottomButtons.exiting}
               >
-                <UnsplashImageSearch
-                  width={width * 0.75}
-                  height={height * 0.75}
-                  providedSearchQuery={searchQuery}
-                  onImageDownload={proceedToReviewView}
-                />
+                <TouchableOpacity
+                  style={styles.bottomButton}
+                  onPress={skipImageSelection}
+                >
+                  <Text style={styles.bottomButtonText}>Skip for now</Text>
+                </TouchableOpacity>
               </Animated.View>
-            </View>
+            </>
             )}
         {viewMode === viewEnum.review
           && (
