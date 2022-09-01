@@ -1,5 +1,5 @@
 import React, {
-  useState, useRef, useCallback, useLayoutEffect, useEffect
+  useState, useRef, useCallback, useLayoutEffect, useEffect,
 } from 'react';
 import {
   StyleSheet, View, ImageBackground, Text, TextInput, Dimensions, TouchableOpacity, BackHandler,
@@ -121,14 +121,6 @@ function AddNewScreen({ navigation }) {
       ),
     });
   });
-
-  // useFocusEffect(
-  //   useCallback(() => {
-  //     if (textInputRef.current !== null) {
-  //       textInputRef.current.focus();
-  //     }
-  //   }, [textInputRef]),
-  // );
 
   const proceedToReviewView = (uri) => {
     setImageBackgroundUri({ uri });
