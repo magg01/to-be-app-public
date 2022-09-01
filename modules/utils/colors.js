@@ -16,6 +16,9 @@ const colors = {
   modals: {
     outerColorOpacity: 'rgba(40,40,40,0.8)',
   },
+  navigation: {
+    tabBarBackground: '#321F71',
+  },
 };
 
 export default colors;

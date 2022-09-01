@@ -2,6 +2,7 @@ const CONSTANT_STRINGS = {
 
   BE_SCREEN: {
     HEADER_TITLE: 'Be...',
+    LIST_EMPTY_MESSAGE: "To get started, add a new 'to be' to your list.",
   },
   UNSPLASH_IMAGE_SEARCH: {
     INPUT_PLACEHOLDER: 'Search for images',

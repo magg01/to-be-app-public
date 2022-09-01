@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { StyleSheet, FlatList, TouchableOpacity, ImageBackground, Text, View, InteractionManager } from 'react-native';
+import {
+  StyleSheet, FlatList, TouchableOpacity, ImageBackground, Text, View, InteractionManager,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -7,6 +9,8 @@ import { Entypo } from '@expo/vector-icons';
 import { getAllToBeItems } from '../database/database';
 import OptimisedToBeTile from '../components/optimisedToBeTile';
 import FocusAwareStatusBar from '../components/focusAwareStatusBar';
+import colors from '../utils/colors';
+import CONSTANT_STRINGS from '../strings/constantStrings';
 
 const defaultImageBackground = require('../../assets/beScreenBackground7.jpg');
 
@@ -31,10 +35,6 @@ function BeScreen({ navigation }) {
         onRefresh();
       });
       return () => task.cancel();
-      // have to make sure we have empty dependency array here otherwise
-      // the effect runs on every render
-      // because arrays are compared by reference and even if the array contents haven't changed the
-      // array will appear to have changed because it's a different reference
     }, [onRefresh]),
   );
 
@@ -49,25 +49,29 @@ function BeScreen({ navigation }) {
     />
   ), [navigation, onRefresh]);
 
-  const ListEmptyComponent = () => (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center', padding: "8%"}}>
-      <Text style={{color: 'white', fontSize: 26}}>To get started, add a new 'to be' to your list.</Text>
+  const renderListEmptyComponent = () => (
+    <View style={styles.listEmptyContainer}>
+      <Text style={styles.listEmptyText}>{CONSTANT_STRINGS.BE_SCREEN.LIST_EMPTY_MESSAGE}</Text>
     </View>
   );
 
   return (
-    <ImageBackground source={defaultImageBackground} resizeMode='cover' style={styles.backgroundImage}>
+    <ImageBackground
+      style={styles.backgroundImage}
+      source={defaultImageBackground}
+      resizeMode="cover"
+    >
       <SafeAreaView style={styles.container(headerHeight)}>
         <FlatList
-          style={{width: "100%", marginTop: 8}}
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'flex-start' }}
+          style={styles.mainFlatList}
+          contentContainerStyle={styles.flatListContainer}
           data={allToBes}
           renderItem={renderOptimisedToBeTile}
           keyExtractor={(item) => item.id}
           numColumns={2}
           onRefresh={onRefresh}
           refreshing={isRetreiving}
-          ListEmptyComponent={ListEmptyComponent}
+          ListEmptyComponent={renderListEmptyComponent}
         />
         <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
           <Entypo name="add-to-list" size={24} color="black" />
@@ -88,6 +92,24 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: headerHeight / 2,
   }),
+  mainFlatList: {
+    width: '100%',
+    marginTop: 8,
+  },
+  flatListContainer: {
+    flexGrow: 1,
+    justifyContent: 'flex-start',
+  },
+  listEmptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '8%',
+  },
+  listEmptyText: {
+    color: colors.general.defaultWhite,
+    fontSize: 26,
+  },
   fab: {
     width: 60,
     height: 60,
@@ -97,17 +119,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     x: 20,
-    backgroundColor: 'white',
+    backgroundColor: colors.general.defaultWhite,
     position: 'absolute',
     opacity: 0.9,
-    shadowColor: "#000",
+    shadowColor: colors.general.defaultBlack,
     shadowOffset: {
       width: 0,
       height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 7
+    elevation: 7,
   },
 });
 
