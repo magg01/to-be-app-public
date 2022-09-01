@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import React, { useState } from 'react';
 import Animated from 'react-native-reanimated';
 import {
@@ -26,12 +27,13 @@ function AddPlan({ toBeId, onAdd, toBeItemTitle, tintColor }) {
     <>
       <Animated.View
         style={styles.container(tintColor)}
-        entering={animations.addPlan.addPlanView.entering}
-        exiting={animations.addPlan.addPlanView.exiting}
+        entering={animations.addPlan.addPlanView.entering()}
+        exiting={animations.addPlan.addPlanView.exiting()}
+        testID="addPlanView"
       >
         <View style={styles.headerContainer(tintColor)}>
           <Text style={styles.headerText(tintColor)}>
-            {CONSTANT_STRINGS.PLANS.ADD_PLAN.PROMPT_TEXT(toBeItemTitle.toLowerCase())}
+            {CONSTANT_STRINGS.PLANS.ADD_PLAN.PROMPT_TEXT(toBeItemTitle)}
           </Text>
         </View>
         <TextInput
@@ -39,12 +41,13 @@ function AddPlan({ toBeId, onAdd, toBeItemTitle, tintColor }) {
           onChangeText={(text) => setNewPlanTitle(text)}
           textAlign="center"
           selectionColor={tintColor}
+          accessibilityLabel={CONSTANT_STRINGS.PLANS.ADD_PLAN.TEXT_INPUT_LABEL}
         />
       </Animated.View>
       <Animated.View
         style={styles.bottomButtonContainer}
-        entering={animations.addPlan.addPlanView.entering}
-        exiting={animations.addPlan.addPlanView.exiting}
+        entering={animations.addPlan.addPlanView.entering()}
+        exiting={animations.addPlan.addPlanView.exiting()}
       >
         <TouchableOpacity
           style={styles.bottomButton}
