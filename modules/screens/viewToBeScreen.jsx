@@ -197,7 +197,6 @@ function ViewToBeScreen({route, navigation}) {
               contentContainerStyle={styles.scrollViewContentContainer}
             >
               <PlanView
-                providedToBeId={toBeId}
                 providedPlansWithRepeaters={plansWithRepeaters}
                 onAddNewPressed={() => setViewMode(viewEnum.addPlan)}
                 tintColor={tintColor}

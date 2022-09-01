@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useRef, useState,
+  useEffect, useState,
 } from 'react';
 import Animated from 'react-native-reanimated';
 import {
@@ -13,14 +13,9 @@ import colors from '../utils/colors';
 
 const screenHeight = Dimensions.get('window').height;
 
-function PlanView({providedToBeId, providedPlansWithRepeaters, onAddNewPressed, tintColor, onPlansModified}) {
+function PlanView({providedPlansWithRepeaters, onAddNewPressed, tintColor, onPlansModified}) {
   const [expandedView, setExpandedView] = useState(true);
-  const [toBeId, setToBeId] = useState(undefined);
   const [plansWithRepeaters, setPlansWithRepeaters] = useState(undefined);
-
-  useEffect(() => {
-    setToBeId(providedToBeId);
-  }, [providedToBeId]);
 
   useEffect(() => {
     setPlansWithRepeaters(providedPlansWithRepeaters);
