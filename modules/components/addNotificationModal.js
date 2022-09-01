@@ -38,7 +38,7 @@ function AddNotificationModal({isVisible, onRequestClose, onDismiss, eventItem, 
       visible={isVisible}
       onRequestClose={onRequestClose}
       onDismiss={onDismiss}
-      testID={'addNotificationModal'}
+      testID="addNotificationModal"
     >
       <View style={styles.outerContainer}>
         <View style={styles.innerContainer}>
