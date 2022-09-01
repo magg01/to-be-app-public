@@ -4,6 +4,7 @@ import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-naviga
 import { createStackNavigator } from '@react-navigation/stack';
 import { setNotificationHandler } from 'expo-notifications';
 import Toast from 'react-native-toast-message';
+import { setUpDatabase, setUpTables } from './modules/database/database';
 import HomeScreen from './modules/screens/homeScreen';
 import ViewToBeScreen from './modules/screens/viewToBeScreen';
 import { fetchPermissionSettings, checkPermissionSettings } from './modules/utils/notifications';
@@ -50,6 +51,9 @@ function getHeaderTitle(route) {
   }
   return headerTitle;
 }
+
+setUpDatabase();
+setUpTables();
 
 export default function App() {
   return (

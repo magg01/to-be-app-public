@@ -1,53 +1,55 @@
 import * as SQLite from 'expo-sqlite';
 
 const DEBUG = false;
-const db = SQLite.openDatabase('tobedb', '0.0.3');
 
-// TODO: go through all methods and move error reporting and
-// final promise resolve to the TRANSACTION success callback
+let db;
 
-// default setting for sqlite is that foreign key constraints are not enforced.
-// So we need to turn the constraint enforcement on manually.
-db.exec([{ sql: 'PRAGMA foreign_keys = ON;', args: [] }], false, () => console.log('Foreign keys turned on'));
+const setUpDatabase = () => {
+  db = SQLite.openDatabase('tobedb', '0.0.3');
+  // default setting for sqlite is that foreign key constraints are not enforced.
+  // So we need to turn the constraint enforcement on manually.
+  db.exec([{ sql: 'PRAGMA foreign_keys = ON;', args: [] }], false, () => console.log('Foreign keys turned on'));
+}
 
-if (DEBUG) {
-  // reset the tables on each reload
+const setUpTables = () => {
+  if (DEBUG) {
+    // reset the tables on each reload
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          'drop table if exists calevents',
+        );
+        tx.executeSql(
+          'drop table if exists plans',
+        );
+        tx.executeSql(
+          'drop table if exists tobeitems',
+        );
+        tx.executeSql(
+          'drop table if exists repeaters',
+        );
+      },
+    );
+  }
   db.transaction(
     (tx) => {
       tx.executeSql(
-        'drop table if exists calevents',
+        'create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text, tintColor text);',
       );
       tx.executeSql(
-        'drop table if exists plans',
+        'create table if not exists plans (id integer primary key not null, done int, title text, description text NOT NULL DEFAULT "", tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);',
       );
       tx.executeSql(
-        'drop table if exists tobeitems',
+        'create table if not exists repeaters (id integer primary key not null, lastdonedatetime string, periodicity string, enddate string, notificationId string, shouldshowincalendar integer, calstarttime string, calendtime string, calday integer, caldate integer, plan integer not null, FOREIGN KEY(plan) REFERENCES plans(id) on delete cascade);',
       );
       tx.executeSql(
-        'drop table if exists repeaters',
+        'create table if not exists calevents (id integer primary key not null, eventdate string, eventstarttime string, eventendtime string, eventnotification string, planitem integer not null, FOREIGN KEY(planitem) REFERENCES plans(id) on delete cascade);',
       );
     },
+    (e) => console.log(`setUpTables encountered an error -> ${e}`),
+    () => console.log('setUpTables: success'),
   );
-}
-
-db.transaction(
-  (tx) => {
-    tx.executeSql(
-      'create table if not exists tobeitems (id integer primary key not null, done int, title text, imageBackgroundUri text, tintColor text);',
-    );
-    tx.executeSql(
-      'create table if not exists plans (id integer primary key not null, done int, title text, description text NOT NULL DEFAULT "", tobeitem integer not null, FOREIGN KEY(tobeitem) REFERENCES tobeitems(id) on delete cascade);',
-    );
-    tx.executeSql(
-      'create table if not exists repeaters (id integer primary key not null, lastdonedatetime string, periodicity string, enddate string, notificationId string, shouldshowincalendar integer, calstarttime string, calendtime string, calday integer, caldate integer, plan integer not null, FOREIGN KEY(plan) REFERENCES plans(id) on delete cascade);',
-    );
-    tx.executeSql(
-      'create table if not exists calevents (id integer primary key not null, eventdate string, eventstarttime string, eventendtime string, eventnotification string, planitem integer not null, FOREIGN KEY(planitem) REFERENCES plans(id) on delete cascade);',
-    );
-  },
-  (e) => console.log(`setUpTables encountered an error -> ${e}`),
-  () => console.log('setUpTables: success'),
-);
+};
 
 const addToBeItem = (title, imageBackgroundUri, tintColor) => {
   db.transaction(
@@ -834,6 +836,8 @@ const getNumberOfUsesForImage = (imageBackgroundUri) => new Promise((resolve, re
 });
 
 export {
+  setUpDatabase,
+  setUpTables,
   deleteToBeItemById,
   addToBeItem,
   getToBeItemById,
