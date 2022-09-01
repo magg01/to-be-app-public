@@ -1,7 +1,7 @@
 /* eslint-disable */
 import React, { useState } from 'react';
 import {
-  Text, ActivityIndicator, ImageBackground, TouchableOpacity, View
+  Text, ActivityIndicator, ImageBackground, TouchableOpacity, View, StyleSheet
 } from 'react-native';
 import { downloadRemoteImageToLocalStorage } from '../FileSystem/fileSystem';
 import { apiMethods } from '../utils/unsplashApi';
@@ -60,7 +60,7 @@ function UnsplashPhotoListItem({ photo, onImageDownload, width }) {
         }
       })()}
       <TouchableOpacity 
-        style={{width: 100, height: 25, backgroundColor:'white', opacity: 0.9, alignItems: 'center', justifyContent: 'center', borderRadius: 5, marginBottom: 10}}
+        style={styles.bottomButton}
         onPress={() =>
           downloadStarted ?
           null
@@ -70,12 +70,28 @@ function UnsplashPhotoListItem({ photo, onImageDownload, width }) {
           { downloadStarted ? 
             <ActivityIndicator /> 
             :
-            <Text style={{color: colors.plans.textOrIconOnWhite }}>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.CHOOSE_IMAGE_TEXT}</Text>
+            <Text style={styles.bottomButtonText}>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.CHOOSE_IMAGE_TEXT}</Text>
           }
       </TouchableOpacity>
       <Text style={{color: "white", fontSize: 10, alignSelf: 'flex-end', marginRight: 4}}>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.IMAGE_ATTRIBUTION(user.name)}</Text>
     </ImageBackground>
   );
 }
+
+const styles = StyleSheet.create({
+  bottomButton: {
+    margin: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    opacity: 0.9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.general.defaultWhite,
+    borderRadius: 8,
+  },
+  bottomButtonText: {
+    color: colors.plans.textOrIconOnWhite
+  }
+})
 
 export default UnsplashPhotoListItem;

@@ -11,6 +11,16 @@ const animations = {
       exiting: FadeOut.duration(800),
     },
   },
+  addNewScreen: {
+    bottomButtons: {
+      entering: FadeIn.duration(1000),
+      exiting: FadeOut.duration(1000),
+    },
+    colorPicker: {
+      entering: FadeIn.duration(1000),
+      exiting: FadeOut.duration(500),
+    },
+  },
   plans: {
     planView: {
       entering: FadeIn.duration(800),

@@ -15,6 +15,7 @@ import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 import colors from '../utils/colors';
+import animations from '../utils/animations';
 
 const { height, width } = Dimensions.get('window');
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
@@ -144,7 +145,11 @@ function AddNewScreen({ navigation }) {
   };
 
   return (
-    <ImageBackground source={imageBackgroundUri} resizeMode='cover' style={styles.backgroundImage}>
+    <ImageBackground
+      source={imageBackgroundUri}
+      resizeMode="cover"
+      style={styles.backgroundImage}
+    >
       <SafeAreaView style={{flex: 1}}>
         {viewMode === viewEnum.titleInput && (
           <Animated.View
@@ -181,8 +186,8 @@ function AddNewScreen({ navigation }) {
               >
                 {CONSTANT_STRINGS.ADD_NEW_SCREEN.IMAGE_PICKER_INSTRUCTION}
               </Animated.Text>
-              <Animated.View 
-                style={{ flexGrow: 1, alignItems: 'center', justifyContent: 'flex-start' }} 
+              <Animated.View
+                style={styles.unsplashContainer}
                 entering={FadeIn.duration(1000).delay(500)}
                 exiting={FadeOut.duration(500)}
               >
@@ -211,25 +216,13 @@ function AddNewScreen({ navigation }) {
               {colorPickerVisible
               && (
                 <Animated.View
-                  style={{
-                    width: 250,
-                    height: 200,
-                    backgroundColor: 'rgba(200,200,200,0.2)', 
-                    borderRadius: 6,
-                    padding: 2,
-                    position: 'absolute',
-                    top: headerHeight,
-                    right: 10,
-                    borderColor: tintColor,
-                    borderWidth: 1,
-                  }}
-                  entering={FadeIn.duration(1000)}
-                  exiting={FadeOut.duration(500)}
+                  style={styles.colorPicker(headerHeight, tintColor)}
+                  entering={animations.addNewScreen.colorPicker.entering}
+                  exiting={animations.addNewScreen.colorPicker.exiting}
                 >
                   <ColorPicker
                     color={tintColor}
                     onColorChange={(color) => setTintColor(color)}
-                    onColorChangeComplete={(color) => console.log(`final color: ${color}`)}
                     thumbSize={30}
                     gapSize={10}
                     sliderSize={20}
@@ -239,12 +232,16 @@ function AddNewScreen({ navigation }) {
                   />
                 </Animated.View>
               )}
-              <Animated.View style={{ alignItems: 'center' }} entering={FadeIn.duration(1000)} exiting={FadeOut.duration(1000)}>
+              <Animated.View
+                style={styles.bottomButtonContainer}
+                entering={animations.addNewScreen.bottomButtons.entering}
+                exiting={animations.addNewScreen.bottomButtons.exiting}
+              >
                 <TouchableOpacity
-                  style={{ backgroundColor: '#ccc', margin: 12, padding: 12, borderRadius: 4 }}
+                  style={styles.bottomButton}
                   onPress={onNewSave}
                 >
-                  <Text>Save</Text>
+                  <Text style={styles.bottomButtonText}>Save</Text>
                 </TouchableOpacity>
               </Animated.View>
             </>
@@ -275,28 +272,57 @@ const styles = StyleSheet.create({
     width: '60%',
     margin: 12,
     borderBottomWidth: 2,
-    borderBottomColor: 'white',
+    borderBottomColor: colors.general.defaultWhite,
     padding: 6,
     fontSize: 36,
-    color: 'white',
-  },
-  titleTextImagePicker: {
-    alignSelf: 'center',
-    marginBottom: 12,
-    fontSize: 36,
-    color: 'white',
+    color: colors.general.defaultWhite,
   },
   titleTextReview: {
     alignSelf: 'center',
     margin: 12,
     fontSize: 36,
-    color: 'white',
+    color: colors.general.defaultWhite,
   },
   imagePickerInstructions: {
     marginBottom: 24,
     marginTop: 12,
     fontSize: 20,
-    color: 'white',
+    color: colors.general.defaultWhite,
+  },
+  bottomButtonContainer: {
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  bottomButton: {
+    margin: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    opacity: 0.9,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.general.defaultWhite,
+    borderRadius: 8,
+  },
+  bottomButtonText: {
+    color: colors.plans.textOrIconOnWhite,
+  },
+  colorPicker: (headerHeight, tintColor) => ({
+    width: 300,
+    height: 250,
+    backgroundColor: colors.plans.planViewBackground,
+    borderRadius: 6,
+    padding: 2,
+    position: 'absolute',
+    top: headerHeight,
+    right: 10,
+    borderColor: tintColor,
+    borderWidth: 1,
+  }),
+  unsplashContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    justifyContent: 'flex-start',
   },
 });
 
