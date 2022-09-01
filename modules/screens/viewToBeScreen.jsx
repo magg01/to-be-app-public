@@ -29,19 +29,14 @@ import PlanRepeaterView from '../components/planRepeaterView';
 import colors from '../utils/colors';
 import { hasEndDateElapsed } from '../utils/datetime';
 import CONSTANT_STRINGS from '../strings/constantStrings';
-
-const viewEnum = {
-  overview: 0,
-  details: 1,
-  addPlan: 2,
-};
+import { viewToBeScreenViewEnum } from '../utils/enums';
 
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
 
 function ViewToBeScreen({route, navigation}) {
   const [toBeId, setToBeId] = useState(undefined);
   const [toBeItem, setToBeItem] = useState(undefined);
-  const [viewMode, setViewMode] = useState(viewEnum.overview);
+  const [viewMode, setViewMode] = useState(viewToBeScreenViewEnum.overview);
   const [tintColor, setTintColor] = useState('#ffffff');
   const [plansWithRepeaters, setPlansWithRepeaters] = useState(null);
   const [dailies, setDailies] = useState(null);
@@ -100,12 +95,12 @@ function ViewToBeScreen({route, navigation}) {
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
-        if (viewMode === viewEnum.details) {
-          setViewMode(viewEnum.overview);
+        if (viewMode === viewToBeScreenViewEnum.details) {
+          setViewMode(viewToBeScreenViewEnum.overview);
           return true;
         }
-        if (viewMode === viewEnum.addPlan) {
-          setViewMode(viewEnum.details);
+        if (viewMode === viewToBeScreenViewEnum.addPlan) {
+          setViewMode(viewToBeScreenViewEnum.details);
           return true;
         }
         return false;
@@ -123,10 +118,10 @@ function ViewToBeScreen({route, navigation}) {
       headerLeft: () => (
         <HeaderBackButton
           onPress={() => {
-            if (viewMode === viewEnum.addPlan) {
-              setViewMode(viewEnum.details);
-            } else if (viewMode === viewEnum.details) {
-              setViewMode(viewEnum.overview);
+            if (viewMode === viewToBeScreenViewEnum.addPlan) {
+              setViewMode(viewToBeScreenViewEnum.details);
+            } else if (viewMode === viewToBeScreenViewEnum.details) {
+              setViewMode(viewToBeScreenViewEnum.overview);
             } else {
               navigation.goBack();
             }
@@ -157,7 +152,7 @@ function ViewToBeScreen({route, navigation}) {
   });
 
   const onNewPlanAdded = () => {
-    setViewMode(viewEnum.details);
+    setViewMode(viewToBeScreenViewEnum.details);
     refreshPlansAndRepeaters();
   };
 
@@ -189,7 +184,7 @@ function ViewToBeScreen({route, navigation}) {
           >
             {toBeItem.title}
           </Animated.Text>
-          {viewMode === viewEnum.details
+          {viewMode === viewToBeScreenViewEnum.details
           && (
             <ScrollView
               nestedScrollEnabled
@@ -198,7 +193,7 @@ function ViewToBeScreen({route, navigation}) {
             >
               <PlanView
                 providedPlansWithRepeaters={plansWithRepeaters}
-                onAddNewPressed={() => setViewMode(viewEnum.addPlan)}
+                onAddNewPressed={() => setViewMode(viewToBeScreenViewEnum.addPlan)}
                 tintColor={tintColor}
                 onPlansModified={onPlansModified}
               />
@@ -231,7 +226,7 @@ function ViewToBeScreen({route, navigation}) {
                 )}
             </ScrollView>
           )}
-          {viewMode === viewEnum.addPlan
+          {viewMode === viewToBeScreenViewEnum.addPlan
             && (
               <AddPlan
                 toBeId={toBeId}
@@ -241,7 +236,7 @@ function ViewToBeScreen({route, navigation}) {
               />
             )}
         </View>
-        {viewMode === viewEnum.overview
+        {viewMode === viewToBeScreenViewEnum.overview
           && (
           <Animated.View
             style={styles.bottomButtonContainer}
@@ -260,7 +255,7 @@ function ViewToBeScreen({route, navigation}) {
             />
             <TouchableOpacity
               style={styles.bottomButton}
-              onPress={() => setViewMode(viewEnum.details)}
+              onPress={() => setViewMode(viewToBeScreenViewEnum.details)}
             >
               <Text style={styles.bottomButtonText}>Details</Text>
             </TouchableOpacity>
@@ -290,7 +285,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   container: (headerHeight, viewMode) => (
-    viewMode === viewEnum.overview
+    viewMode === viewToBeScreenViewEnum.overview
       ? {
         flex: 1,
         marginTop: headerHeight / 2,

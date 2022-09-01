@@ -9,7 +9,14 @@ const addNewScreenViewEnum = {
   review: 2,
 };
 
+const viewToBeScreenViewEnum = {
+  overview: 0,
+  details: 1,
+  addPlan: 2,
+};
+
 export {
   calEventTypeEnum,
   addNewScreenViewEnum,
+  viewToBeScreenViewEnum,
 };
