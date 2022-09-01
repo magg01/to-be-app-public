@@ -54,6 +54,17 @@ const CONSTANT_STRINGS = {
       },
     },
   },
+  NOTIFICATIONS: {
+    ADD_NOTIFICATION_MODAL: {
+      TITLE: (planTitle) => (
+        `Add notification for '${planTitle ?? ''}'`
+      ),
+      INPUT_PROMPT: 'Minutes before start time: ',
+      INPUT_ACCESSIBILITY_LABEL: 'Input number of minutes before start time',
+      CANCEL_BUTTON_TITLE: 'CANCEL',
+      SUBMIT_BUTTON_TITLE: 'SUBMIT',
+    },
+  },
 };
 
 export default CONSTANT_STRINGS;

@@ -1,8 +1,10 @@
+/* eslint-disable react/jsx-filename-extension */
 import React, { useState } from 'react';
 import {
   StyleSheet, View, Text, Modal, Button, TextInput,
 } from 'react-native';
 import colors from '../utils/colors';
+import CONSTANT_STRINGS from '../strings/constantStrings';
 
 function AddNotificationModal({isVisible, onRequestClose, onDismiss, eventItem, onShouldSetNotification}) {
   const [minutesBeforeStartTime, setMinutesBeforeStartTime] = useState('0');
@@ -16,6 +18,14 @@ function AddNotificationModal({isVisible, onRequestClose, onDismiss, eventItem, 
     }
   };
 
+  const updateMinutesBeforeStartTime = (minutes) => {
+    if (isNaN(minutes)) {
+      setMinutesBeforeStartTime('0');
+    } else {
+      setMinutesBeforeStartTime(minutes);
+    }
+  };
+
   return (
     <Modal
       animationType="fade"
@@ -24,28 +34,36 @@ function AddNotificationModal({isVisible, onRequestClose, onDismiss, eventItem, 
       visible={isVisible}
       onRequestClose={onRequestClose}
       onDismiss={onDismiss}
+      testID={'addNotificationModal'}
     >
       <View style={styles.outerContainer}>
         <View style={styles.innerContainer}>
           <Text style={styles.titleText}>
-            Add notification for {eventItem.plan_title}
+            {CONSTANT_STRINGS.NOTIFICATIONS.ADD_NOTIFICATION_MODAL.TITLE(eventItem.planTitle)}
           </Text>
           <View style={styles.selectorRowContainer}>
             <Text style={styles.dateTimePickerHeader}>
-              Minutes before start time:
+              {CONSTANT_STRINGS.NOTIFICATIONS.ADD_NOTIFICATION_MODAL.INPUT_PROMPT}
             </Text>
             <TextInput
               style={styles.input}
               autoFocus
               showSoftInputOnFocus
               value={minutesBeforeStartTime}
-              onChangeText={setMinutesBeforeStartTime}
+              onChangeText={updateMinutesBeforeStartTime}
               keyboardType="numeric"
+              accessibilityLabel={CONSTANT_STRINGS.NOTIFICATIONS.ADD_NOTIFICATION_MODAL.INPUT_ACCESSIBILITY_LABEL}
             />
           </View>
           <View style={styles.buttonRow}>
-            <Button title="Cancel" onPress={() => onClose(false)} />
-            <Button title="Submit" onPress={() => onClose(true)} />
+            <Button
+              title={CONSTANT_STRINGS.NOTIFICATIONS.ADD_NOTIFICATION_MODAL.CANCEL_BUTTON_TITLE}
+              onPress={() => onClose(false)}
+            />
+            <Button
+              title={CONSTANT_STRINGS.NOTIFICATIONS.ADD_NOTIFICATION_MODAL.SUBMIT_BUTTON_TITLE}
+              onPress={() => onClose(true)}
+            />
           </View>
         </View>
       </View>
