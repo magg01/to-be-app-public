@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Button, View, Text, StyleSheet, Modal, Alert } from 'react-native';
+import {
+  Button, View, Text, StyleSheet, Modal,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
@@ -21,7 +23,6 @@ const IconSize = 28;
 
 function RepeaterCalEventDateTimePicker(props) {
   const [isNativePickerVisible, setIsNativePickerVisibile] = useState(false);
-  const [datePicked, setDatePicked] = useState(null);
   const [startTimePicked, setStartTimePicked] = useState(new Date());
   const [endTimePicked, setEndTimePicked] = useState(new Date());
   const [selectedDayOfTheWeek, setSelectedDayOfTheWeek] = useState(null);
@@ -52,14 +53,9 @@ function RepeaterCalEventDateTimePicker(props) {
   };
 
   const handleConfirm = (date) => {
-    if (updateValue.current === updateValueEnum.date) {
-      console.log('A date has been picked: ', date);
-      setDatePicked(date);
-    } else if (updateValue.current === updateValueEnum.startTime) {
-      console.log('A start time has been picked: ', date);
+    if (updateValue.current === updateValueEnum.startTime) {
       setStartTimePicked(date);
     } else if (updateValue.current === updateValueEnum.endTime) {
-      console.log('An end time has been picked: ', date);
       setEndTimePicked(date);
     }
     hideNativePicker();
@@ -68,11 +64,22 @@ function RepeaterCalEventDateTimePicker(props) {
   const onClose = (shouldSetRepeatingCalEvent) => {
     if (shouldSetRepeatingCalEvent) {
       if (props.periodicity === 'daily') {
-        props.onSubmit({ startTime: startTimePicked, endTime: endTimePicked });
+        props.onSubmit({
+          startTime: startTimePicked,
+          endTime: endTimePicked,
+        });
       } else if (props.periodicity === 'weekly') {
-        props.onSubmit({ dayOfWeek: selectedDayOfTheWeek, startTime: startTimePicked, endTime: endTimePicked });
+        props.onSubmit({
+          dayOfWeek: selectedDayOfTheWeek,
+          startTime: startTimePicked,
+          endTime: endTimePicked,
+        });
       } else if (props.periodicity === 'monthly') {
-        props.onSubmit({ dayOfMonth: selectedDayOfTheMonth, startTime: startTimePicked, endTime: endTimePicked });
+        props.onSubmit({
+          dayOfMonth: selectedDayOfTheMonth,
+          startTime: startTimePicked,
+          endTime: endTimePicked,
+        });
       }
     } else {
       props.onCancel();
@@ -149,7 +156,9 @@ function RepeaterCalEventDateTimePicker(props) {
                 Start:
               </Text>
               <Text style={styles.dateTimePickerDateTime}>
-                {zeroPadTime(startTimePicked.getHours())}:{zeroPadTime(startTimePicked.getMinutes())}
+                {zeroPadTime(startTimePicked.getHours())}
+                :
+                {zeroPadTime(startTimePicked.getMinutes())}
               </Text>
               <MaterialCommunityIcons
                 name="clock-edit-outline"
@@ -163,7 +172,9 @@ function RepeaterCalEventDateTimePicker(props) {
                 End:
               </Text>
               <Text style={styles.dateTimePickerDateTime}>
-                {zeroPadTime(endTimePicked.getHours())}:{zeroPadTime(endTimePicked.getMinutes())}
+                {zeroPadTime(endTimePicked.getHours())}
+                :
+                {zeroPadTime(endTimePicked.getMinutes())}
               </Text>
               <MaterialCommunityIcons
                 name="clock-edit-outline"
@@ -195,13 +206,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'stretch',
     paddingHorizontal: 20,
-    backgroundColor: 'rgba(40,40,40,0.8)',
+    backgroundColor: colors.modals.outerColorOpacity,
   },
   innerContainer: {
     backgroundColor: colors.general.defaultWhite,
     padding: 20,
     opacity: 1,
-    shadowColor: "#000",
+    shadowColor: colors.general.defaultBlack,
     shadowOffset: {
       width: 0,
       height: 1,
