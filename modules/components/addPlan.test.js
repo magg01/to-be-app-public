@@ -3,7 +3,7 @@
 /* eslint-disable max-len */
 import React from 'react';
 import {
-  render, screen, cleanup, fireEvent, waitFor
+  render, screen, cleanup, fireEvent, waitFor, act
 } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import * as db from '../database/database';
@@ -75,7 +75,8 @@ describe('add button', () => {
     render(<AddPlan toBeId={toBeIdUsed} onAdd={mockOnNewPlanAdded} toBeItemTitle={toBeItemTitle} tintColor={colors.general.defaultWhite} />);
     const textInput = screen.getByLabelText(CONSTANT_STRINGS.PLANS.ADD_PLAN.TEXT_INPUT_LABEL);
     const newTitleText = 'Eat more fruit';
-    await waitFor(() => fireEvent.changeText(textInput, newTitleText));
+    // changing the text updates the state so we need to wrap in await act(async () => ...)
+    await act(async () => fireEvent.changeText(textInput, newTitleText));
     const addButton = screen.queryAllByText(CONSTANT_STRINGS.PLANS.ADD_PLAN.ADD_BUTTON)[0];
     await waitFor(() => fireEvent.press(addButton));
     expect(mockDbAddPlan).toHaveBeenCalledWith(newTitleText, toBeIdUsed);
