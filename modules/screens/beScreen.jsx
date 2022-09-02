@@ -7,7 +7,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { Entypo } from '@expo/vector-icons';
 import { getAllToBeItems } from '../database/database';
-import OptimisedToBeTile from '../components/optimisedToBeTile';
+import ToBeTile from '../components/toBeTile';
 import FocusAwareStatusBar from '../components/focusAwareStatusBar';
 import colors from '../utils/colors';
 import CONSTANT_STRINGS from '../strings/constantStrings';
@@ -38,8 +38,8 @@ function BeScreen({ navigation }) {
     }, [onRefresh]),
   );
 
-  const renderOptimisedToBeTile = useCallback(({ item }) => (
-    <OptimisedToBeTile
+  const renderToBeTile = useCallback(({ item }) => (
+    <ToBeTile
       toBeId={item.id}
       title={item.title}
       imageBackgroundUri={item.imageBackgroundUri}
@@ -66,7 +66,7 @@ function BeScreen({ navigation }) {
           style={styles.mainFlatList}
           contentContainerStyle={styles.flatListContainer}
           data={allToBes}
-          renderItem={renderOptimisedToBeTile}
+          renderItem={renderToBeTile}
           keyExtractor={(item) => item.id}
           numColumns={2}
           onRefresh={onRefresh}
