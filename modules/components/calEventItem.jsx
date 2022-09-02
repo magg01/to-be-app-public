@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet, View, TouchableOpacity, Text, Alert, Platform,
@@ -5,7 +7,7 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import * as Notifications from 'expo-notifications';
 import {
-  confirmRemoveNotification, cancelNotificationEvent, isScheduleNotificationAllowed
+  confirmRemoveNotification, cancelNotificationEvent, isScheduleNotificationAllowed,
 } from '../utils/notifications';
 import * as db from '../database/database';
 import AddNotificationModal from './addNotificationModal';
