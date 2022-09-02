@@ -38,7 +38,6 @@ describe('unsplashPhotoListItem', () => {
   });
 
   it('should display photo attribution to user and Unsplash', () => {
-    console.log(screen.toJSON().children[0]);
     expect(screen.getByText(singlePhotoItem.user.name)).toBeTruthy();
     expect(screen.getByText('Unsplash')).toBeTruthy();
   });
