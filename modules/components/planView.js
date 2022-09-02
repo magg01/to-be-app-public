@@ -1,3 +1,6 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/jsx-filename-extension */
 import React, {
   useEffect, useState,
 } from 'react';
@@ -10,10 +13,13 @@ import { deletePlanItemById } from '../database/database';
 import animations from '../utils/animations';
 import PlanItem from './planItem';
 import colors from '../utils/colors';
+import CONSTANT_STRINGS from '../strings/constantStrings';
 
 const screenHeight = Dimensions.get('window').height;
 
-function PlanView({providedPlansWithRepeaters, onAddNewPressed, tintColor, onPlansModified}) {
+function PlanView({
+  providedPlansWithRepeaters, onAddNewPressed, tintColor, onPlansModified,
+}) {
   const [expandedView, setExpandedView] = useState(true);
   const [plansWithRepeaters, setPlansWithRepeaters] = useState(undefined);
 
@@ -39,9 +45,10 @@ function PlanView({providedPlansWithRepeaters, onAddNewPressed, tintColor, onPla
       entering={animations.plans.planView.entering()}
       exiting={animations.plans.planView.exiting()}
       layout={animations.plans.planView.layout()}
+      testID="planView"
     >
       <View style={styles.headerContainer(tintColor)}>
-        <Text style={styles.headerText(tintColor)}>Plans</Text>
+        <Text style={styles.headerText(tintColor)}>{CONSTANT_STRINGS.PLANS.PLAN_VIEW_TITLE}</Text>
         <MaterialIcons
           name={expandedView ? 'expand-less' : 'expand-more'}
           size={22}

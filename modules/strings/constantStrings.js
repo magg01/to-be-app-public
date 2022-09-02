@@ -24,6 +24,7 @@ const CONSTANT_STRINGS = {
       ADD_FAILURE_ALERT: 'Unable to add a new plan at this time.',
       TEXT_INPUT_LABEL: 'enter a title for the new plan',
     },
+    PLAN_VIEW_TITLE: 'Plans',
     ADD_CAL_EVENT_DATETIMEPICKER_HEADER: 'Add an event to the calendar for this plan.',
     PLAN_DETAIL_PLACEHOLDER: 'Add more details here',
     REPEATERS: {
