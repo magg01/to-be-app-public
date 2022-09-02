@@ -1,3 +1,6 @@
+/* eslint-disable react/style-prop-object */
+/* eslint-disable react/prop-types */
+/* eslint-disable no-use-before-define */
 import React, { useCallback, useState } from 'react';
 import {
   StyleSheet, FlatList, TouchableOpacity, ImageBackground, Text, View, InteractionManager,
@@ -73,7 +76,7 @@ function BeScreen({ navigation }) {
           refreshing={isRetreiving}
           ListEmptyComponent={renderListEmptyComponent}
         />
-        <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate("AddNewScreen")}>
+        <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('AddNewScreen')}>
           <Entypo name="add-to-list" size={24} color="black" />
         </TouchableOpacity>
         <FocusAwareStatusBar style="light" />

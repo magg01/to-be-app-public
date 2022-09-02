@@ -1,3 +1,5 @@
+/* eslint-disable react/style-prop-object */
+/* eslint-disable no-use-before-define */
 import React, { useCallback, useState, useRef } from 'react';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -129,7 +131,7 @@ function AgendaScreen() {
         onDayPress={loadItemsForMonth}
         showOnlySelectedDayItems
       />
-      <FocusAwareStatusBar style={'dark'}/>
+      <FocusAwareStatusBar style="dark" />
     </SafeAreaView>
   );
 }

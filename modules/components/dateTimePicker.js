@@ -1,3 +1,6 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/jsx-filename-extension */
 import React, { useState, useRef } from 'react';
 import { Button, View, Text, StyleSheet, Modal } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -8,16 +11,18 @@ import { DTPickerNativePickerModeEnum, DTPickerUpdateValueEnum } from '../utils/
 
 const IconSize = 28;
 
-function DateTimePicker(props) {
+function DateTimePicker({
+  calEvent, dateOnly, onSubmit, onCancel, modalTitleText,
+}) {
   const [isNativePickerVisible, setIsNativePickerVisibile] = useState(false);
   const [datePicked, setDatePicked] = useState(
-    props.calEvent ? new Date(props.calEvent.date) : new Date(),
+    calEvent ? new Date(calEvent.date) : new Date(),
   );
   const [startTimePicked, setStartTimePicked] = useState(
-    props.calEvent ? new Date(props.calEvent.start) : new Date(),
+    calEvent ? new Date(calEvent.start) : new Date(),
   );
   const [endTimePicked, setEndTimePicked] = useState(
-    props.calEvent ? new Date(props.calEvent.end) : new Date(),
+    calEvent ? new Date(calEvent.end) : new Date(),
   );
 
   const pickerMode = useRef(DTPickerNativePickerModeEnum.date);
@@ -43,13 +48,10 @@ function DateTimePicker(props) {
 
   const handleConfirm = (date) => {
     if (updateValue.current === DTPickerUpdateValueEnum.date) {
-      console.log('A date has been picked: ', date);
       setDatePicked(date);
     } else if (updateValue.current === DTPickerUpdateValueEnum.startTime) {
-      console.log('A start time has been picked: ', date);
       setStartTimePicked(date);
     } else if (updateValue.current === DTPickerUpdateValueEnum.endTime) {
-      console.log('An end time has been picked: ', date);
       setEndTimePicked(date);
     }
     hideNativePicker();
@@ -57,13 +59,13 @@ function DateTimePicker(props) {
 
   const onClose = (shouldReturnDateTime) => {
     if (shouldReturnDateTime) {
-      if (props.dateOnly) {
-        props.onSubmit({ date: datePicked });
+      if (dateOnly) {
+        onSubmit({ date: datePicked });
       } else {
-        props.onSubmit({ date: datePicked, startTime: startTimePicked, endTime: endTimePicked });
+        onSubmit({ date: datePicked, startTime: startTimePicked, endTime: endTimePicked });
       }
     } else {
-      props.onCancel();
+      onCancel();
     }
   };
 
@@ -71,14 +73,14 @@ function DateTimePicker(props) {
     <Modal
       transparent
       statusBarTranslucent
-      animationType={'fade'}
+      animationType="fade"
       onRequestClose={() => onClose(false)}
     >
       <View style={styles.outerContainer}>
         <View style={styles.innerContainer}>
-          {props.modalTitleText
+          {modalTitleText
             && (
-              <Text style={styles.titleText}>{props.modalTitleText}</Text>
+              <Text style={styles.titleText}>{modalTitleText}</Text>
             )}
           <View style={styles.selectorRowContainer}>
             <Text style={styles.dateTimePickerHeader}>
@@ -94,7 +96,7 @@ function DateTimePicker(props) {
               onPress={() => showNativePicker('date')}
             />
           </View>
-          {!props.dateOnly
+          {!dateOnly
             && (
               <>
                 <View style={styles.selectorRowContainer}>

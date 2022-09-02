@@ -1,3 +1,6 @@
+/* eslint-disable react/style-prop-object */
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/prop-types */
 import React, {
   useState, useRef, useCallback, useLayoutEffect, useEffect,
 } from 'react';
@@ -142,7 +145,7 @@ function AddNewScreen({ navigation }) {
       resizeMode="cover"
       style={styles.backgroundImage}
     >
-      <SafeAreaView style={{flex: 1}}>
+      <SafeAreaView style={styles.outerContainer}>
         {viewMode === addNewScreenViewEnum.titleInput && (
           <Animated.View
             style={styles.container}
@@ -211,7 +214,7 @@ function AddNewScreen({ navigation }) {
             <>
               <View style={[styles.container, styles.containerReview]}>
                 <Animated.Text
-                  style={[styles.titleTextReview, {color: tintColor}]}
+                  style={[styles.titleTextReview, { color: tintColor }]}
                   entering={FadeIn.duration(1000).delay(250)}
                   exiting={FadeOut.duration(500)}
                   key="test"
@@ -259,6 +262,9 @@ function AddNewScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+  },
   backgroundImage: {
     flex: 1,
   },

@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-filename-extension */
 import React, { useEffect, useState } from 'react';
 import {
@@ -178,15 +180,17 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
 
   const setRepeatingCalendarEventOnRepeater = (dateTimeData) => {
     if (item.repeater_periodicity === 'daily') {
-      udpateRepeaterCalEvent(
-        item.repeater_id, dateTimeData.startTime.toISOString(), dateTimeData.endTime.toISOString(), null, null, 1)
-        .then((updated) => updated ? onRepeaterModified() : null);
+      // eslint-disable-next-line max-len
+      udpateRepeaterCalEvent(item.repeater_id, dateTimeData.startTime.toISOString(), dateTimeData.endTime.toISOString(), null, null, 1)
+        .then((updated) => (updated ? onRepeaterModified() : null));
     } else if (item.repeater_periodicity === 'weekly') {
+      // eslint-disable-next-line max-len
       udpateRepeaterCalEvent(item.repeater_id, dateTimeData.startTime.toISOString(), dateTimeData.endTime.toISOString(), dateTimeData.dayOfWeek, null, 1)
-        .then((updated) => updated ? onRepeaterModified() : null);
+        .then((updated) => (updated ? onRepeaterModified() : null));
     } else if (item.repeater_periodicity === 'monthly') {
+      // eslint-disable-next-line max-len
       udpateRepeaterCalEvent(item.repeater_id, dateTimeData.startTime.toISOString(), dateTimeData.endTime.toISOString(), null, dateTimeData.dayOfMonth, 1)
-        .then((updated) => updated ? onRepeaterModified() : null);
+        .then((updated) => (updated ? onRepeaterModified() : null));
     }
     setShowRepeatingCalEventDateTimePicker(false);
   };

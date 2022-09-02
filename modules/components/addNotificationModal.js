@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-use-before-define */
 /* eslint-disable react/jsx-filename-extension */
 import React, { useEffect, useState } from 'react';
 import {
@@ -6,12 +8,14 @@ import {
 import colors from '../utils/colors';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 
-function AddNotificationModal({isVisible, onRequestClose, onDismiss, eventItem, onShouldSetNotification}) {
+function AddNotificationModal({
+  isVisible, onRequestClose, onDismiss, eventItem, onShouldSetNotification,
+}) {
   const [minutesBeforeStartTime, setMinutesBeforeStartTime] = useState();
 
   useEffect(() => {
     setMinutesBeforeStartTime('0');
-  }, [])
+  }, []);
 
   const onClose = (shouldSetNotification) => {
     if (shouldSetNotification) {
@@ -23,6 +27,7 @@ function AddNotificationModal({isVisible, onRequestClose, onDismiss, eventItem, 
   };
 
   const updateMinutesBeforeStartTime = (minutes) => {
+    // eslint-disable-next-line no-restricted-globals
     if (isNaN(minutes)) {
       setMinutesBeforeStartTime('0');
     } else {
@@ -56,7 +61,9 @@ function AddNotificationModal({isVisible, onRequestClose, onDismiss, eventItem, 
               value={minutesBeforeStartTime}
               onChangeText={updateMinutesBeforeStartTime}
               keyboardType="numeric"
-              accessibilityLabel={CONSTANT_STRINGS.NOTIFICATIONS.ADD_NOTIFICATION_MODAL.INPUT_ACCESSIBILITY_LABEL}
+              accessibilityLabel={
+                CONSTANT_STRINGS.NOTIFICATIONS.ADD_NOTIFICATION_MODAL.INPUT_ACCESSIBILITY_LABEL
+              }
             />
           </View>
           <View style={styles.buttonRow}>

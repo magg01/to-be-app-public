@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-filename-extension */
 import React, { useState } from 'react';
 import Animated from 'react-native-reanimated';
@@ -9,7 +11,9 @@ import animations from '../utils/animations';
 import colors from '../utils/colors';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 
-function AddPlan({ toBeId, onAdd, toBeItemTitle, tintColor }) {
+function AddPlan({
+  toBeId, onAdd, toBeItemTitle, tintColor,
+}) {
   const [newPlanTitle, setNewPlanTitle] = useState('');
 
   const addPlan = () => {
