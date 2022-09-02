@@ -3,7 +3,7 @@
 /* eslint-disable max-len */
 import React from 'react';
 import {
-  render, screen, cleanup, fireEvent, waitFor, act
+  render, screen, cleanup, fireEvent, waitFor, act,
 } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import * as db from '../database/database';
@@ -78,7 +78,7 @@ describe('add button', () => {
     // changing the text updates the state so we need to wrap in await act(async () => ...)
     await act(async () => fireEvent.changeText(textInput, newTitleText));
     const addButton = screen.queryAllByText(CONSTANT_STRINGS.PLANS.ADD_PLAN.ADD_BUTTON)[0];
-    await waitFor(() => fireEvent.press(addButton));
+    await act(async () => fireEvent.press(addButton));
     expect(mockDbAddPlan).toHaveBeenCalledWith(newTitleText, toBeIdUsed);
   });
 });

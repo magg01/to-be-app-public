@@ -74,9 +74,7 @@
         "setupFilesAfterEnv": [
           "@testing-library/jest-native/extend-expect",
           "./jest-setup-animations"
-        ],
-        "timers": "fake",
-        "testEnvironment": "jsdom"
+        ]
       },
       {
         "preset": "jest-expo/android",
@@ -93,9 +91,7 @@
         "setupFilesAfterEnv": [
           "@testing-library/jest-native/extend-expect",
           "./jest-setup-animations"
-        ],
-        "timers": "fake",
-        "testEnvironment": "jsdom"
+        ]
       }
     ]
   },
