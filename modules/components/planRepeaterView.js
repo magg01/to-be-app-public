@@ -10,6 +10,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import animations from '../utils/animations';
 import PlanRepeaterItem from './planRepeaterItem';
 import colors from '../utils/colors';
+import CONSTANT_STRINGS from '../strings/constantStrings';
 
 function PlanRepeaterView({planRepeaters, tintColor, headerText, onRepeaterModified}) {
   const [expandedView, setExpandedView] = useState(true);
@@ -20,6 +21,7 @@ function PlanRepeaterView({planRepeaters, tintColor, headerText, onRepeaterModif
       entering={animations.plans.planView.entering()}
       exiting={animations.plans.planView.exiting()}
       layout={animations.plans.planView.layout()}
+      testID={'PlanRepeaterView'}
     >
       <View style={styles.headerContainer(tintColor)}>
         <Text style={styles.headerText(tintColor)}>{headerText}</Text>
@@ -28,6 +30,7 @@ function PlanRepeaterView({planRepeaters, tintColor, headerText, onRepeaterModif
           size={22}
           color={tintColor}
           onPress={() => setExpandedView(!expandedView)}
+          accessibilityLabel={CONSTANT_STRINGS.PLANS.PLAN_VIEW.EXPAND_COLLAPSE_ICON_LABEL}
         />
       </View>
       {expandedView

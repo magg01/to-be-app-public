@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Button, View, Text, StyleSheet, Modal,
@@ -80,7 +81,7 @@ function RepeaterCalEventDateTimePicker(props) {
     <Modal
       transparent
       statusBarTranslucent
-      animationType={'fade'}
+      animationType="fade"
       onRequestClose={() => onClose(false)}
     >
       <View style={styles.outerContainer}>
