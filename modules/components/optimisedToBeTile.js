@@ -1,5 +1,10 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/jsx-filename-extension */
 import React, { useState } from 'react';
-import { StyleSheet, View, ImageBackground, TouchableHighlight, Text, Alert } from 'react-native';
+import {
+  StyleSheet, View, ImageBackground, TouchableHighlight, Text, Alert,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { deleteToBeItemById, getNumberOfUsesForImage } from '../database/database';
 import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
@@ -7,7 +12,9 @@ import colors from '../utils/colors';
 
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
 
-function OptimisedToBeTile({toBeId, title, imageBackgroundUri, tintColor, onDelete, navigation}) {
+function OptimisedToBeTile({
+  toBeId, title, imageBackgroundUri, tintColor, onDelete, navigation,
+}) {
   const [deleteMode, setDeleteMode] = useState(false);
 
   const confirmDelete = () => {
@@ -58,18 +65,18 @@ function OptimisedToBeTile({toBeId, title, imageBackgroundUri, tintColor, onDele
     <TouchableHighlight
       style={styles.toBeTile}
       onPress={navigate}
-      underlayColor={'#ffffff'}
+      underlayColor="#ffffff"
       onLongPress={beginDeletePath}
     >
       <ImageBackground
         style={styles.tileImageBackground}
-        imageStyle={{ borderRadius: 4 }}
+        imageStyle={styles.imageBackgroundImageStyle}
         source={{ uri: imageBackgroundUri }}
         defaultSource={defaultBackgroundImage}
       >
         {!deleteMode
         && (
-          <Text style={{color: tintColor, fontSize: 22}}>
+          <Text style={styles.titleText(tintColor)}>
             {title}
           </Text>
         )}
@@ -103,6 +110,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  imageBackgroundImageStyle: {
+    borderRadius: 4,
+  },
+  titleText: (tintColor) => ({
+    color: tintColor,
+    fontSize: 22,
+  }),
   deleteView: {
     flexGrow: 1,
     width: '100%',
