@@ -15,7 +15,6 @@ import { singlePhotoItem } from './__mocks__/unsplashPhotoListItem';
 const mockedLocalFilePath = 'file:///aRealFilePath/';
 const mockOnImageDownload = jest.fn();
 const mockDownloadImageFromUnsplash = jest.spyOn(apiMethods, 'downloadImageFromUnsplash').mockImplementation(() => Promise.resolve(mockedLocalFilePath));
-const mockNotifyUnsplashOfImageDownload = jest.spyOn(apiMethods, 'notifyUnsplashOfImageDownload').mockImplementation(() => null);
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -95,18 +94,5 @@ describe('unsplashPhotoListItem choose button', () => {
     const chooseButton = screen.getByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.CHOOSE_IMAGE_TEXT);
     fireEvent.press(chooseButton);
     expect(mockDownloadImageFromUnsplash).toHaveBeenCalledWith(singlePhotoItem);
-  });
-
-  it('should notify Unsplash of an image download on press', () => {
-    render(
-      <UnsplashPhotoListItem
-        photo={singlePhotoItem}
-        onImageDownload={mockOnImageDownload}
-        width={200}
-      />,
-    );
-    const chooseButton = screen.getByText(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.CHOOSE_IMAGE_TEXT);
-    fireEvent.press(chooseButton);
-    waitFor(() => expect(mockNotifyUnsplashOfImageDownload).toHaveBeenCalled());
   });
 });
