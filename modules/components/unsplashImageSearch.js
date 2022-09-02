@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/jsx-filename-extension */
 import React, { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
@@ -8,7 +10,10 @@ import CONSTANT_STRINGS from '../strings/constantStrings';
 import * as apiMethods from '../utils/unsplashApi';
 import colors from '../utils/colors';
 
-function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQuery}) {
+function UnsplashImageSearch({
+  // eslint-disable-next-line react/prop-types
+  onImageDownload, width, height, providedSearchQuery,
+}) {
   const [searchQuery, setSearchQuery] = useState(undefined);
   const [searchInput, setSearchInput] = useState('');
   const [data, setPhotosResponse] = useState(null);
@@ -59,13 +64,13 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
         value={searchInput}
         returnKeyType="search"
         placeholder={CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.INPUT_PLACEHOLDER}
-        placeholderTextColor="#444" 
+        placeholderTextColor="#444"
       />
       {(() => {
         if (data === null) {
           return (
             <View style={styles.dataDisplayImages}>
-              <ActivityIndicator accessibilityRole='progressbar' size={'large'} testID={'fetchingDataActivityIndicator'}/>
+              <ActivityIndicator accessibilityRole="progressbar" size="large" testID="fetchingDataActivityIndicator" />
             </View>
           );
         }
@@ -73,7 +78,7 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
           return (
             <View style={styles.dataDisplayMessage}>
               <Text style={styles.messageText}>{data.errors[0]}</Text>
-              <Text style={styles.messageText}>{"\n\n"}</Text>
+              <Text style={styles.messageText}>{'\n\n'}</Text>
               <Text style={styles.messageText}>
                 {CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_ERROR_RESPONSE_MESSAGE}
               </Text>
