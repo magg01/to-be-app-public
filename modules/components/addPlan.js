@@ -13,14 +13,18 @@ function AddPlan({ toBeId, onAdd, toBeItemTitle, tintColor }) {
   const [newPlanTitle, setNewPlanTitle] = useState('');
 
   const addPlan = () => {
-    db.addPlan(newPlanTitle, toBeId)
-      .then((success) => {
-        if (success) {
-          onAdd();
-        } else {
-          Alert.alert('Unable to add a new plan at this time.');
-        }
-      });
+    if (newPlanTitle === '') {
+      Alert.alert(CONSTANT_STRINGS.PLANS.ADD_PLAN.ADD_BLANK_PLAN_ALERT);
+    } else {
+      db.addPlan(newPlanTitle, toBeId)
+        .then((success) => {
+          if (success) {
+            onAdd();
+          } else {
+            Alert.alert(CONSTANT_STRINGS.PLANS.ADD_PLAN.ADD_FAILURE_ALERT);
+          }
+        });
+    }
   };
 
   return (

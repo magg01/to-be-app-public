@@ -3,8 +3,9 @@
 /* eslint-disable max-len */
 import React from 'react';
 import {
-  render, screen, cleanup,
+  render, screen, cleanup, fireEvent, waitFor
 } from '@testing-library/react-native';
+import { Alert } from 'react-native';
 import * as db from '../database/database';
 import animations from '../utils/animations';
 import AddPlan from './addPlan';
@@ -19,6 +20,9 @@ const mockOnNewPlanAdded = jest.fn();
 // so here I am replacing those animations called in this component with mocks
 jest.spyOn(animations.addPlan.addPlanView, 'entering').mockImplementation(() => null);
 jest.spyOn(animations.addPlan.addPlanView, 'exiting').mockImplementation(() => null);
+
+// spy on and mock the implementation of the addPlan database method
+const mockDbAddPlan = jest.spyOn(db, 'addPlan').mockImplementation(() => Promise.resolve(true));
 
 // Unmounts React trees that were mounted with render and clears screen variable that holds latest render output
 afterEach(() => {
@@ -47,14 +51,33 @@ describe('addPlan', () => {
 
 describe('add button', () => {
   it('should render', () => {
-
+    render(<AddPlan toBeId={0} onAdd={mockOnNewPlanAdded} toBeItemTitle={toBeItemTitle} tintColor={colors.general.defaultWhite} />);
+    expect(screen.queryAllByText(CONSTANT_STRINGS.PLANS.ADD_PLAN.ADD_BUTTON)).toHaveLength(1);
   });
 
-  it('should not call onAdd if there is no text input present when pressed', () => {
-
+  it('should not call onAdd if there is no text input present when pressed', async () => {
+    render(<AddPlan toBeId={0} onAdd={mockOnNewPlanAdded} toBeItemTitle={toBeItemTitle} tintColor={colors.general.defaultWhite} />);
+    const addButton = screen.queryAllByText(CONSTANT_STRINGS.PLANS.ADD_PLAN.ADD_BUTTON)[0];
+    await waitFor(() => fireEvent.press(addButton));
+    expect(mockOnNewPlanAdded).not.toHaveBeenCalled();
   });
 
-  it('should show the empty title alert if there is not text input present when pressed', () => {
+  it('should show the empty-title-alert if there is no text input present when pressed, with the correct message', () => {
+    mockedAlert = jest.spyOn(Alert, 'alert').mockImplementation(() => null);
+    render(<AddPlan toBeId={0} onAdd={mockOnNewPlanAdded} toBeItemTitle={toBeItemTitle} tintColor={colors.general.defaultWhite} />);
+    const addButton = screen.queryAllByText(CONSTANT_STRINGS.PLANS.ADD_PLAN.ADD_BUTTON)[0];
+    fireEvent.press(addButton);
+    expect(mockedAlert).toHaveBeenCalledWith(CONSTANT_STRINGS.PLANS.ADD_PLAN.ADD_BLANK_PLAN_ALERT);
+  });
 
+  it('given valid text input, should call the database method addPlan with the toBeId and title when pressed', async () => {
+    const toBeIdUsed = 1;
+    render(<AddPlan toBeId={toBeIdUsed} onAdd={mockOnNewPlanAdded} toBeItemTitle={toBeItemTitle} tintColor={colors.general.defaultWhite} />);
+    const textInput = screen.getByLabelText(CONSTANT_STRINGS.PLANS.ADD_PLAN.TEXT_INPUT_LABEL);
+    const newTitleText = 'Eat more fruit';
+    await waitFor(() => fireEvent.changeText(textInput, newTitleText));
+    const addButton = screen.queryAllByText(CONSTANT_STRINGS.PLANS.ADD_PLAN.ADD_BUTTON)[0];
+    await waitFor(() => fireEvent.press(addButton));
+    expect(mockDbAddPlan).toHaveBeenCalledWith(newTitleText, toBeIdUsed);
   });
 });
