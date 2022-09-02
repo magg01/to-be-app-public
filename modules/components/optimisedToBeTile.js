@@ -8,6 +8,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { deleteToBeItemById, getNumberOfUsesForImage } from '../database/database';
 import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
+import { confirmDeleteAlert } from '../utils/deleteConfirmation';
 import colors from '../utils/colors';
 
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
@@ -17,39 +18,23 @@ function OptimisedToBeTile({
 }) {
   const [deleteMode, setDeleteMode] = useState(false);
 
-  const confirmDelete = () => {
-    Alert.alert(
-      'Are you sure?',
+  const confirmDeleteToBe = () => {
+    confirmDeleteAlert(
+      'Delete this to be?',
       `All data associated with your to be item "${title}" will be lost.`,
-      [
-        {
-          text: 'Cancel',
-          onPress: () => setDeleteMode(!deleteMode),
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          onPress: () => {
-            deleteToBeItemById(toBeId)
-              .then((deleted) => {
-                if (deleted) {
-                  if (getNumberOfUsesForImage(imageBackgroundUri) === 0) {
-                    deleteLocallyStoredImage(imageBackgroundUri);
-                  }
-                  onDelete();
-                }
-              })
-              .catch((err) => {
-                console.error(`confirmDelete encountered an error -> ${err}`);
-                Alert.alert('There was a problem deleting your to be. Please try again.');
-              });
-          },
-          style: 'destructive',
-        },
-      ],
-      {
-        cancelable: false,
-      },
+      () => deleteToBeItemById(toBeId)
+        .then((deleted) => {
+          if (deleted) {
+            if (getNumberOfUsesForImage(imageBackgroundUri) === 0) {
+              deleteLocallyStoredImage(imageBackgroundUri);
+            }
+            onDelete();
+          }
+        })
+        .catch(() => {
+          Alert.alert('There was a problem deleting your to be. Please try again.');
+        }),
+      null,
     );
   };
 
@@ -83,7 +68,7 @@ function OptimisedToBeTile({
         {deleteMode
         && (
           <View style={styles.deleteView}>
-            <Ionicons name="trash-outline" size={42} color={tintColor} onPress={confirmDelete} />
+            <Ionicons name="trash-outline" size={42} color={tintColor} onPress={confirmDeleteToBe} />
           </View>
         )}
       </ImageBackground>
