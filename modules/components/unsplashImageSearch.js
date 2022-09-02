@@ -65,7 +65,7 @@ function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQue
         if (data === null) {
           return (
             <View style={styles.dataDisplayImages}>
-              <ActivityIndicator accessibilityRole='progressbar' size={'large'}/>
+              <ActivityIndicator accessibilityRole='progressbar' size={'large'} testID={'fetchingDataActivityIndicator'}/>
             </View>
           );
         }

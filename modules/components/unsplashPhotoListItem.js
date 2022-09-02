@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { useState } from 'react';
 import {
   Text, ActivityIndicator, ImageBackground, TouchableOpacity, View, StyleSheet
@@ -51,7 +50,7 @@ function UnsplashPhotoListItem({ photo, onImageDownload, width }) {
                 alignItems: 'center',
               }}
             >
-              <ActivityIndicator size={'large'}/>
+              <ActivityIndicator size={'large'} accessibilityRole={'progressbar'}/>
             </View>
           );
         }
@@ -65,7 +64,7 @@ function UnsplashPhotoListItem({ photo, onImageDownload, width }) {
           onImageSelectionMade(photo)}
       >
           { downloadStarted ? 
-            <ActivityIndicator /> 
+            <ActivityIndicator accessibilityRole={'progressbar'} testID={'chooseButtonActivityIndicator'}/> 
             :
             <Text style={styles.bottomButtonText}>{CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.CHOOSE_IMAGE_TEXT}</Text>
           }

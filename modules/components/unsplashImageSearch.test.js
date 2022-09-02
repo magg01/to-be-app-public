@@ -18,7 +18,9 @@ const spiedApiGetPhotos = jest.spyOn(apiMethods, 'apiGetPhotos')
 
 // Unmounts React trees that were mounted with render
 // and clears screen variable that holds latest render output
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+});
 // clear all info from the mock arrays of the mocked apiGetPhotos function
 beforeEach(() => spiedApiGetPhotos.mockClear());
 
@@ -201,7 +203,7 @@ describe('activity indicator', () => {
       await expect(resultOfApiCall).resolves.toEqual(mockApiGetPhotosSuccessResponse);
     });
     // expect that the loading indicator has been removed from the component tree
-    expect(screen.queryByRole('progressbar')).toBeNull();
+    expect(screen.queryByTestId('fetchingDataActivityIndicator')).toBeNull();
   });
 });
 
