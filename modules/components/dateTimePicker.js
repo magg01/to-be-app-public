@@ -2,7 +2,9 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable react/jsx-filename-extension */
 import React, { useState, useRef } from 'react';
-import { Button, View, Text, StyleSheet, Modal } from 'react-native';
+import {
+  Button, View, Text, StyleSheet, Modal,
+} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import colors from '../utils/colors';
