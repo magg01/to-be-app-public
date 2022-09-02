@@ -19,6 +19,8 @@ jest.spyOn(animations.plans.planView, 'entering').mockImplementation(() => null)
 jest.spyOn(animations.plans.planView, 'exiting').mockImplementation(() => null);
 const mockLayoutAnimation = jest.spyOn(animations.plans.planView, 'layout').mockImplementation(() => null);
 
+const mockOnAddNew = jest.fn();
+
 afterEach(() => {
   jest.clearAllMocks();
   cleanup();
@@ -31,7 +33,7 @@ describe('planView expanded view', () => {
     render(
       <PlanView
         providedPlansWithRepeaters={null}
-        onAddNewPressed={null}
+        onAddNewPressed={mockOnAddNew}
         tintColor={colors.general.defaultWhite}
         onPlansModified={null}
       />
@@ -66,7 +68,7 @@ describe('planView collapsed view', () => {
     render(
       <PlanView
         providedPlansWithRepeaters={null}
-        onAddNewPressed={null}
+        onAddNewPressed={mockOnAddNew}
         tintColor={colors.general.defaultWhite}
         onPlansModified={null}
       />
@@ -95,5 +97,24 @@ describe('planView collapsed view', () => {
   it('should not show the addNewPlan button', () => {
     expect(screen.queryByRole('button')).toBeNull();
   });
+});
+
+describe('addNewPlan button', () => {
+  beforeEach(() => {
+    render(
+      <PlanView
+        providedPlansWithRepeaters={null}
+        onAddNewPressed={mockOnAddNew}
+        tintColor={colors.general.defaultWhite}
+        onPlansModified={null}
+      />
+    );
+  });
+
+  it('should call onAddNew prop function when pressed', () => {
+    const addNewButton = screen.getByRole('button');
+    fireEvent.press(addNewButton);
+    expect(mockOnAddNew).toHaveBeenCalled();
+  })
 
 });
