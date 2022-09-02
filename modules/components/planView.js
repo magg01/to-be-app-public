@@ -48,12 +48,13 @@ function PlanView({
       testID="planView"
     >
       <View style={styles.headerContainer(tintColor)}>
-        <Text style={styles.headerText(tintColor)}>{CONSTANT_STRINGS.PLANS.PLAN_VIEW_TITLE}</Text>
+        <Text style={styles.headerText(tintColor)}>{CONSTANT_STRINGS.PLANS.PLAN_VIEW.TITLE}</Text>
         <MaterialIcons
           name={expandedView ? 'expand-less' : 'expand-more'}
           size={22}
           color={tintColor}
           onPress={() => setExpandedView(!expandedView)}
+          accessibilityLabel={CONSTANT_STRINGS.PLANS.PLAN_VIEW.EXPAND_COLLAPSE_ICON_LABEL}
         />
       </View>
       { expandedView
@@ -77,7 +78,7 @@ function PlanView({
             entering={animations.plans.planView.entering()}
             exiting={animations.plans.planView.exiting()}
           >
-            <TouchableOpacity style={styles.addButton} onPress={() => onAddNewPressed()}>
+            <TouchableOpacity style={styles.addButton} onPress={() => onAddNewPressed()} accessibilityRole="button" >
               <Entypo name="add-to-list" size={18} color={colors.plans.textOrIconOnWhite} />
             </TouchableOpacity>
           </Animated.View>
