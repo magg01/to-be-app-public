@@ -23,7 +23,7 @@ const notifyUnsplashOfImageDownload = (photo) => {
   try {
     api.photos.trackDownload({ downloadLocation: photo.links.download_location });
   } catch (error) {
-    console.error(`notifyUnsplashOfImageDownload: encountered an error -> ${error}`);
+    // should log failure here but the user doens't need to be aware
   }
 };
 
