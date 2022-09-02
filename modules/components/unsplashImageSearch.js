@@ -4,7 +4,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import {
-  StyleSheet, Text, View, ActivityIndicator, FlatList, TextInput,
+  StyleSheet, Text, View, ActivityIndicator, FlatList, TextInput, Alert,
 } from 'react-native';
 import UnsplashPhotoListItem from './unsplashPhotoListItem';
 import CONSTANT_STRINGS from '../strings/constantStrings';
@@ -49,8 +49,8 @@ function UnsplashImageSearch({
           .then((result) => {
             setPhotosResponse(result);
           })
-          .catch((e) => {
-            console.log(`apiGetPhotos encountered an error -> ${JSON.stringify(e, null, 1)}`);
+          .catch(() => {
+            Alert.alert(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_ERROR_RESPONSE_MESSAGE);
           });
       }
     }

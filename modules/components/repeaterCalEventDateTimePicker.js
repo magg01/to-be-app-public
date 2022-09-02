@@ -1,3 +1,5 @@
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-filename-extension */
 import React, { useState, useRef, useEffect } from 'react';
 import {
@@ -12,7 +14,9 @@ import { DTPickerNativePickerModeEnum, DTPickerUpdateValueEnum } from '../utils/
 
 const IconSize = 28;
 
-function RepeaterCalEventDateTimePicker(props) {
+function RepeaterCalEventDateTimePicker({
+  modalTitleText, periodicity, onSubmit, onCancel,
+}) {
   const [isNativePickerVisible, setIsNativePickerVisibile] = useState(false);
   const [startTimePicked, setStartTimePicked] = useState(new Date());
   const [endTimePicked, setEndTimePicked] = useState(new Date());
@@ -54,26 +58,26 @@ function RepeaterCalEventDateTimePicker(props) {
 
   const onClose = (shouldSetRepeatingCalEvent) => {
     if (shouldSetRepeatingCalEvent) {
-      if (props.periodicity === 'daily') {
-        props.onSubmit({
+      if (periodicity === 'daily') {
+        onSubmit({
           startTime: startTimePicked,
           endTime: endTimePicked,
         });
-      } else if (props.periodicity === 'weekly') {
-        props.onSubmit({
+      } else if (periodicity === 'weekly') {
+        onSubmit({
           dayOfWeek: selectedDayOfTheWeek,
           startTime: startTimePicked,
           endTime: endTimePicked,
         });
-      } else if (props.periodicity === 'monthly') {
-        props.onSubmit({
+      } else if (periodicity === 'monthly') {
+        onSubmit({
           dayOfMonth: selectedDayOfTheMonth,
           startTime: startTimePicked,
           endTime: endTimePicked,
         });
       }
     } else {
-      props.onCancel();
+      onCancel();
     }
   };
 
@@ -86,15 +90,15 @@ function RepeaterCalEventDateTimePicker(props) {
     >
       <View style={styles.outerContainer}>
         <View style={styles.innerContainer}>
-          {props.modalTitleText
+          {modalTitleText
             && (
-              <Text style={styles.titleText}>{props.modalTitleText}</Text>
+              <Text style={styles.titleText}>{modalTitleText}</Text>
             )}
-          {props.periodicity === 'weekly'
+          {periodicity === 'weekly'
             && (
             <Picker
               selectedValue={selectedDayOfTheWeek}
-              onValueChange={(itemValue, itemIndex) => setSelectedDayOfTheWeek(itemValue)}
+              onValueChange={(itemValue) => setSelectedDayOfTheWeek(itemValue)}
             >
               <Picker.Item label="Monday" value={1} />
               <Picker.Item label="Tuesday" value={2} />
@@ -105,11 +109,11 @@ function RepeaterCalEventDateTimePicker(props) {
               <Picker.Item label="Sunday" value={0} />
             </Picker>
             )}
-          {props.periodicity === 'monthly'
+          {periodicity === 'monthly'
             && (
               <Picker
                 selectedValue={selectedDayOfTheMonth}
-                onValueChange={(itemValue, itemIndex) => setSelectedDayOfTheMonth(itemValue)}
+                onValueChange={(itemValue) => setSelectedDayOfTheMonth(itemValue)}
               >
                 <Picker.Item label="1st" value={1} />
                 <Picker.Item label="2nd" value={2} />

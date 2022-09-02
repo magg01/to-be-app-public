@@ -3,7 +3,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import {
-  Text, ActivityIndicator, ImageBackground, TouchableOpacity, View, StyleSheet,
+  Text, ActivityIndicator, ImageBackground, TouchableOpacity, View, StyleSheet, Alert,
 } from 'react-native';
 import * as apiMethods from '../utils/unsplashApi';
 import CONSTANT_STRINGS from '../strings/constantStrings';
@@ -20,8 +20,8 @@ function UnsplashPhotoListItem({ photo, onImageDownload, width }) {
       .then((localFileUri) => {
         onImageDownload(localFileUri);
       })
-      .catch((error) => {
-        console.error(`onImageSelectionMade encountered an error -> ${error}`);
+      .catch(() => {
+        Alert.alert(CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_ERROR_RESPONSE_MESSAGE);
       });
   };
 
