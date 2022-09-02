@@ -8,7 +8,7 @@ import UnsplashImageSearch from './unsplashImageSearch';
 import {
   mockApiGetPhotosSuccessResponse, mockApiGetPhotosErrorResponse, mockApiGetPhotosEmptyResponse,
 } from './__mocks__/unsplashImageSearch';
-import { apiMethods } from '../utils/unsplashApi';
+import * as apiMethods from '../utils/unsplashApi';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 
 // spy on the apiGetPhotos function, replace it with a mock with a default implementation that

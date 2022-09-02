@@ -1,13 +1,12 @@
 /* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import {
-  render, screen, cleanup, fireEvent, waitFor, act,
+  render, screen, cleanup, fireEvent,
 } from '@testing-library/react-native';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {
   describe, expect, it, beforeEach,
 } from '@jest/globals';
-import { Alert } from 'react-native';
 import PlanView from './planView';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
@@ -58,12 +57,6 @@ describe('planView expanded view', () => {
 });
 
 describe('planView collapsed view', () => {
-  // beforeEach(async () => {
-  //   const expandCollapseIcon = screen.getByLabelText(CONSTANT_STRINGS.PLANS.PLAN_VIEW.EXPAND_COLLAPSE_ICON_LABEL);
-  //   mockLayoutAnimation.reset();
-  //   await act(() => fireEvent.press(expandCollapseIcon));
-  // });
-
   beforeEach(() => {
     render(
       <PlanView
@@ -116,5 +109,4 @@ describe('addNewPlan button', () => {
     fireEvent.press(addNewButton);
     expect(mockOnAddNew).toHaveBeenCalled();
   })
-
 });

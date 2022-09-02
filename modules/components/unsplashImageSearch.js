@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import UnsplashPhotoListItem from './unsplashPhotoListItem';
 import CONSTANT_STRINGS from '../strings/constantStrings';
-import { apiMethods } from '../utils/unsplashApi';
+import * as apiMethods from '../utils/unsplashApi';
 import colors from '../utils/colors';
 
 function UnsplashImageSearch({ onImageDownload, width, height, providedSearchQuery}) {

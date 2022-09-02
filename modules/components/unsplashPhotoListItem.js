@@ -4,14 +4,10 @@ import {
   Text, ActivityIndicator, ImageBackground, TouchableOpacity, View, StyleSheet
 } from 'react-native';
 import { downloadRemoteImageToLocalStorage } from '../FileSystem/fileSystem';
-import { apiMethods } from '../utils/unsplashApi';
+import * as apiMethods from '../utils/unsplashApi';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 import colors from '../utils/colors';
 
-const downloadImageFromUnsplash = (photo) => {
-  apiMethods.notifyUnsplashOfImageDownload(photo);
-  return downloadRemoteImageToLocalStorage(photo.urls.regular, photo.id);
-};
 
 function UnsplashPhotoListItem({ photo, onImageDownload, width }) {
   const [downloadStarted, setDownloadStarted] = useState(false);
@@ -20,7 +16,7 @@ function UnsplashPhotoListItem({ photo, onImageDownload, width }) {
 
   const onImageSelectionMade = (photo) => {
     setDownloadStarted(true);
-    downloadImageFromUnsplash(photo)
+    apiMethods.downloadImageFromUnsplash(photo)
       .then((localFileUri) => {
         onImageDownload(localFileUri);
       })
@@ -42,6 +38,7 @@ function UnsplashPhotoListItem({ photo, onImageDownload, width }) {
       onLoad={() => {
         setIsLoading(false);
       }}
+      testID={'unsplashPhotoListItem'}
     >
       {(() => {
         if (isLoading) {
