@@ -1,3 +1,4 @@
+/* eslint-disable react/style-prop-object */
 /* eslint-disable no-use-before-define */
 /* eslint-disable react/jsx-filename-extension */
 import React, { useState, useEffect, useRef } from 'react';
