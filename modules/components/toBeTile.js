@@ -8,7 +8,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { deleteToBeItemById, getNumberOfUsesForImage } from '../database/database';
 import { deleteLocallyStoredImage } from '../FileSystem/fileSystem';
-import { confirmDeleteAlert } from '../utils/deleteConfirmation';
+import confirmDeleteAlert from '../utils/deleteConfirmation';
 import colors from '../utils/colors';
 
 const defaultBackgroundImage = require('../../assets/addNew.jpg');

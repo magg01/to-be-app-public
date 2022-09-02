@@ -19,7 +19,7 @@ import {
   addCalEvent,
   updatePlanDoneByPlanId,
 } from '../database/database';
-import { confirmDeleteAlert } from '../utils/deleteConfirmation';
+import confirmDeleteAlert from '../utils/deleteConfirmation';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
 import { getEndOfDay } from '../utils/datetime';

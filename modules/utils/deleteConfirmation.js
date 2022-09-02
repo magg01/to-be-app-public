@@ -31,4 +31,4 @@ const confirmDeleteAlert = (title, message, onConfirmed, onCancelled, destructiv
   );
 };
 
-export { confirmDeleteAlert };
+export default confirmDeleteAlert;

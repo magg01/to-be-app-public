@@ -14,7 +14,7 @@ import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 import animations from '../utils/animations';
 import colors from '../utils/colors';
-import { confirmDeleteAlert } from '../utils/deleteConfirmation';
+import confirmDeleteAlert from '../utils/deleteConfirmation';
 import { getPreviousPeriodReset, getEndOfDay } from '../utils/datetime';
 import DateTimePicker from './dateTimePicker';
 import {
