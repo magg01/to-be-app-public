@@ -13,7 +13,7 @@ import colors from '../utils/colors';
 
 const defaultBackgroundImage = require('../../assets/addNew.jpg');
 
-function toBeTile({
+function ToBeTile({
   toBeId, title, imageBackgroundUri, tintColor, onDelete, navigation,
 }) {
   const [deleteMode, setDeleteMode] = useState(false);
@@ -113,4 +113,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default toBeTile;
+export default ToBeTile;
