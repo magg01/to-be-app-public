@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`unsplashPhotoListItem matches snapshot 1`] = `
+<View
+  accessibilityIgnoresInvertColors={true}
+  style={
+    Object {
+      "alignItems": "center",
+      "flex": 1,
+      "justifyContent": "flex-end",
+      "resizeMode": "contain",
+      "width": 200,
+    }
+  }
+>
+  <Image
+    onLoad={[Function]}
+    source={
+      Object {
+        "uri": "https://images.unsplash.com/photo-1604537529586-87ac173f4310?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNDM3NTl8MXwxfHNlYXJjaHwxfHxtb3VudGFpbnN8ZW58MHwxfHx8MTY1OTk4ODMwNw&ixlib=rb-1.2.1&q=80&w=1080",
+      }
+    }
+    style={
+      Array [
+        Object {
+          "bottom": 0,
+          "left": 0,
+          "position": "absolute",
+          "right": 0,
+          "top": 0,
+        },
+        Object {
+          "height": undefined,
+          "width": 200,
+        },
+        undefined,
+      ]
+    }
+    testID="unsplashPhotoListItem"
+  />
+  <View
+    style={
+      Object {
+        "alignItems": "center",
+        "flex": 1,
+        "justifyContent": "center",
+        "width": 200,
+      }
+    }
+  >
+    <ActivityIndicator
+      accessibilityRole="progressbar"
+      size="large"
+    />
+  </View>
+  <View
+    accessible={true}
+    collapsable={false}
+    focusable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
+    style={
+      Object {
+        "alignItems": "center",
+        "backgroundColor": "#ffffff",
+        "borderRadius": 8,
+        "justifyContent": "center",
+        "margin": 8,
+        "opacity": 0.9,
+        "paddingHorizontal": 16,
+        "paddingVertical": 8,
+      }
+    }
+  >
+    <Text
+      style={
+        Object {
+          "color": "rgba(75,75,75,1)",
+        }
+      }
+    >
+      Choose
+    </Text>
+  </View>
+  <Text
+    style={
+      Object {
+        "alignSelf": "flex-end",
+        "color": "#ffffff",
+        "fontSize": 10,
+        "marginRight": 4,
+      }
+    }
+  >
+    Boxed Water Is Better / Unsplash
+  </Text>
+</View>
+`;

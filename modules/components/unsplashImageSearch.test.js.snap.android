@@ -1,0 +1,48 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UnsplashImageSearch matches snapshot 1`] = `
+<View
+  style={
+    Object {
+      "alignItems": "center",
+      "height": "100",
+      "width": "100",
+    }
+  }
+>
+  <TextInput
+    onChangeText={[Function]}
+    onSubmitEditing={[Function]}
+    placeholder="Search for images"
+    placeholderTextColor="#444"
+    returnKeyType="search"
+    style={
+      Object {
+        "backgroundColor": "#ffffff",
+        "borderRadius": 5,
+        "marginBottom": 20,
+        "opacity": 0.9,
+        "padding": 6,
+        "width": "80%",
+      }
+    }
+    value=""
+  />
+  <View
+    style={
+      Object {
+        "borderRadius": 6,
+        "flex": 1,
+        "justifyContent": "center",
+        "overflow": "hidden",
+      }
+    }
+  >
+    <ActivityIndicator
+      accessibilityRole="progressbar"
+      size="large"
+      testID="fetchingDataActivityIndicator"
+    />
+  </View>
+</View>
+`;

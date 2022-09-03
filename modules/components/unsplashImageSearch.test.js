@@ -24,6 +24,20 @@ afterEach(() => {
 // clear all info from the mock arrays of the mocked apiGetPhotos function
 beforeEach(() => spiedApiGetPhotos.mockClear());
 
+describe('UnsplashImageSearch', () => {
+  it('matches snapshot', async () => {
+    const tree = await waitFor(() => render(
+      <UnsplashImageSearch
+        providedSearchQuery="test query"
+        onImageDownload={null}
+        width="100"
+        height="100"
+      />,
+    ).toJSON());
+    expect(tree).toMatchSnapshot();
+  });
+});
+
 describe('UnsplashImageSearch Component effects', () => {
   it('should make a call to the unsplash API on mount given a non-blank providedSearchQuery prop', async () => {
     await waitFor(() => render(

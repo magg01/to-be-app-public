@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`addPlan matches snapshot 1`] = `
+Array [
+  <View
+    entering={null}
+    exiting={null}
+    style={
+      Object {
+        "backgroundColor": "rgba(200,200,200,0.2)",
+        "borderColor": "#ffffff",
+        "borderRadius": 6,
+        "borderWidth": 1.5,
+        "justifyContent": "flex-end",
+        "marginBottom": 12,
+        "padding": "3%",
+        "width": "100%",
+      }
+    }
+    testID="addPlanView"
+  >
+    <View
+      style={
+        Object {
+          "borderBottomColor": "#ffffff",
+          "borderBottomWidth": 1.5,
+          "flexDirection": "row",
+          "justifyContent": "flex-start",
+          "marginBottom": 8,
+        }
+      }
+    >
+      <Text
+        style={
+          Object {
+            "color": "#ffffff",
+            "flexGrow": 1,
+            "fontSize": 20,
+          }
+        }
+      >
+        How can you be more happy?
+      </Text>
+    </View>
+    <TextInput
+      accessibilityLabel="enter a title for the new plan"
+      onChangeText={[Function]}
+      selectionColor="#ffffff"
+      style={
+        Object {
+          "borderBottomColor": "#ffffff",
+          "borderBottomWidth": 2,
+          "color": "#ffffff",
+          "fontSize": 20,
+          "margin": 12,
+          "padding": 6,
+        }
+      }
+      textAlign="center"
+    />
+  </View>,
+  <View
+    entering={null}
+    exiting={null}
+    style={
+      Object {
+        "alignItems": "center",
+        "flex": 1,
+        "justifyContent": "flex-end",
+      }
+    }
+  >
+    <View
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "backgroundColor": "#ffffff",
+          "borderRadius": 8,
+          "justifyContent": "center",
+          "margin": 10,
+          "opacity": 0.7,
+          "paddingHorizontal": 16,
+          "paddingVertical": 8,
+        }
+      }
+    >
+      <Text
+        style={
+          Object {
+            "fontSize": 16,
+          }
+        }
+      >
+        Add
+      </Text>
+    </View>
+  </View>,
+]
+`;

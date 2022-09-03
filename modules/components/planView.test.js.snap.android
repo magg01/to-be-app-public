@@ -1,0 +1,154 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`planView collapsed view matches snapshot 1`] = `
+<View
+  entering={null}
+  exiting={null}
+  layout={null}
+  style={
+    Object {
+      "backgroundColor": "rgba(200,200,200,0.2)",
+      "borderColor": "#ffffff",
+      "borderRadius": 6,
+      "borderWidth": 1.5,
+      "marginBottom": 12,
+      "maxHeight": 867.1,
+      "padding": "3%",
+      "width": "100%",
+    }
+  }
+  testID="planView"
+>
+  <View
+    style={
+      Object {
+        "borderBottomColor": "#ffffff",
+        "borderBottomWidth": 1.5,
+        "flexDirection": "row",
+        "justifyContent": "flex-start",
+        "marginBottom": 8,
+      }
+    }
+  >
+    <Text
+      style={
+        Object {
+          "color": "#ffffff",
+          "flexGrow": 1,
+          "fontSize": 20,
+        }
+      }
+    >
+      Plans
+    </Text>
+    <Text
+      accessibilityLabel="Expand and collapse the plans view"
+      allowFontScaling={false}
+      onPress={[Function]}
+      selectable={false}
+      style={
+        Array [
+          Object {
+            "color": "#ffffff",
+            "fontSize": 22,
+          },
+          undefined,
+          Object {
+            "fontFamily": "material",
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          Object {},
+        ]
+      }
+    >
+      
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`planView expanded view matches snapshot 1`] = `
+<View
+  entering={null}
+  exiting={null}
+  layout={null}
+  style={
+    Object {
+      "backgroundColor": "rgba(200,200,200,0.2)",
+      "borderColor": "#ffffff",
+      "borderRadius": 6,
+      "borderWidth": 1.5,
+      "marginBottom": 12,
+      "maxHeight": 867.1,
+      "padding": "3%",
+      "width": "100%",
+    }
+  }
+  testID="planView"
+>
+  <View
+    style={
+      Object {
+        "borderBottomColor": "#ffffff",
+        "borderBottomWidth": 1.5,
+        "flexDirection": "row",
+        "justifyContent": "flex-start",
+        "marginBottom": 8,
+      }
+    }
+  >
+    <Text
+      style={
+        Object {
+          "color": "#ffffff",
+          "flexGrow": 1,
+          "fontSize": 20,
+        }
+      }
+    >
+      Plans
+    </Text>
+    <Text />
+  </View>
+  <RCTScrollView
+    nestedScrollEnabled={true}
+  >
+    <View />
+  </RCTScrollView>
+  <View
+    entering={null}
+    exiting={null}
+    layout={null}
+  >
+    <View
+      accessibilityRole="button"
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "flex-end",
+          "backgroundColor": "#ffffff",
+          "borderRadius": 20,
+          "height": 40,
+          "justifyContent": "center",
+          "marginTop": 8,
+          "opacity": 1,
+          "width": 40,
+        }
+      }
+    >
+      <Text />
+    </View>
+  </View>
+</View>
+`;

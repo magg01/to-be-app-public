@@ -36,6 +36,11 @@ describe('unsplashPhotoListItem', () => {
     expect(screen.getByTestId('unsplashPhotoListItem')).toBeTruthy();
   });
 
+  it('matches snapshot', () => {
+    const tree = screen.toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
   it('should display photo attribution to user and Unsplash', async () => {
     render(
       <UnsplashPhotoListItem

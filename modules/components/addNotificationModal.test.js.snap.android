@@ -1,0 +1,188 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`addNotificationModal matches snapshot 1`] = `
+<Modal
+  animationType="fade"
+  hardwareAccelerated={false}
+  onDismiss={[MockFunction]}
+  statusBarTranslucent={true}
+  testID="addNotificationModal"
+  transparent={true}
+  visible={true}
+>
+  <View
+    style={
+      Object {
+        "alignItems": "stretch",
+        "backgroundColor": "rgba(40,40,40,0.8)",
+        "flex": 1,
+        "justifyContent": "center",
+        "paddingHorizontal": 20,
+      }
+    }
+  >
+    <View
+      style={
+        Object {
+          "backgroundColor": "#ffffff",
+          "elevation": 3,
+          "opacity": 1,
+          "padding": 20,
+          "shadowColor": "#000000",
+          "shadowOffset": Object {
+            "height": 1,
+            "width": 0,
+          },
+          "shadowOpacity": 0.22,
+          "shadowRadius": 2.22,
+        }
+      }
+    >
+      <Text
+        style={
+          Object {
+            "color": "rgba(75,75,75,1)",
+            "fontSize": 20,
+            "fontWeight": "500",
+            "marginBottom": 12,
+          }
+        }
+      >
+        Add notification for 'Go to be early'
+      </Text>
+      <View
+        style={
+          Object {
+            "alignItems": "flex-end",
+            "flexDirection": "row",
+            "marginBottom": 18,
+            "marginHorizontal": 3,
+          }
+        }
+      >
+        <Text
+          style={
+            Object {
+              "color": "rgba(75,75,75,1)",
+              "fontSize": 20,
+              "minWidth": "18%",
+            }
+          }
+        >
+          Minutes before start time: 
+        </Text>
+        <TextInput
+          accessibilityLabel="Input number of minutes before start time"
+          autoFocus={true}
+          keyboardType="numeric"
+          onChangeText={[Function]}
+          showSoftInputOnFocus={true}
+          style={
+            Object {
+              "fontSize": 24,
+              "marginLeft": 12,
+            }
+          }
+          value="0"
+        />
+      </View>
+      <View
+        style={
+          Object {
+            "flexDirection": "row",
+            "justifyContent": "space-around",
+            "marginTop": 6,
+          }
+        }
+      >
+        <View
+          accessibilityRole="button"
+          accessible={true}
+          focusable={true}
+          nativeBackgroundAndroid={
+            Object {
+              "attribute": "selectableItemBackground",
+              "rippleRadius": undefined,
+              "type": "ThemeAttrAndroid",
+            }
+          }
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Array [
+              Object {
+                "backgroundColor": "#2196F3",
+                "borderRadius": 2,
+                "elevation": 4,
+              },
+            ]
+          }
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "color": "white",
+                  "fontWeight": "500",
+                  "margin": 8,
+                  "textAlign": "center",
+                },
+              ]
+            }
+          >
+            CANCEL
+          </Text>
+        </View>
+        <View
+          accessibilityRole="button"
+          accessible={true}
+          focusable={true}
+          nativeBackgroundAndroid={
+            Object {
+              "attribute": "selectableItemBackground",
+              "rippleRadius": undefined,
+              "type": "ThemeAttrAndroid",
+            }
+          }
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Array [
+              Object {
+                "backgroundColor": "#2196F3",
+                "borderRadius": 2,
+                "elevation": 4,
+              },
+            ]
+          }
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "color": "white",
+                  "fontWeight": "500",
+                  "margin": 8,
+                  "textAlign": "center",
+                },
+              ]
+            }
+          >
+            SUBMIT
+          </Text>
+        </View>
+      </View>
+    </View>
+  </View>
+</Modal>
+`;

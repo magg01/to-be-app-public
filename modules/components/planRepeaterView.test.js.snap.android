@@ -1,0 +1,120 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PlanRepeaterView collapsed view matches snapshot 1`] = `
+<View
+  entering={null}
+  exiting={null}
+  layout={null}
+  style={
+    Object {
+      "backgroundColor": "rgba(200,200,200,0.2)",
+      "borderColor": "#ffffff",
+      "borderRadius": 6,
+      "borderWidth": 1.5,
+      "marginBottom": 12,
+      "maxHeight": "75%",
+      "padding": "3%",
+      "width": "100%",
+    }
+  }
+  testID="PlanRepeaterView"
+>
+  <View
+    style={
+      Object {
+        "borderBottomColor": "#ffffff",
+        "borderBottomWidth": 1.5,
+        "flexDirection": "row",
+        "justifyContent": "flex-start",
+        "marginBottom": 8,
+      }
+    }
+  >
+    <Text
+      style={
+        Object {
+          "color": "#ffffff",
+          "flexGrow": 1,
+          "fontSize": 20,
+        }
+      }
+    >
+      Dailies
+    </Text>
+    <Text
+      accessibilityLabel="Expand and collapse the plans view"
+      allowFontScaling={false}
+      onPress={[Function]}
+      selectable={false}
+      style={
+        Array [
+          Object {
+            "color": "#ffffff",
+            "fontSize": 22,
+          },
+          undefined,
+          Object {
+            "fontFamily": "material",
+            "fontStyle": "normal",
+            "fontWeight": "normal",
+          },
+          Object {},
+        ]
+      }
+    >
+      
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`PlanRepeaterView expanded view matches snapshot 1`] = `
+<View
+  entering={null}
+  exiting={null}
+  layout={null}
+  style={
+    Object {
+      "backgroundColor": "rgba(200,200,200,0.2)",
+      "borderColor": "#ffffff",
+      "borderRadius": 6,
+      "borderWidth": 1.5,
+      "marginBottom": 12,
+      "maxHeight": "75%",
+      "padding": "3%",
+      "width": "100%",
+    }
+  }
+  testID="PlanRepeaterView"
+>
+  <View
+    style={
+      Object {
+        "borderBottomColor": "#ffffff",
+        "borderBottomWidth": 1.5,
+        "flexDirection": "row",
+        "justifyContent": "flex-start",
+        "marginBottom": 8,
+      }
+    }
+  >
+    <Text
+      style={
+        Object {
+          "color": "#ffffff",
+          "flexGrow": 1,
+          "fontSize": 20,
+        }
+      }
+    >
+      Dailies
+    </Text>
+    <Text />
+  </View>
+  <RCTScrollView
+    nestedScrollEnabled={true}
+  >
+    <View />
+  </RCTScrollView>
+</View>
+`;
