@@ -1,3 +1,6 @@
+/* eslint-disable react/style-prop-object */
+/* eslint-disable no-use-before-define */
+/* eslint-disable react/prop-types */
 import React, {
   useCallback,
   useEffect,
