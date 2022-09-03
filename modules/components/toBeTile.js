@@ -56,7 +56,7 @@ function ToBeTile({
       <ImageBackground
         style={styles.tileImageBackground}
         imageStyle={styles.imageBackgroundImageStyle}
-        source={{ uri: imageBackgroundUri }}
+        source={imageBackgroundUri ? { uri: imageBackgroundUri } : defaultBackgroundImage}
         defaultSource={defaultBackgroundImage}
       >
         {!deleteMode

@@ -169,7 +169,11 @@ function ViewToBeScreen({route, navigation}) {
 
   return (
     <ImageBackground
-      source={{ uri: toBeItem.imageBackgroundUri }}
+      source={
+        toBeItem.imageBackgroundUri
+          ? { uri: toBeItem.imageBackgroundUri }
+          : defaultBackgroundImage
+      }
       resizeMode="cover"
       style={styles.backgroundImage}
       defaultSource={defaultBackgroundImage}
