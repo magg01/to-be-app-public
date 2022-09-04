@@ -389,6 +389,22 @@ const deleteToBeItemById = (id) => new Promise((resolve, reject) => {
   );
 });
 
+const deleteCalEventsByPlanId = (planId) => new Promise((resolve, reject) => {
+  db.transaction(
+    (tx) => {
+      tx.executeSql('delete from calevents where planitem=?', [planId]);
+    },
+    (e) => {
+      console.log(`deleteCalEventsByPlanId encountered an error -> ${e}`);
+      reject(false);
+    },
+    () => {
+      console.log(`deleteCalEventsByPlanId: calEvents linked to plan with id:${planId} successfully deleted from calevents table`);
+      resolve(true);
+    },
+  );
+});
+
 const deletePlanItemById = (id) => new Promise((resolve, reject) => {
   db.transaction(
     (tx) => {
@@ -652,7 +668,7 @@ const getAllPlansWithRepeatersAndCalEventsByToBeId = (toBeId) => new Promise((re
   db.transaction(
     (tx) => {
       tx.executeSql(
-        'select plans.id as plan_id, plans.done as plan_done, plans.title as plan_title, plans.description as plan_description, plans.tobeitem as plan_tobeitem, repeaters.id as repeater_id, repeaters.lastdonedatetime as repeater_lastdonedatetime, repeaters.periodicity as repeater_periodicity, repeaters.enddate as repeater_enddate, repeaters.shouldshowincalendar as repeater_shouldshowincalendar, calevents.id as calevent_id from plans plans left join repeaters repeaters on plans.id=repeaters.plan left join calevents calevents on plans.id=calevents.planitem where plans.tobeitem = ? order by plans.done, repeaters.lastdonedatetime',
+        'select plans.id as plan_id, plans.done as plan_done, plans.title as plan_title, plans.description as plan_description, plans.tobeitem as plan_tobeitem, repeaters.id as repeater_id, repeaters.lastdonedatetime as repeater_lastdonedatetime, repeaters.periodicity as repeater_periodicity, repeaters.enddate as repeater_enddate, repeaters.shouldshowincalendar as repeater_shouldshowincalendar, calevents.id as calevent_id, calevents.eventnotification as calevent_eventnotification from plans plans left join repeaters repeaters on plans.id=repeaters.plan left join calevents calevents on plans.id=calevents.planitem where plans.tobeitem = ? order by plans.done, repeaters.lastdonedatetime',
         [toBeId],
         (_, { rows: { _array } }) => {
           console.log(`getAllPlansWithRepeatersAndCalEventsByToBeId: _array is ${JSON.stringify(_array, null, 1)}`);
@@ -873,4 +889,5 @@ export {
   getAllRepeatersThatShouldBeInCalendar,
   getAllRepeaterEventsWithPlanDetails,
   getNumberOfUsesForImage,
+  deleteCalEventsByPlanId,
 };

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable react/jsx-filename-extension */
 import React, { useState, useEffect, useRef } from 'react';
 import {
@@ -24,6 +25,7 @@ import animations from '../utils/animations';
 import colors from '../utils/colors';
 import { getEndOfDay } from '../utils/datetime';
 import CONSTANT_STRINGS from '../strings/constantStrings';
+import { cancelNotificationEvent } from '../utils/notifications';
 
 const planLineContainerHeightCollapsed = 40;
 const planLineContainerHeightExpanded = planLineContainerHeightCollapsed * 6;
@@ -79,7 +81,12 @@ function PlanItem({ item, onDelete, onRepeaterModified }) {
     confirmDeleteAlert(
       'Delete this plan?',
       'Data and notifications for your plan will be removed',
-      () => onDelete(item.plan_id),
+      () => {
+        if (item.calevent_eventnotification) {
+          cancelNotificationEvent(item.calevent_eventnotification);
+        }
+        onDelete(item.plan_id);
+      },
       null,
     );
   };

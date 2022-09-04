@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-filename-extension */
 import React, { useState } from 'react';
 import Animated from 'react-native-reanimated';
 import {

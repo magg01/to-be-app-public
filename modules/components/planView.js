@@ -9,11 +9,12 @@ import {
   StyleSheet, View, Text, TouchableOpacity, Alert, ScrollView, Dimensions,
 } from 'react-native';
 import { Entypo, MaterialIcons } from '@expo/vector-icons';
-import { deletePlanItemById } from '../database/database';
+import { deletePlanItemById, deleteCalEventsByPlanId } from '../database/database';
 import animations from '../utils/animations';
 import PlanItem from './planItem';
 import colors from '../utils/colors';
 import CONSTANT_STRINGS from '../strings/constantStrings';
+import { cancelNotificationEvent } from '../utils/notifications';
 
 const screenHeight = Dimensions.get('window').height;
 
@@ -28,7 +29,7 @@ function PlanView({
   }, [providedPlansWithRepeaters]);
 
   const onDeletePlan = (planId) => {
-    // still need to delete all scheduled notifications on calEvents before deleting plan.
+    deleteCalEventsByPlanId(planId);
     deletePlanItemById(planId)
       .then((deleted) => {
         if (deleted) {
