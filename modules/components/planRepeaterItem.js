@@ -375,6 +375,8 @@ const styles = StyleSheet.create({
     borderColor: colors.plans.textOrIconOnWhite,
     padding: 4,
     marginVertical: 6,
+    marginLeft: 3,
+    marginRight: 6,
   },
   detailIconsContainer: {
     flex: 1,
