@@ -26,6 +26,7 @@ import {
 } from '../database/database';
 import CONSTANT_STRINGS from '../strings/constantStrings';
 import RepeaterCalEventDateTimePicker from './repeaterCalEventDateTimePicker';
+import { cancelNotificationEvent } from '../utils/notifications';
 
 const planLineContainerHeightCollapsed = 40;
 const planLineContainerHeightExpanded = planLineContainerHeightCollapsed * 6;
@@ -78,6 +79,9 @@ function PlanRepeaterItem({ item, onRepeaterModified }) {
       CONSTANT_STRINGS.PLANS.REPEATERS.REMOVE_ALERT_MAIN_TITLE,
       CONSTANT_STRINGS.PLANS.REPEATERS.REMOVE_ALERT_DESCRIPTION,
       () => {
+        if (item.repeater_notificationId) {
+          cancelNotificationEvent(item.repeater_notificationId);
+        }
         deleteRepeaterByPlanId(item.plan_id)
           .then(() => {
             onRepeaterModified();

@@ -36,7 +36,7 @@ const CONSTANT_STRINGS = {
       HEADER_TEXT_MONTHLIES: 'Monthlies',
       SET_END_DATE_PROMPT: 'Add an end date for this recurring plan.',
       REMOVE_ALERT_MAIN_TITLE: 'Stop this recurring plan?',
-      REMOVE_ALERT_DESCRIPTION: 'It will remain available in your non-recurring plans.',
+      REMOVE_ALERT_DESCRIPTION: 'It will remain available in your non-recurring plans. Any existing calendar events and notifications will be removed.',
       REMOVE_ALERT_CONFIRM_BUTTON_TITLE: 'Remove',
       COMPLETION_TOAST_HEADER: () => {
         // can add more messages here

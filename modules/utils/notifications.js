@@ -108,6 +108,7 @@ const confirmRemoveNotification = () => new Promise((resolve, reject) => {
 
 const cancelNotificationEvent = (notificationIdentifier) => {
   // cancel the scheduled notification
+  console.log(`cancelNotificationEvent: cancelling notification with id ${notificationIdentifier}`);
   Notifications.cancelScheduledNotificationAsync(notificationIdentifier);
 };
 
