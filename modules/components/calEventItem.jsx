@@ -79,7 +79,7 @@ function CalEventItem({ eventItem, onEventModified }) {
       }
     } else {
       // check permissions and show modal on granted.
-      const notificationsAllowed = checkNotificationsPermissions();
+      const notificationsAllowed = await checkNotificationsPermissions();
       if (notificationsAllowed) {
         // show the modal to get user input
         setNotificationModalVisible(true);
@@ -89,12 +89,10 @@ function CalEventItem({ eventItem, onEventModified }) {
 
   const onNotificationScheduled = async (notificationId) => {
     if (eventItem.type === calEventTypeEnum.singleEvent) {
-
       await db.addNotificationToCalEvent(eventItem.id, notificationId);
       onEventModified();
     }
     if (eventItem.type === calEventTypeEnum.repeaterEvent) {
-
       await db.addNotificationToRepeater(eventItem.id, notificationId);
       onEventModified();
     }
