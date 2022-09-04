@@ -53,7 +53,7 @@ function ViewToBeScreen({route, navigation}) {
 
   const refreshPlansAndRepeaters = useCallback(() => {
     if (toBeId !== undefined) {
-      db.getAllPlansWithRepeatersByToBeId(toBeId)
+      db.getAllPlansWithRepeatersAndCalEventsByToBeId(toBeId)
         .then((result) => {
           // put any non-repeating plans and repeaters whose end date has elapsed in the plan view
           setPlansWithRepeaters(

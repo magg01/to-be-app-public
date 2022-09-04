@@ -663,7 +663,6 @@ const getPlansWithRepeaterPeriodicityByToBeId = (toBeId) => new Promise((resolve
 });
 
 const getAllPlansWithRepeatersAndCalEventsByToBeId = (toBeId) => new Promise((resolve, reject) => {
-  console.log(`getAllPlansWithRepeatersByToBeId: supplied toBeId was: ${toBeId}`);
   let result;
   db.transaction(
     (tx) => {
@@ -683,7 +682,7 @@ const getAllPlansWithRepeatersAndCalEventsByToBeId = (toBeId) => new Promise((re
     },
     // transaction success callback
     () => {
-      console.log(`getAllPlansWithRepeatersByToBeId: plans and repeaters for tobeitem id:${toBeId} successfully retreived.`);
+      console.log(`getAllPlansWithRepeatersAndCalEventsByToBeId: plans and repeaters for tobeitem id:${toBeId} successfully retreived.`);
       resolve(result);
     },
   );
@@ -879,7 +878,7 @@ export {
   getAllRepeatersByToBeId,
   deleteRepeaterByPlanId,
   getPlansWithRepeaterPeriodicityByToBeId,
-  getAllPlansWithRepeatersAndCalEventsByToBeId as getAllPlansWithRepeatersByToBeId,
+  getAllPlansWithRepeatersAndCalEventsByToBeId,
   updateLastDoneDateTimeOnRepeaterByRepeaterId,
   updateEndDateTimeOnRepeaterByRepeaterId,
   updatePlanDescriptionByPlanId,
