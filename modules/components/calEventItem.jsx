@@ -56,9 +56,9 @@ function CalEventItem({ eventItem, onEventModified }) {
     cancelNotificationEvent(eventItem.notificationId);
     // remove the identifier from the database
     if (eventItem.type === calEventTypeEnum.singleEvent) {
-      db.removeNotificationFromCalEvent(eventItem.id);
+      await db.removeNotificationFromCalEvent(eventItem.id);
     } else if (eventItem.type === calEventTypeEnum.repeaterEvent) {
-      db.removeNotificationFromRepeaterByRepeaterId(eventItem.id);
+      await db.removeNotificationFromRepeaterByRepeaterId(eventItem.id);
     }
   };
 
@@ -89,12 +89,12 @@ function CalEventItem({ eventItem, onEventModified }) {
 
   const onNotificationScheduled = async (notificationId) => {
     if (eventItem.type === calEventTypeEnum.singleEvent) {
-      setHasNotification(true);
+
       await db.addNotificationToCalEvent(eventItem.id, notificationId);
       onEventModified();
     }
     if (eventItem.type === calEventTypeEnum.repeaterEvent) {
-      setHasNotification(true);
+
       await db.addNotificationToRepeater(eventItem.id, notificationId);
       onEventModified();
     }

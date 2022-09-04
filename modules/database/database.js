@@ -511,7 +511,7 @@ const removeNotificationFromRepeaterByRepeaterId = (repeaterId) => new Promise((
       reject(e);
     },
     () => {
-      console.log(`removeNotificationFromRepeaterByRepeaterId: calevent with id=${repeaterId} eventnotification successfully set to null`);
+      console.log(`removeNotificationFromRepeaterByRepeaterId: repeater with id=${repeaterId} notificationId successfully set to null`);
       resolve(true);
     },
   );
