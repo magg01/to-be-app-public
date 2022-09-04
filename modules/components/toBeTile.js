@@ -34,15 +34,15 @@ function ToBeTile({
         }
       })
       .then(() => {
+        // check if any other tobes used the same imagebackgrounduri
+        // if not delete the image file.
+        if (getNumberOfUsesForImage(imageBackgroundUri) === 0) {
+          deleteLocallyStoredImage(imageBackgroundUri);
+        }
         // then delete tobeitem (delete then cascades to plans and repeaters)
         deleteToBeItemById(toBeId)
           .then((deleted) => {
             if (deleted) {
-              // check if any other tobes used the same imagebackgrounduri
-              // if not delete the image file.
-              if (getNumberOfUsesForImage(imageBackgroundUri) === 0) {
-                deleteLocallyStoredImage(imageBackgroundUri);
-              }
               onDelete();
             }
           });
