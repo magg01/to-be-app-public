@@ -7,7 +7,7 @@ function getPreviousPeriodReset(periodicity) {
   }
   if (periodicity === 'weekly') {
     const previousPeriodReset = new Date();
-    previousPeriodReset.setDate(previousPeriodReset.getDate() - previousPeriodReset.getDay() + 1);
+    previousPeriodReset.setDate(previousPeriodReset.getDate() - previousPeriodReset.getDay());
     previousPeriodReset.setHours(0, 0, 0, 0);
     console.log(`previous weekly period reset is ${previousPeriodReset}`);
     return previousPeriodReset;
