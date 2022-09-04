@@ -1,9 +1,11 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable react/prop-types */
-import React from 'react';
-import { StyleSheet } from 'react-native';
+import React, { useCallback } from 'react';
+import { Platform, StyleSheet } from 'react-native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { SimpleLineIcons, Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
+import * as NavigationBar from 'expo-navigation-bar';
 import AgendaScreen from './agendaScreen';
 import BeScreen from './beScreen';
 import colors from '../utils/colors';
@@ -19,6 +21,13 @@ function AgendaScreenIcon({ color }) {
 }
 
 function HomeScreen() {
+  useFocusEffect(useCallback(() => {
+    if (Platform.OS === 'android') {
+      NavigationBar.setBackgroundColorAsync(colors.navigation.tabBarBackground);
+      NavigationBar.setButtonStyleAsync('light');
+    }
+  }, []));
+
   return (
     <Tab.Navigator
       initialRouteName="To be"

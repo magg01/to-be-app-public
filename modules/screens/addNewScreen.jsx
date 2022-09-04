@@ -5,7 +5,15 @@ import React, {
   useState, useRef, useCallback, useLayoutEffect, useEffect,
 } from 'react';
 import {
-  StyleSheet, View, ImageBackground, Text, TextInput, Dimensions, TouchableOpacity, BackHandler,
+  StyleSheet,
+  View,
+  ImageBackground,
+  Text,
+  TextInput,
+  Dimensions,
+  TouchableOpacity,
+  BackHandler,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -14,6 +22,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { HeaderBackButton, useHeaderHeight } from '@react-navigation/elements';
 import Animated, { FadeIn, Layout, FadeOut } from 'react-native-reanimated';
 import ColorPicker from 'react-native-wheel-color-picker';
+import * as NavigationBar from 'expo-navigation-bar';
 import UnsplashImageSearch from '../components/unsplashImageSearch';
 import { addToBeItem } from '../database/database';
 import CONSTANT_STRINGS from '../strings/constantStrings';
@@ -31,9 +40,15 @@ function AddNewScreen({ navigation }) {
   const [colorPickerVisible, setColorPickerVisible] = useState(false);
   const [tintColor, setTintColor] = useState(colors.toBes.defaultTintColor);
   const headerHeight = useHeaderHeight();
-
   const [imageBackgroundUri, setImageBackgroundUri] = useState(defaultBackgroundImage);
   const textInputRef = useRef(null);
+
+  useFocusEffect(useCallback(() => {
+    if (Platform.OS === 'android') {
+      NavigationBar.setBackgroundColorAsync('white');
+      NavigationBar.setButtonStyleAsync('dark');
+    }
+  }, []));
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const backMethods = {

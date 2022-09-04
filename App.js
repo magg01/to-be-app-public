@@ -1,8 +1,10 @@
+/* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import { Platform } from 'react-native';
 import { NavigationContainer, getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { setNotificationHandler } from 'expo-notifications';
+import * as NavigationBar from 'expo-navigation-bar';
 import Toast from 'react-native-toast-message';
 import { setUpDatabase, setUpTables } from './modules/database/database';
 import HomeScreen from './modules/screens/homeScreen';
@@ -10,6 +12,7 @@ import ViewToBeScreen from './modules/screens/viewToBeScreen';
 import { fetchPermissionSettings, checkPermissionSettings } from './modules/utils/notifications';
 import AddNewScreen from './modules/screens/addNewScreen';
 import CONSTANT_STRINGS from './modules/strings/constantStrings';
+import colors from './modules/utils/colors';
 
 const Stack = createStackNavigator();
 
@@ -56,6 +59,10 @@ setUpDatabase();
 setUpTables();
 
 export default function App() {
+  if (Platform.OS === 'android') {
+    NavigationBar.setBackgroundColorAsync(colors.navigation.tabBarBackground);
+    NavigationBar.setButtonStyleAsync('light');
+  }
   return (
     <NavigationContainer>
       <Stack.Navigator 

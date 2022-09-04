@@ -24,6 +24,7 @@ import { HeaderBackButton, useHeaderHeight } from '@react-navigation/elements';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { useFocusEffect } from '@react-navigation/native';
+import * as NavigationBar from 'expo-navigation-bar';
 import * as db from '../database/database';
 import PlanView from '../components/planView';
 import AddPlan from '../components/addPlan';
@@ -46,6 +47,13 @@ function ViewToBeScreen({route, navigation}) {
   const [weeklies, setWeeklies] = useState(null);
   const [monthlies, setMonthlies] = useState(null);
   const headerHeight = useHeaderHeight();
+
+  useFocusEffect(useCallback(() => {
+    if (Platform.OS === 'android') {
+      NavigationBar.setBackgroundColorAsync('white');
+      NavigationBar.setButtonStyleAsync('dark');
+    }
+  }, []));
 
   useEffect(() => {
     setToBeId(route.params.toBeId);
