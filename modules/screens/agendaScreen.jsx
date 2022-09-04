@@ -125,7 +125,7 @@ function AgendaScreen() {
         )}
         selected={Date()}
         // max months can scroll to past on full calendar
-        pastScrollRange={1}
+        pastScrollRange={12}
         // max months can scroll to future on full calendar
         futureScrollRange={12}
         onDayPress={loadItemsForMonth}
