@@ -2,7 +2,7 @@
 ## Description
 A cross-platform, mindful, task management app built with Expo and React Native.
 
-The ‘To-be list’ app is not a typical task management app in that it doesn’t focus on organising your chores or work-based tasks. Instead, the app looks at tasks from an angle of *being* rather than *doing* for bettering your well-being, fulfilment and self-actualisation. The app should promotes a sense of working on oneself rather than for somebody or something else.
+The ‘To-be list’ app is not a typical task management app in that it doesn’t focus on organising your chores or work-based tasks. Instead, the app looks at tasks from an angle of *being* rather than *doing* for bettering your well-being, fulfilment and self-actualisation. The app promotes a sense of working on oneself rather than for somebody or something else.
 
 ## Installation
 Clone this repository.
