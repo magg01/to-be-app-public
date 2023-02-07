@@ -76,6 +76,17 @@ function UnsplashImageSearch({
           );
         }
         if (data.errors) {
+          if (data.errors[0].includes('OAuth')) {
+            return (
+              <View style={styles.dataDisplayMessage}>
+                <Text style={styles.messageText}>{data.errors[0]}</Text>
+                <Text style={styles.messageText}>{'\n\n'}</Text>
+                <Text style={styles.messageText}>
+                  {CONSTANT_STRINGS.UNSPLASH_IMAGE_SEARCH.ON_AUTH_ERROR}
+                </Text>
+            </View>
+            );
+          }
           return (
             <View style={styles.dataDisplayMessage}>
               <Text style={styles.messageText}>{data.errors[0]}</Text>
