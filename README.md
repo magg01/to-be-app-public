@@ -1,10 +1,12 @@
-# mvp-combined-prototype
-To install git clone this repository
+# To-be app
+To install:
 
-Run npm install within the root directory
+Clone this repository.
 
-Add the 'unsplashkeys.js' file from Appednix E of the report into a folder named 'local' at the root directory
+Run npm install within the root directory.
 
-With expo-cli installed run 'expo start'
+Add valid developer keys for the Unsplash API to '/local/unsplashkeys.js' file.
 
-Tests can be run with 'npm test'
+With expo-cli installed run 'expo start'.
+
+Use Expo-go app to connect to the local server and download and run the app on a physical or emulated device.
